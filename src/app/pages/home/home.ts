@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
@@ -53,7 +53,8 @@ export class HomeComponent implements OnInit {
     private deviceService: DeviceService,
     public documentService: DocumentService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.deviceForm = this.fb.group({
       // Step 1: Basic Info
@@ -298,6 +299,7 @@ export class HomeComponent implements OnInit {
   onLoginSuccess(): void {
     // Close the dialog immediately
     this.isLoginDialogOpen = false;
+    this.cdr.detectChanges();
 
     // User successfully logged in, create the device if there's pending data
     if (this.pendingDeviceData) {
@@ -309,6 +311,7 @@ export class HomeComponent implements OnInit {
   onSignupSuccess(): void {
     // Close the dialog immediately
     this.isSignupDialogOpen = false;
+    this.cdr.detectChanges();
 
     // User successfully signed up, create the device if there's pending data
     if (this.pendingDeviceData) {
