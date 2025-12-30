@@ -1,0 +1,180 @@
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <!-- Logo -->
+      <a routerLink="/" class="logo" (click)="closeMenu()">
+        <svg viewBox="0 0 44 50" class="logo-icon" xmlns="http://www.w3.org/2000/svg">
+          <!-- Shield left half -->
+          <path d="M 22 5 L 6 12 L 6 28 Q 22 45 22 45 L 22 5 Z" fill="var(--brand-blue-600)"/>
+          <!-- Shield right half -->
+          <path d="M 22 5 L 38 12 L 38 28 Q 22 45 22 45 L 22 5 Z" fill="var(--brand-cyan-700)"/>
+          <!-- Cloud inside -->
+          <path d="M 14 22 Q 11 22 11 25 Q 11 28 14 28.5 L 30 28.5 Q 33 28 33 25 Q 33 22 30 22 Q 29 19 26 19 Q 22 18 19 21 Q 16 21.5 14 22 Z" fill="white" opacity="0.95"/>
+          <!-- Checkmark -->
+          <path d="M 18 24 L 21 27 L 28 20" stroke="var(--brand-blue-600)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="logo-text">
+          <span class="logo-text-primary">Gadget</span><span class="logo-text-secondary">Cloud</span>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-desktop">
+        <a
+          *ngFor="let link of navLinks"
+          [routerLink]="link.path"
+          [routerLinkActive]="'active'"
+          [routerLinkActiveOptions]="{ exact: link.exact || false }"
+          class="nav-link"
+        >
+          {{ link.label }}
+        </a>
+      </nav>
+
+      <!-- Desktop Actions -->
+      <div class="header-actions">
+        <!-- Not Authenticated -->
+        <ng-container *ngIf="!authState.isAuthenticated">
+          <gc-button variant="ghost" size="sm" (click)="openLoginDialog()">
+            Sign In
+          </gc-button>
+          <gc-button variant="primary" size="sm" (click)="openSignupDialog()">
+            Get Started
+          </gc-button>
+        </ng-container>
+
+        <!-- Authenticated -->
+        <div *ngIf="authState.isAuthenticated" class="user-menu">
+          <button class="user-menu-trigger" (click)="toggleUserMenu()">
+            <div class="user-avatar">
+              {{ (authState.user?.name?.charAt(0) || 'U').toUpperCase() }}
+            </div>
+            <span class="user-name">{{ authState.user?.name }}</span>
+            <svg class="chevron-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+
+          <div class="user-dropdown" *ngIf="isUserMenuOpen">
+            <a routerLink="/dashboard" class="dropdown-item" (click)="closeUserMenu()">
+              <svg class="item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+              Dashboard
+            </a>
+            <a routerLink="/profile" class="dropdown-item" (click)="closeUserMenu()">
+              <svg class="item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              Profile
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" (click)="logout()">
+              <svg class="item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button
+        class="mobile-menu-button"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="isMenuOpen"
+        aria-label="Toggle menu"
+      >
+        <svg
+          *ngIf="!isMenuOpen"
+          class="menu-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg
+          *ngIf="isMenuOpen"
+          class="menu-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="nav-mobile" [class.open]="isMenuOpen">
+      <a
+        *ngFor="let link of navLinks"
+        [routerLink]="link.path"
+        [routerLinkActive]="'active'"
+        [routerLinkActiveOptions]="{ exact: link.exact || false }"
+        class="nav-link-mobile"
+        (click)="closeMenu()"
+      >
+        {{ link.label }}
+      </a>
+      <div class="mobile-actions">
+        <!-- Not Authenticated -->
+        <ng-container *ngIf="!authState.isAuthenticated">
+          <gc-button variant="ghost" size="md" [fullWidth]="true" (click)="openLoginDialog()">
+            Sign In
+          </gc-button>
+          <gc-button variant="primary" size="md" [fullWidth]="true" (click)="openSignupDialog()">
+            Get Started
+          </gc-button>
+        </ng-container>
+
+        <!-- Authenticated -->
+        <div *ngIf="authState.isAuthenticated" class="mobile-user-menu">
+          <div class="mobile-user-info">
+            <div class="user-avatar">
+              {{ (authState.user?.name?.charAt(0) || 'U').toUpperCase() }}
+            </div>
+            <div class="user-details">
+              <div class="user-name">{{ authState.user?.name }}</div>
+              <div class="user-email">{{ authState.user?.email }}</div>
+            </div>
+          </div>
+          <a routerLink="/dashboard" class="mobile-menu-item" (click)="closeMenu()">
+            <svg class="item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+          </a>
+          <a routerLink="/profile" class="mobile-menu-item" (click)="closeMenu()">
+            <svg class="item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            Profile
+          </a>
+          <button class="mobile-menu-item logout-button" (click)="logout()">
+            <svg class="item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Login Dialog -->
+<gc-login-dialog
+  [isOpen]="isLoginDialogOpen"
+  (close)="closeLoginDialog()"
+  (switchToSignup)="switchToSignup()"
+></gc-login-dialog>
+
+<!-- Signup Dialog -->
+<gc-signup-dialog
+  [isOpen]="isSignupDialogOpen"
+  (close)="closeSignupDialog()"
+  (switchToLogin)="switchToLogin()"
+></gc-signup-dialog>

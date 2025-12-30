@@ -1,0 +1,107 @@
+<gc-modal [isOpen]="isOpen" [title]="'Create your account'" [maxWidth]="'sm'" (close)="onClose()">
+  <form (ngSubmit)="onSubmit()" #signupForm="ngForm" class="signup-form">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Name Field -->
+    <div class="form-group">
+      <label for="signup-name" class="form-label">Full name</label>
+      <input
+        type="text"
+        id="signup-name"
+        name="name"
+        [(ngModel)]="formData.name"
+        class="form-input"
+        placeholder="John Doe"
+        required
+        autocomplete="name"
+      />
+    </div>
+
+    <!-- Email Field -->
+    <div class="form-group">
+      <label for="signup-email" class="form-label">Email</label>
+      <input
+        type="email"
+        id="signup-email"
+        name="email"
+        [(ngModel)]="formData.email"
+        class="form-input"
+        placeholder="you@example.com"
+        required
+        autocomplete="email"
+      />
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+      <label for="signup-password" class="form-label">Password</label>
+      <input
+        type="password"
+        id="signup-password"
+        name="password"
+        [(ngModel)]="formData.password"
+        class="form-input"
+        placeholder="Create a strong password"
+        required
+        minlength="8"
+        autocomplete="new-password"
+      />
+      <span class="field-hint">At least 8 characters</span>
+    </div>
+
+    <!-- Confirm Password Field -->
+    <div class="form-group">
+      <label for="signup-confirm-password" class="form-label">Confirm password</label>
+      <input
+        type="password"
+        id="signup-confirm-password"
+        name="confirmPassword"
+        [(ngModel)]="formData.confirmPassword"
+        class="form-input"
+        placeholder="Re-enter your password"
+        required
+        minlength="8"
+        autocomplete="new-password"
+      />
+    </div>
+
+    <!-- Terms Agreement -->
+    <label class="checkbox-label">
+      <input
+        type="checkbox"
+        [(ngModel)]="formData.agreeToTerms"
+        name="agreeToTerms"
+        class="checkbox-input"
+        required
+      />
+      <span>
+        I agree to the
+        <a href="/terms" target="_blank" class="link">Terms of Service</a>
+        and
+        <a href="/privacy" target="_blank" class="link">Privacy Policy</a>
+      </span>
+    </label>
+
+    <!-- Submit Button -->
+    <gc-button
+      type="submit"
+      variant="primary"
+      size="lg"
+      [fullWidth]="true"
+      [disabled]="isLoading || (signupForm.invalid ?? false)"
+    >
+      {{ isLoading ? 'Creating account...' : 'Create account' }}
+    </gc-button>
+
+    <!-- Login Link -->
+    <p class="login-link">
+      Already have an account?
+      <button type="button" class="link-button" (click)="onSwitchToLogin()">
+        Sign in
+      </button>
+    </p>
+  </form>
+</gc-modal>

@@ -1,0 +1,11 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick()">
+  <div class="modal-container" [class]="'modal-' + maxWidth" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ title }}</h2>
+      <button class="modal-close" (click)="onClose()" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,164 @@
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge animate-slide-down">
+        ✨ New Platform Launch
+      </div>
+
+      <h1 class="hero-title animate-slide-up">
+        Gadget care
+        <br>
+        <span class="gradient-text">simplified</span>
+      </h1>
+
+      <p class="hero-description animate-slide-up">
+        Inventory, coverage, documents, and actions in one place—so warranties,
+        insurance, and maintenance never slip.
+      </p>
+
+      <div class="hero-cta animate-slide-up">
+        <gc-button variant="primary" size="lg" routerLink="/auth/signup">
+          Get Started
+        </gc-button>
+        <gc-button variant="secondary" size="lg" (onClick)="scrollToFeatures()">
+          Learn More
+        </gc-button>
+      </div>
+
+      <div class="hero-trust">
+        <p class="trust-text">No credit card required • 14-day free trial</p>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="visual-mockup">
+        <div class="mockup-glow"></div>
+        <svg viewBox="0 0 400 300" class="mockup-graphic">
+          <!-- Dashboard illustration -->
+          <rect x="20" y="20" width="360" height="260" rx="12" fill="white" stroke="#D7DAEB" stroke-width="2"/>
+          <rect x="40" y="40" width="120" height="80" rx="8" fill="url(#gradient1)"/>
+          <rect x="180" y="40" width="180" height="80" rx="8" fill="url(#gradient2)"/>
+          <rect x="40" y="140" width="320" height="40" rx="8" fill="#F5F6FA"/>
+          <rect x="40" y="200" width="150" height="40" rx="8" fill="#F5F6FA"/>
+          <rect x="210" y="200" width="150" height="40" rx="8" fill="#F5F6FA"/>
+
+          <defs>
+            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#0ea5e9"/>
+              <stop offset="100%" style="stop-color:#3b82f6"/>
+            </linearGradient>
+            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e40af"/>
+              <stop offset="100%" style="stop-color:#2563eb"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section (Live Dashboard) -->
+<section class="stats-section">
+  <div class="container">
+    <h2 class="stats-title">Live Dashboard Snapshot</h2>
+    <div class="stats-grid">
+      <div *ngFor="let stat of stats" class="stat-item">
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Feature Highlights</h2>
+      <p class="section-description">
+        Everything you need to track, protect, and maintain your devices
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div *ngFor="let feature of features" class="feature-card">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-description">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process Section -->
+<section class="process-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>How It Works</h2>
+      <p class="section-description">
+        Three simple steps to take control of your device management
+      </p>
+    </div>
+
+    <div class="process-grid">
+      <div *ngFor="let step of processSteps" class="process-step">
+        <div class="step-icon">
+          <span class="step-number">{{ step.number }}</span>
+          <span class="step-emoji">{{ step.icon }}</span>
+        </div>
+        <h3 class="step-title">{{ step.title }}</h3>
+        <p class="step-description">{{ step.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Trusted by Professionals</h2>
+      <p class="section-description">
+        See what our customers have to say about GadgetCloud
+      </p>
+    </div>
+
+    <div class="testimonials-grid">
+      <div *ngFor="let testimonial of testimonials" class="testimonial-card">
+        <div class="testimonial-content">
+          <p class="testimonial-text">"{{ testimonial.text }}"</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">{{ testimonial.avatar }}</div>
+          <div class="author-info">
+            <p class="author-name">{{ testimonial.name }}</p>
+            <p class="author-role">{{ testimonial.role }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2 class="cta-title">Ready to Get Started?</h2>
+      <p class="cta-description">
+        Join thousands of users who trust GadgetCloud to manage their devices
+      </p>
+      <div class="cta-buttons">
+        <gc-button variant="primary" size="lg" routerLink="/auth/signup">
+          Start Free Trial
+        </gc-button>
+        <gc-button variant="secondary" size="lg" routerLink="/contact">
+          Contact Sales
+        </gc-button>
+      </div>
+      <p class="cta-note">No credit card required • 14-day free trial • Cancel anytime</p>
+    </div>
+  </div>
+</section>

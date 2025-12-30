@@ -1,0 +1,356 @@
+/**
+ * Profile Page - New Brand Design
+ */
+
+// ===== PAGE CONTAINER =====
+.profile-page {
+  min-height: 100vh;
+  background: var(--neutral-50);
+}
+
+// ===== PROFILE HEADER =====
+.profile-header {
+  background: linear-gradient(180deg, white 0%, var(--neutral-50) 100%);
+  border-bottom: 1px solid var(--neutral-200);
+  padding: var(--space-12) 0 var(--space-8);
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  .user-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--brand-cyan-700), var(--brand-blue-600));
+    color: white;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: var(--font-bold);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .user-info {
+    flex: 1;
+
+    .user-name {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      font-weight: var(--font-bold);
+      color: var(--brand-blue-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .user-email {
+      font-size: var(--text-base);
+      color: var(--neutral-600);
+      margin-bottom: var(--space-3);
+    }
+
+    .user-badges {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+
+      @media (max-width: 768px) {
+        justify-content: center;
+      }
+    }
+  }
+
+  .header-actions {
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+}
+
+// ===== BADGES =====
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+
+  &.badge-primary {
+    background: rgba(14, 165, 233, 0.1);
+    color: var(--brand-cyan-800);
+  }
+
+  &.badge-secondary {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+  }
+}
+
+// ===== PROFILE GRID =====
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+  padding: var(--space-8) 0;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-section {
+  .section-card {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    height: 100%;
+    transition: all var(--transition-base);
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  .section-header {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--neutral-200);
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: var(--font-semibold);
+      color: var(--brand-blue-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .section-description {
+      font-size: var(--text-sm);
+      color: var(--neutral-600);
+      margin: 0;
+    }
+  }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+}
+
+// ===== FORM ELEMENTS =====
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  .form-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-700);
+  }
+
+  .form-input {
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    color: var(--neutral-900);
+    background: white;
+    transition: all var(--transition-base);
+
+    &:focus {
+      outline: none;
+      border-color: var(--brand-cyan-700);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    &::placeholder {
+      color: var(--neutral-400);
+    }
+  }
+}
+
+.section-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--neutral-200);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+// ===== SETTINGS ITEMS =====
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-lg);
+
+  .setting-info {
+    flex: 1;
+
+    .setting-title {
+      font-size: var(--text-base);
+      font-weight: var(--font-semibold);
+      color: var(--brand-blue-900);
+      margin-bottom: var(--space-1);
+    }
+
+    .setting-description {
+      font-size: var(--text-sm);
+      color: var(--neutral-600);
+      margin: 0;
+    }
+  }
+}
+
+// ===== TOGGLE SWITCH =====
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle-slider {
+      background: var(--brand-cyan-700);
+
+      &::before {
+        transform: translateX(24px);
+      }
+    }
+
+    &:focus + .toggle-slider {
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--neutral-300);
+    transition: var(--transition-base);
+    border-radius: var(--radius-full);
+
+    &::before {
+      content: '';
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background: white;
+      transition: var(--transition-base);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+}
+
+// ===== SECURITY ITEMS =====
+.security-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-lg);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .security-info {
+    flex: 1;
+
+    .security-title {
+      font-size: var(--text-base);
+      font-weight: var(--font-semibold);
+      color: var(--brand-blue-900);
+      margin-bottom: var(--space-1);
+    }
+
+    .security-status {
+      font-size: var(--text-sm);
+      color: var(--neutral-600);
+      margin: 0;
+    }
+  }
+}
+
+// ===== INFO ITEMS =====
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-lg);
+
+  .info-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-700);
+  }
+
+  .info-value {
+    font-size: var(--text-sm);
+    color: var(--neutral-900);
+    font-weight: var(--font-medium);
+  }
+}
+
+// ===== DANGER ZONE =====
+.danger-zone {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 2px solid rgba(239, 68, 68, 0.2);
+
+  .danger-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--color-error);
+    margin-bottom: var(--space-2);
+  }
+
+  .danger-description {
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+    margin-bottom: var(--space-4);
+  }
+}
+
+// ===== PROFILE FOOTER =====
+.profile-footer {
+  padding: var(--space-8) 0 var(--space-12);
+  text-align: center;
+}

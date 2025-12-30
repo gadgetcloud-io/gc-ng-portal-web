@@ -1,0 +1,9 @@
+/**
+ * App Root Styles
+ */
+
+.main-content {
+  min-height: calc(100vh - 72px); // Account for sticky header
+  display: flex;
+  flex-direction: column;
+}

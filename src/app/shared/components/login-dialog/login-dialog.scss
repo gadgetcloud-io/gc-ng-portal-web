@@ -1,0 +1,192 @@
+/**
+ * Login Dialog - GadgetCloud
+ */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.error-message {
+  padding: var(--space-3) var(--space-4);
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: var(--radius-md);
+  color: #c33;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--neutral-700);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  font-family: var(--font-body);
+  color: var(--neutral-900);
+  background: white;
+  transition: all var(--transition-base);
+
+  &:focus {
+    outline: none;
+    border-color: var(--brand-cyan-700);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--neutral-400);
+  }
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--neutral-700);
+  cursor: pointer;
+
+  .checkbox-input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--brand-cyan-700);
+  }
+}
+
+.forgot-password {
+  background: none;
+  border: none;
+  font-size: var(--text-sm);
+  color: var(--brand-cyan-700);
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--brand-blue-600);
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid var(--brand-cyan-700);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: var(--space-2) 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--neutral-200);
+  }
+
+  span {
+    position: relative;
+    display: inline-block;
+    padding: 0 var(--space-3);
+    background: white;
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+  }
+}
+
+.social-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: white;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--neutral-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--brand-cyan-700);
+    background: var(--neutral-50);
+  }
+
+  &:focus {
+    outline: 2px solid var(--brand-cyan-700);
+    outline-offset: 2px;
+  }
+
+  .social-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.signup-link {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--neutral-700);
+  margin: 0;
+
+  .link-button {
+    background: none;
+    border: none;
+    color: var(--brand-cyan-700);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    padding: 0;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--brand-blue-600);
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 2px solid var(--brand-cyan-700);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
+}

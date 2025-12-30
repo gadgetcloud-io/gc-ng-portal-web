@@ -1,0 +1,219 @@
+<!-- Profile Page -->
+<div class="profile-page">
+  <!-- Header Section -->
+  <section class="profile-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="user-avatar-large">{{ userInfo.avatar }}</div>
+        <div class="user-info">
+          <h1 class="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
+          <p class="user-email">{{ userInfo.email }}</p>
+          <div class="user-badges">
+            <span class="badge badge-primary">{{ userInfo.role }}</span>
+            <span class="badge badge-secondary">{{ userInfo.devicesCount }} Devices</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <gc-button variant="secondary" size="md">
+            Edit Profile
+          </gc-button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profile Content -->
+  <div class="container">
+    <div class="profile-grid">
+      <!-- Personal Information -->
+      <div class="profile-section">
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">Personal Information</h2>
+            <p class="section-description">Update your personal details and contact information</p>
+          </div>
+
+          <div class="section-content">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input
+                type="text"
+                class="form-input"
+                [value]="userInfo.firstName"
+                placeholder="Enter first name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input
+                type="text"
+                class="form-input"
+                [value]="userInfo.lastName"
+                placeholder="Enter last name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-input"
+                [value]="userInfo.email"
+                placeholder="Enter email address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mobile Number</label>
+              <input
+                type="tel"
+                class="form-input"
+                [value]="userInfo.mobile"
+                placeholder="Enter mobile number"
+              />
+            </div>
+
+            <div class="section-actions">
+              <gc-button variant="primary" size="md" (onClick)="updateProfile()">
+                Save Changes
+              </gc-button>
+              <gc-button variant="ghost" size="md">
+                Cancel
+              </gc-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="profile-section">
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">Account Settings</h2>
+            <p class="section-description">Manage your account preferences and settings</p>
+          </div>
+
+          <div class="section-content">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="setting-title">Email Notifications</h3>
+                <p class="setting-description">Receive email updates about your devices and services</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="setting-title">Marketing Communications</h3>
+                <p class="setting-description">Receive news, tips, and special offers</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="setting-title">Weekly Reports</h3>
+                <p class="setting-description">Get weekly summaries of your device activity</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="profile-section">
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">Security</h2>
+            <p class="section-description">Manage your password and security settings</p>
+          </div>
+
+          <div class="section-content">
+            <div class="security-item">
+              <div class="security-info">
+                <h3 class="security-title">Password</h3>
+                <p class="security-status">Last changed 3 months ago</p>
+              </div>
+              <gc-button variant="secondary" size="sm" (onClick)="changePassword()">
+                Change Password
+              </gc-button>
+            </div>
+
+            <div class="security-item">
+              <div class="security-info">
+                <h3 class="security-title">Two-Factor Authentication</h3>
+                <p class="security-status">Not enabled</p>
+              </div>
+              <gc-button variant="secondary" size="sm" (onClick)="toggleTwoFactor()">
+                Enable 2FA
+              </gc-button>
+            </div>
+
+            <div class="security-item">
+              <div class="security-info">
+                <h3 class="security-title">Active Sessions</h3>
+                <p class="security-status">2 active sessions</p>
+              </div>
+              <gc-button variant="ghost" size="sm">
+                View Sessions
+              </gc-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Info -->
+      <div class="profile-section">
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">Account Information</h2>
+            <p class="section-description">Your account details and membership information</p>
+          </div>
+
+          <div class="section-content">
+            <div class="info-item">
+              <span class="info-label">Member Since</span>
+              <span class="info-value">{{ userInfo.joinDate }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Account Type</span>
+              <span class="info-value">{{ userInfo.role }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Total Devices</span>
+              <span class="info-value">{{ userInfo.devicesCount }} devices</span>
+            </div>
+
+            <div class="danger-zone">
+              <h3 class="danger-title">Danger Zone</h3>
+              <p class="danger-description">Permanently delete your account and all associated data</p>
+              <gc-button variant="danger" size="sm">
+                Delete Account
+              </gc-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back to Home -->
+    <div class="profile-footer">
+      <gc-button variant="ghost" size="md" routerLink="/">
+        ← Back to Home
+      </gc-button>
+    </div>
+  </div>
+</div>

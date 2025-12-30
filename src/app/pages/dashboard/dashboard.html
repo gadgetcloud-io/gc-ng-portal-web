@@ -1,0 +1,163 @@
+<!-- Dashboard Header -->
+<section class="dashboard-header">
+  <div class="container">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Welcome back! Here's an overview of your devices and warranties.</p>
+      </div>
+      <gc-button variant="primary" size="md" (click)="onQuickAction('add-device')">
+        ➕ Add Device
+      </gc-button>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Grid -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div *ngFor="let stat of stats" class="stat-card" [class]="'stat-' + stat.color">
+        <div class="stat-icon">{{ stat.icon }}</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+          <div class="stat-change" [class]="'trend-' + stat.trend">
+            {{ stat.change }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content Grid -->
+<section class="main-content">
+  <div class="container">
+    <div class="content-grid">
+      <!-- Recent Devices -->
+      <div class="content-card devices-card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Devices</h2>
+          <a routerLink="/devices" class="view-all-link">View all →</a>
+        </div>
+        <div class="devices-list">
+          <div *ngFor="let device of recentDevices" class="device-item" (click)="onViewDevice(device.id)">
+            <div class="device-icon">{{ device.image }}</div>
+            <div class="device-info">
+              <h3 class="device-name">{{ device.name }}</h3>
+              <p class="device-category">{{ device.category }}</p>
+            </div>
+            <div class="device-status">
+              <span class="status-badge" [class]="getStatusColor(device.status)">
+                {{ getStatusLabel(device.status) }}
+              </span>
+              <p class="warranty-date">Expires: {{ device.warrantyExpires }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="content-card activity-card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Activity</h2>
+        </div>
+        <div class="activity-list">
+          <div *ngFor="let activity of recentActivity" class="activity-item">
+            <div class="activity-icon">{{ activity.icon }}</div>
+            <div class="activity-content">
+              <h3 class="activity-title">{{ activity.title }}</h3>
+              <p class="activity-description">{{ activity.description }}</p>
+              <span class="activity-timestamp">{{ activity.timestamp }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Actions & Reminders -->
+<section class="secondary-content">
+  <div class="container">
+    <div class="secondary-grid">
+      <!-- Quick Actions -->
+      <div class="content-card actions-card">
+        <div class="card-header">
+          <h2 class="card-title">Quick Actions</h2>
+        </div>
+        <div class="actions-grid">
+          <button
+            *ngFor="let action of quickActions"
+            class="action-button"
+            [class]="'action-' + action.color"
+            (click)="onQuickAction(action.action)"
+          >
+            <span class="action-icon">{{ action.icon }}</span>
+            <span class="action-label">{{ action.label }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Upcoming Reminders -->
+      <div class="content-card reminders-card">
+        <div class="card-header">
+          <h2 class="card-title">Upcoming Reminders</h2>
+        </div>
+        <div class="reminders-list">
+          <div *ngFor="let reminder of upcomingReminders" class="reminder-item">
+            <div class="reminder-priority" [class]="getPriorityColor(reminder.priority)"></div>
+            <div class="reminder-content">
+              <h3 class="reminder-title">{{ reminder.title }}</h3>
+              <p class="reminder-date">{{ reminder.date }}</p>
+              <span class="reminder-days">{{ reminder.daysLeft }} days left</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Warranty Coverage Chart (Placeholder) -->
+<section class="chart-section">
+  <div class="container">
+    <div class="content-card chart-card">
+      <div class="card-header">
+        <h2 class="card-title">Warranty Coverage Overview</h2>
+      </div>
+      <div class="chart-content">
+        <div class="coverage-stats">
+          <div class="coverage-item">
+            <div class="coverage-bar">
+              <div class="coverage-fill coverage-active" style="width: 75%"></div>
+            </div>
+            <div class="coverage-label">
+              <span class="coverage-color coverage-active"></span>
+              <span>Active: 18 devices (75%)</span>
+            </div>
+          </div>
+          <div class="coverage-item">
+            <div class="coverage-bar">
+              <div class="coverage-fill coverage-expiring" style="width: 12.5%"></div>
+            </div>
+            <div class="coverage-label">
+              <span class="coverage-color coverage-expiring"></span>
+              <span>Expiring Soon: 3 devices (12.5%)</span>
+            </div>
+          </div>
+          <div class="coverage-item">
+            <div class="coverage-bar">
+              <div class="coverage-fill coverage-expired" style="width: 12.5%"></div>
+            </div>
+            <div class="coverage-label">
+              <span class="coverage-color coverage-expired"></span>
+              <span>Expired: 3 devices (12.5%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
