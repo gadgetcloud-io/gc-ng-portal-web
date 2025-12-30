@@ -1,20 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { LoginDialogComponent } from '../../shared/components/login-dialog/login-dialog';
+import { SignupDialogComponent } from '../../shared/components/signup-dialog/signup-dialog';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { DocumentService } from '../../core/services/document.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, ButtonComponent, LoginDialogComponent, SignupDialogComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   // Stepper state
   currentStep = 1;
   totalSteps = 3;
@@ -26,6 +29,12 @@ export class HomeComponent implements OnInit {
   devices: Device[] = [];
   isLoading = false;
   isSaving = false;
+
+  // Auth dialogs
+  isLoginDialogOpen = false;
+  isSignupDialogOpen = false;
+  pendingDeviceData: any = null;
+  private authSubscription?: Subscription;
 
   // Categories
   categories = [
@@ -69,6 +78,19 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDevices();
+
+    // Subscribe to auth state changes
+    this.authSubscription = this.authService.authState$.subscribe(state => {
+      if (state.isAuthenticated && this.pendingDeviceData) {
+        // User just logged in and there's a pending device to create
+        this.performDeviceCreation(this.pendingDeviceData);
+        this.pendingDeviceData = null;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
   }
 
   loadDevices(): void {
@@ -163,18 +185,33 @@ export class HomeComponent implements OnInit {
       return;
     }
 
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      // Store the form data and show login dialog
+      this.pendingDeviceData = this.deviceForm.value;
+      this.isLoginDialogOpen = true;
+      return;
+    }
+
+    // User is authenticated, proceed with creation
+    this.performDeviceCreation(this.deviceForm.value);
+  }
+
+  private performDeviceCreation(deviceData: any): void {
     this.isSaving = true;
 
-    this.deviceService.createDevice(this.deviceForm.value).subscribe({
+    this.deviceService.createDevice(deviceData).subscribe({
       next: (result) => {
         if (result.success) {
           this.deviceForm.reset();
           this.currentStep = 1;
-          this.loadDevices();
+          this.isSaving = false;
+          // Reload the page to show the newly created device
+          window.location.reload();
         } else {
           alert('Failed to create device: ' + (result.error || 'Unknown error'));
+          this.isSaving = false;
         }
-        this.isSaving = false;
       },
       error: (error) => {
         console.error('Error creating device:', error);
@@ -270,5 +307,32 @@ export class HomeComponent implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.deviceForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
+  }
+
+  // Auth dialog handlers
+  closeLoginDialog(): void {
+    this.isLoginDialogOpen = false;
+    // Clear pending data if user cancels login
+    if (!this.authService.isAuthenticated()) {
+      this.pendingDeviceData = null;
+    }
+  }
+
+  closeSignupDialog(): void {
+    this.isSignupDialogOpen = false;
+    // Clear pending data if user cancels signup
+    if (!this.authService.isAuthenticated()) {
+      this.pendingDeviceData = null;
+    }
+  }
+
+  switchToSignup(): void {
+    this.isLoginDialogOpen = false;
+    this.isSignupDialogOpen = true;
+  }
+
+  switchToLogin(): void {
+    this.isSignupDialogOpen = false;
+    this.isLoginDialogOpen = true;
   }
 }

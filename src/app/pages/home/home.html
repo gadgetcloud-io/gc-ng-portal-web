@@ -273,3 +273,16 @@
     </div>
   </div>
 </div>
+
+<!-- Auth Dialogs -->
+<gc-login-dialog
+  [isOpen]="isLoginDialogOpen"
+  (close)="closeLoginDialog()"
+  (switchToSignup)="switchToSignup()"
+></gc-login-dialog>
+
+<gc-signup-dialog
+  [isOpen]="isSignupDialogOpen"
+  (close)="closeSignupDialog()"
+  (switchToLogin)="switchToLogin()"
+></gc-signup-dialog>
