@@ -1,99 +1,274 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { DeviceService, Device } from '../../core/services/device.service';
+import { DocumentService } from '../../core/services/document.service';
+import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomeComponent {
-  features = [
-    {
-      icon: '📱',
-      title: 'Device Inventory',
-      description: 'Track all devices with purchase dates, warranty info, and documents—never lose coverage details again.'
-    },
-    {
-      icon: '⏰',
-      title: 'Smart Reminders',
-      description: 'Get notified before warranties expire, renewals are due, or maintenance windows open.'
-    },
-    {
-      icon: '🔒',
-      title: 'Secure Storage',
-      description: 'Encrypted document storage for receipts, warranties, and manuals—accessible anytime, anywhere.'
-    },
-    {
-      icon: '✓',
-      title: 'Coverage Confidence',
-      description: 'Know exactly what\'s covered, what\'s expiring, and what needs attention with real-time dashboards.'
-    },
-    {
-      icon: '👥',
-      title: 'Team Collaboration',
-      description: 'Share device info across teams, assign responsibilities, and streamline maintenance workflows.'
-    },
-    {
-      icon: '📊',
-      title: 'Analytics',
-      description: 'Track spending, coverage gaps, and device lifecycle—make data-driven decisions.'
+export class HomeComponent implements OnInit {
+  // Stepper state
+  currentStep = 1;
+  totalSteps = 3;
+
+  // Forms
+  deviceForm: FormGroup;
+
+  // Data
+  devices: Device[] = [];
+  isLoading = false;
+  isSaving = false;
+
+  // Categories
+  categories = [
+    { value: 'Laptop', label: 'Laptop 💻' },
+    { value: 'Smartphone', label: 'Smartphone 📱' },
+    { value: 'Tablet', label: 'Tablet 📱' },
+    { value: 'Headphones', label: 'Headphones 🎧' },
+    { value: 'Smartwatch', label: 'Smartwatch ⌚' },
+    { value: 'Camera', label: 'Camera 📷' },
+    { value: 'Speaker', label: 'Speaker 🔊' },
+    { value: 'TV', label: 'TV 📺' },
+    { value: 'Monitor', label: 'Monitor 🖥️' },
+    { value: 'Other', label: 'Other 📦' }
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private deviceService: DeviceService,
+    public documentService: DocumentService,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.deviceForm = this.fb.group({
+      // Step 1: Basic Info
+      name: ['', [Validators.required]],
+      category: ['', [Validators.required]],
+      manufacturer: [''],
+      model: [''],
+
+      // Step 2: Purchase & Warranty
+      purchaseDate: ['', [Validators.required]],
+      purchasePrice: [''],
+      warrantyExpires: ['', [Validators.required]],
+      warrantyProvider: [''],
+
+      // Step 3: Additional Details
+      serialNumber: [''],
+      notes: ['']
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadDevices();
+  }
+
+  loadDevices(): void {
+    this.isLoading = true;
+    this.deviceService.devices$.subscribe({
+      next: (devices) => {
+        this.devices = devices.slice(0, 5); // Show only 5 recent devices
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading devices:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Stepper navigation
+  nextStep(): void {
+    if (this.currentStep < this.totalSteps) {
+      if (this.validateCurrentStep()) {
+        this.currentStep++;
+      }
+    } else {
+      this.submitDevice();
     }
-  ];
+  }
 
-  processSteps = [
-    {
-      number: '1',
-      title: 'Capture',
-      description: 'Scan barcodes, import receipts, or manually add devices. Upload documents and set warranty dates.',
-      icon: '📸'
-    },
-    {
-      number: '2',
-      title: 'Automate',
-      description: 'Track warranties automatically. Sync with calendars. Get reminders before coverage expires.',
-      icon: '⚙️'
-    },
-    {
-      number: '3',
-      title: 'Act',
-      description: 'File claims, schedule repairs, generate reports. Everything you need in one place.',
-      icon: '✨'
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
     }
-  ];
+  }
 
-  testimonials = [
-    {
-      name: 'Sarah Chen',
-      role: 'IT Manager, TechCorp',
-      avatar: 'SC',
-      text: 'GadgetCloud reduced our warranty tracking time by 90%. We caught 12 expiring warranties last quarter that would have cost us $15K to replace.'
-    },
-    {
-      name: 'Michael Rodriguez',
-      role: 'Small Business Owner',
-      avatar: 'MR',
-      text: 'The barcode scanning feature is a game-changer. Set up our entire office inventory in under an hour.'
-    },
-    {
-      name: 'Emily Watson',
-      role: 'Operations Manager',
-      avatar: 'EW',
-      text: 'Finally, a system that makes sense. Our team actually uses it because it\'s that easy.'
+  goToStep(step: number): void {
+    if (step <= this.currentStep || this.validateStepsUpTo(step - 1)) {
+      this.currentStep = step;
     }
-  ];
+  }
 
-  stats = [
-    { value: '482', label: 'Devices Tracked' },
-    { value: '98%', label: 'Coverage Rate' },
-    { value: '12', label: 'Renewals Due' },
-    { value: '3', label: 'Active Claims' }
-  ];
+  validateCurrentStep(): boolean {
+    const controls = this.getStepControls(this.currentStep);
+    let isValid = true;
 
-  scrollToFeatures(): void {
-    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+    controls.forEach(controlName => {
+      const control = this.deviceForm.get(controlName);
+      if (control) {
+        control.markAsTouched();
+        if (control.invalid) {
+          isValid = false;
+        }
+      }
+    });
+
+    return isValid;
+  }
+
+  validateStepsUpTo(step: number): boolean {
+    for (let i = 1; i <= step; i++) {
+      if (!this.validateStep(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  validateStep(step: number): boolean {
+    const controls = this.getStepControls(step);
+    return controls.every(controlName => {
+      const control = this.deviceForm.get(controlName);
+      return control ? control.valid : true;
+    });
+  }
+
+  getStepControls(step: number): string[] {
+    switch (step) {
+      case 1:
+        return ['name', 'category'];
+      case 2:
+        return ['purchaseDate', 'warrantyExpires'];
+      case 3:
+        return [];
+      default:
+        return [];
+    }
+  }
+
+  submitDevice(): void {
+    if (this.deviceForm.invalid) {
+      Object.keys(this.deviceForm.controls).forEach(key => {
+        this.deviceForm.get(key)?.markAsTouched();
+      });
+      return;
+    }
+
+    this.isSaving = true;
+
+    this.deviceService.createDevice(this.deviceForm.value).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.deviceForm.reset();
+          this.currentStep = 1;
+          this.loadDevices();
+        } else {
+          alert('Failed to create device: ' + (result.error || 'Unknown error'));
+        }
+        this.isSaving = false;
+      },
+      error: (error) => {
+        console.error('Error creating device:', error);
+        alert('Failed to create device');
+        this.isSaving = false;
+      }
+    });
+  }
+
+  // Device actions
+  viewDevice(device: Device): void {
+    this.router.navigate(['/dashboard'], {
+      queryParams: { deviceId: device.id }
+    });
+  }
+
+  editDevice(device: Device): void {
+    // Populate form with device data
+    this.deviceForm.patchValue({
+      name: device.name,
+      category: device.category,
+      manufacturer: device.manufacturer,
+      model: device.model,
+      purchaseDate: device.purchaseDate,
+      purchasePrice: device.purchasePrice,
+      warrantyExpires: device.warrantyExpires,
+      warrantyProvider: device.warrantyProvider,
+      serialNumber: device.serialNumber,
+      notes: device.notes
+    });
+    this.currentStep = 1;
+  }
+
+  deleteDevice(device: Device): void {
+    if (confirm(`Are you sure you want to delete "${device.name}"?`)) {
+      this.deviceService.deleteDevice(device.id).subscribe({
+        next: (result) => {
+          if (result.success) {
+            this.loadDevices();
+          } else {
+            alert('Failed to delete device: ' + (result.error || 'Unknown error'));
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting device:', error);
+          alert('Failed to delete device');
+        }
+      });
+    }
+  }
+
+  viewDocuments(device: Device): void {
+    this.router.navigate(['/dashboard'], {
+      queryParams: { deviceId: device.id, view: 'documents' }
+    });
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'active':
+        return 'status-active';
+      case 'expiring-soon':
+        return 'status-warning';
+      case 'expired':
+        return 'status-expired';
+      default:
+        return '';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'active':
+        return 'Active';
+      case 'expiring-soon':
+        return 'Expiring Soon';
+      case 'expired':
+        return 'Expired';
+      default:
+        return status;
+    }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.deviceForm.get(fieldName);
+    return !!(field && field.invalid && field.touched);
   }
 }

@@ -1,164 +1,275 @@
-<!-- Hero Section -->
-<section class="hero">
+<div class="home-container">
   <div class="container">
-    <div class="hero-content">
-      <div class="hero-badge animate-slide-down">
-        ✨ New Platform Launch
-      </div>
-
-      <h1 class="hero-title animate-slide-up">
-        Gadget care
-        <br>
-        <span class="gradient-text">simplified</span>
-      </h1>
-
-      <p class="hero-description animate-slide-up">
-        Inventory, coverage, documents, and actions in one place—so warranties,
-        insurance, and maintenance never slip.
-      </p>
-
-      <div class="hero-cta animate-slide-up">
-        <gc-button variant="primary" size="lg" routerLink="/auth/signup">
-          Get Started
-        </gc-button>
-        <gc-button variant="secondary" size="lg" (onClick)="scrollToFeatures()">
-          Learn More
-        </gc-button>
-      </div>
-
-      <div class="hero-trust">
-        <p class="trust-text">No credit card required • 14-day free trial</p>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="visual-mockup">
-        <div class="mockup-glow"></div>
-        <svg viewBox="0 0 400 300" class="mockup-graphic">
-          <!-- Dashboard illustration -->
-          <rect x="20" y="20" width="360" height="260" rx="12" fill="white" stroke="#D7DAEB" stroke-width="2"/>
-          <rect x="40" y="40" width="120" height="80" rx="8" fill="url(#gradient1)"/>
-          <rect x="180" y="40" width="180" height="80" rx="8" fill="url(#gradient2)"/>
-          <rect x="40" y="140" width="320" height="40" rx="8" fill="#F5F6FA"/>
-          <rect x="40" y="200" width="150" height="40" rx="8" fill="#F5F6FA"/>
-          <rect x="210" y="200" width="150" height="40" rx="8" fill="#F5F6FA"/>
-
-          <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#0ea5e9"/>
-              <stop offset="100%" style="stop-color:#3b82f6"/>
-            </linearGradient>
-            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#1e40af"/>
-              <stop offset="100%" style="stop-color:#2563eb"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Stats Section (Live Dashboard) -->
-<section class="stats-section">
-  <div class="container">
-    <h2 class="stats-title">Live Dashboard Snapshot</h2>
-    <div class="stats-grid">
-      <div *ngFor="let stat of stats" class="stat-item">
-        <div class="stat-value">{{ stat.value }}</div>
-        <div class="stat-label">{{ stat.label }}</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features Section -->
-<section id="features" class="features-section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Feature Highlights</h2>
-      <p class="section-description">
-        Everything you need to track, protect, and maintain your devices
-      </p>
-    </div>
-
-    <div class="features-grid">
-      <div *ngFor="let feature of features" class="feature-card">
-        <div class="feature-icon">{{ feature.icon }}</div>
-        <h3 class="feature-title">{{ feature.title }}</h3>
-        <p class="feature-description">{{ feature.description }}</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Process Section -->
-<section class="process-section">
-  <div class="container">
-    <div class="section-header">
-      <h2>How It Works</h2>
-      <p class="section-description">
-        Three simple steps to take control of your device management
-      </p>
-    </div>
-
-    <div class="process-grid">
-      <div *ngFor="let step of processSteps" class="process-step">
-        <div class="step-icon">
-          <span class="step-number">{{ step.number }}</span>
-          <span class="step-emoji">{{ step.icon }}</span>
+    <div class="split-layout">
+      <!-- LEFT SIDE: Device Creation Form -->
+      <div class="form-section">
+        <div class="form-header">
+          <h2 class="form-title">Add New Device</h2>
+          <p class="form-subtitle">Track your devices in 3 simple steps</p>
         </div>
-        <h3 class="step-title">{{ step.title }}</h3>
-        <p class="step-description">{{ step.description }}</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Testimonials Section -->
-<section class="testimonials-section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Trusted by Professionals</h2>
-      <p class="section-description">
-        See what our customers have to say about GadgetCloud
-      </p>
-    </div>
-
-    <div class="testimonials-grid">
-      <div *ngFor="let testimonial of testimonials" class="testimonial-card">
-        <div class="testimonial-content">
-          <p class="testimonial-text">"{{ testimonial.text }}"</p>
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">{{ testimonial.avatar }}</div>
-          <div class="author-info">
-            <p class="author-name">{{ testimonial.name }}</p>
-            <p class="author-role">{{ testimonial.role }}</p>
+        <!-- Stepper -->
+        <div class="stepper">
+          <div
+            *ngFor="let step of [1, 2, 3]"
+            class="step"
+            [class.active]="currentStep === step"
+            [class.completed]="currentStep > step"
+            (click)="goToStep(step)"
+          >
+            <div class="step-circle">
+              <span *ngIf="currentStep <= step" class="step-number">{{ step }}</span>
+              <span *ngIf="currentStep > step" class="step-check">✓</span>
+            </div>
+            <div class="step-label">
+              <span *ngIf="step === 1">Basic Info</span>
+              <span *ngIf="step === 2">Warranty</span>
+              <span *ngIf="step === 3">Details</span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- CTA Section -->
-<section class="cta-section">
-  <div class="container">
-    <div class="cta-card">
-      <h2 class="cta-title">Ready to Get Started?</h2>
-      <p class="cta-description">
-        Join thousands of users who trust GadgetCloud to manage their devices
-      </p>
-      <div class="cta-buttons">
-        <gc-button variant="primary" size="lg" routerLink="/auth/signup">
-          Start Free Trial
-        </gc-button>
-        <gc-button variant="secondary" size="lg" routerLink="/contact">
-          Contact Sales
-        </gc-button>
+        <!-- Form -->
+        <form [formGroup]="deviceForm" class="device-form">
+          <!-- Step 1: Basic Info -->
+          <div *ngIf="currentStep === 1" class="form-step">
+            <div class="form-group">
+              <label class="form-label">Device Name *</label>
+              <input
+                type="text"
+                formControlName="name"
+                class="form-input"
+                [class.invalid]="isFieldInvalid('name')"
+                placeholder="e.g., MacBook Pro 16&quot;"
+              />
+              <span *ngIf="isFieldInvalid('name')" class="error-message">
+                Device name is required
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select
+                formControlName="category"
+                class="form-input"
+                [class.invalid]="isFieldInvalid('category')"
+              >
+                <option value="">Select category</option>
+                <option *ngFor="let cat of categories" [value]="cat.value">
+                  {{ cat.label }}
+                </option>
+              </select>
+              <span *ngIf="isFieldInvalid('category')" class="error-message">
+                Category is required
+              </span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Manufacturer</label>
+                <input
+                  type="text"
+                  formControlName="manufacturer"
+                  class="form-input"
+                  placeholder="e.g., Apple"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Model</label>
+                <input
+                  type="text"
+                  formControlName="model"
+                  class="form-input"
+                  placeholder="e.g., M3 Max"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Purchase & Warranty -->
+          <div *ngIf="currentStep === 2" class="form-step">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Purchase Date *</label>
+                <input
+                  type="date"
+                  formControlName="purchaseDate"
+                  class="form-input"
+                  [class.invalid]="isFieldInvalid('purchaseDate')"
+                />
+                <span *ngIf="isFieldInvalid('purchaseDate')" class="error-message">
+                  Purchase date is required
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Purchase Price</label>
+                <input
+                  type="number"
+                  formControlName="purchasePrice"
+                  class="form-input"
+                  placeholder="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Warranty Expires *</label>
+                <input
+                  type="date"
+                  formControlName="warrantyExpires"
+                  class="form-input"
+                  [class.invalid]="isFieldInvalid('warrantyExpires')"
+                />
+                <span *ngIf="isFieldInvalid('warrantyExpires')" class="error-message">
+                  Warranty expiry date is required
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Warranty Provider</label>
+                <input
+                  type="text"
+                  formControlName="warrantyProvider"
+                  class="form-input"
+                  placeholder="e.g., AppleCare+"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Additional Details -->
+          <div *ngIf="currentStep === 3" class="form-step">
+            <div class="form-group">
+              <label class="form-label">Serial Number</label>
+              <input
+                type="text"
+                formControlName="serialNumber"
+                class="form-input"
+                placeholder="e.g., C02YX3ABMD6T"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Notes</label>
+              <textarea
+                formControlName="notes"
+                class="form-input form-textarea"
+                rows="4"
+                placeholder="Add any additional notes about this device..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <gc-button
+              *ngIf="currentStep > 1"
+              variant="secondary"
+              (onClick)="previousStep()"
+              [disabled]="isSaving"
+            >
+              Back
+            </gc-button>
+
+            <gc-button
+              variant="primary"
+              (onClick)="nextStep()"
+              [disabled]="isSaving"
+              class="next-button"
+            >
+              <span *ngIf="currentStep < totalSteps">Next Step</span>
+              <span *ngIf="currentStep === totalSteps && !isSaving">Create Device</span>
+              <span *ngIf="isSaving">Creating...</span>
+            </gc-button>
+          </div>
+        </form>
       </div>
-      <p class="cta-note">No credit card required • 14-day free trial • Cancel anytime</p>
+
+      <!-- RIGHT SIDE: Device List -->
+      <div class="list-section">
+        <div class="list-header">
+          <h2 class="list-title">Recent Devices</h2>
+          <span class="device-count">{{ devices.length }} device{{ devices.length !== 1 ? 's' : '' }}</span>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading devices...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
+          <div class="empty-icon">📦</div>
+          <h3>No devices yet</h3>
+          <p>Create your first device using the form on the left</p>
+        </div>
+
+        <!-- Device List -->
+        <div *ngIf="!isLoading && devices.length > 0" class="device-list">
+          <div *ngFor="let device of devices" class="device-card">
+            <div class="device-info">
+              <div class="device-icon">{{ device.image || '📦' }}</div>
+              <div class="device-details">
+                <h3 class="device-name">{{ device.name }}</h3>
+                <p class="device-meta">
+                  {{ device.manufacturer }} {{ device.model }}
+                </p>
+                <div class="device-status">
+                  <span class="status-badge" [ngClass]="getStatusClass(device.status)">
+                    {{ getStatusLabel(device.status) }}
+                  </span>
+                  <span class="warranty-date">
+                    Expires {{ formatDate(device.warrantyExpires) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="device-actions">
+              <button
+                class="action-btn view-btn"
+                (click)="viewDevice(device)"
+                title="View Details"
+              >
+                👁️
+              </button>
+              <button
+                class="action-btn edit-btn"
+                (click)="editDevice(device)"
+                title="Edit"
+              >
+                ✏️
+              </button>
+              <button
+                class="action-btn docs-btn"
+                (click)="viewDocuments(device)"
+                title="Documents"
+              >
+                📄
+              </button>
+              <button
+                class="action-btn delete-btn"
+                (click)="deleteDevice(device)"
+                title="Delete"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- View All Link -->
+        <div *ngIf="!isLoading && devices.length > 0" class="view-all">
+          <a routerLink="/dashboard" class="view-all-link">
+            View all devices →
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-</section>
+</div>
