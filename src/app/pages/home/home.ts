@@ -296,6 +296,9 @@ export class HomeComponent implements OnInit {
 
   // Auth dialog handlers
   onLoginSuccess(): void {
+    // Close the dialog immediately
+    this.isLoginDialogOpen = false;
+
     // User successfully logged in, create the device if there's pending data
     if (this.pendingDeviceData) {
       this.performDeviceCreation(this.pendingDeviceData);
@@ -304,6 +307,9 @@ export class HomeComponent implements OnInit {
   }
 
   onSignupSuccess(): void {
+    // Close the dialog immediately
+    this.isSignupDialogOpen = false;
+
     // User successfully signed up, create the device if there's pending data
     if (this.pendingDeviceData) {
       this.performDeviceCreation(this.pendingDeviceData);
