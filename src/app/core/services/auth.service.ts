@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ApiService, ApiResponse } from './api.service';
 
 export interface User {
   id: string;
@@ -11,6 +13,16 @@ export interface User {
 export interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
+}
+
+interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+interface SignupResponse {
+  token: string;
+  user: User;
 }
 
 @Injectable({
@@ -24,14 +36,22 @@ export class AuthService {
 
   public authState$ = this.authState.asObservable();
 
-  constructor(private router: Router) {
+  // Flag to toggle between API and localStorage mode
+  private useApi = false; // Set to true when backend is ready
+
+  constructor(
+    private router: Router,
+    private apiService: ApiService
+  ) {
     // Check for existing session on init
     this.loadStoredAuth();
   }
 
   private loadStoredAuth(): void {
     const storedUser = localStorage.getItem('gc_user');
-    if (storedUser) {
+    const token = localStorage.getItem('gc_token');
+
+    if (storedUser && (this.useApi ? token : true)) {
       try {
         const user = JSON.parse(storedUser);
         this.authState.next({
@@ -41,83 +61,132 @@ export class AuthService {
       } catch (e) {
         console.error('Error parsing stored user:', e);
         localStorage.removeItem('gc_user');
+        localStorage.removeItem('gc_token');
       }
     }
   }
 
   signup(name: string, email: string, password: string): Observable<{ success: boolean; error?: string }> {
-    return new Observable(observer => {
-      // Simulate API call delay
-      setTimeout(() => {
-        // Check if user already exists
-        const existingUsers = this.getStoredUsers();
-        if (existingUsers.find(u => u.email === email)) {
-          observer.next({ success: false, error: 'Email already registered' });
+    if (this.useApi) {
+      // API mode: Call backend
+      return this.apiService.post<ApiResponse<SignupResponse>>('/auth/signup', {
+        name,
+        email,
+        password
+      }).pipe(
+        map(response => {
+          if (response.success && response.data) {
+            // Store token and user
+            this.apiService.setToken(response.data.token);
+            localStorage.setItem('gc_user', JSON.stringify(response.data.user));
+
+            this.authState.next({
+              isAuthenticated: true,
+              user: response.data.user
+            });
+
+            this.router.navigate(['/dashboard']);
+            return { success: true };
+          }
+          return { success: false, error: response.error || 'Signup failed' };
+        }),
+        catchError(error => {
+          return of({ success: false, error: error.message || 'Signup failed' });
+        })
+      );
+    } else {
+      // localStorage mode: Mock API
+      return new Observable(observer => {
+        setTimeout(() => {
+          const existingUsers = this.getStoredUsers();
+          if (existingUsers.find(u => u.email === email)) {
+            observer.next({ success: false, error: 'Email already registered' });
+            observer.complete();
+            return;
+          }
+
+          const newUser: User = {
+            id: Date.now().toString(),
+            name,
+            email
+          };
+
+          const users = [...existingUsers, { ...newUser, password }];
+          localStorage.setItem('gc_users', JSON.stringify(users));
+          localStorage.setItem('gc_user', JSON.stringify(newUser));
+
+          this.authState.next({
+            isAuthenticated: true,
+            user: newUser
+          });
+
+          observer.next({ success: true });
           observer.complete();
-          return;
-        }
-
-        // Create new user
-        const newUser: User = {
-          id: Date.now().toString(),
-          name,
-          email
-        };
-
-        // Store user credentials (in production, this would be done server-side)
-        const users = [...existingUsers, { ...newUser, password }];
-        localStorage.setItem('gc_users', JSON.stringify(users));
-
-        // Set current user
-        localStorage.setItem('gc_user', JSON.stringify(newUser));
-        this.authState.next({
-          isAuthenticated: true,
-          user: newUser
-        });
-
-        observer.next({ success: true });
-        observer.complete();
-
-        // Redirect to dashboard
-        this.router.navigate(['/dashboard']);
-      }, 1000);
-    });
+          this.router.navigate(['/dashboard']);
+        }, 1000);
+      });
+    }
   }
 
   login(email: string, password: string): Observable<{ success: boolean; error?: string }> {
-    return new Observable(observer => {
-      // Simulate API call delay
-      setTimeout(() => {
-        const users = this.getStoredUsers();
-        const user = users.find(u => u.email === email && u.password === password);
+    if (this.useApi) {
+      // API mode: Call backend
+      return this.apiService.post<ApiResponse<LoginResponse>>('/auth/login', {
+        email,
+        password
+      }).pipe(
+        map(response => {
+          if (response.success && response.data) {
+            // Store token and user
+            this.apiService.setToken(response.data.token);
+            localStorage.setItem('gc_user', JSON.stringify(response.data.user));
 
-        if (!user) {
-          observer.next({ success: false, error: 'Invalid email or password' });
+            this.authState.next({
+              isAuthenticated: true,
+              user: response.data.user
+            });
+
+            this.router.navigate(['/dashboard']);
+            return { success: true };
+          }
+          return { success: false, error: response.error || 'Login failed' };
+        }),
+        catchError(error => {
+          return of({ success: false, error: error.message || 'Invalid email or password' });
+        })
+      );
+    } else {
+      // localStorage mode: Mock API
+      return new Observable(observer => {
+        setTimeout(() => {
+          const users = this.getStoredUsers();
+          const user = users.find(u => u.email === email && u.password === password);
+
+          if (!user) {
+            observer.next({ success: false, error: 'Invalid email or password' });
+            observer.complete();
+            return;
+          }
+
+          const { password: _, ...userWithoutPassword } = user;
+          localStorage.setItem('gc_user', JSON.stringify(userWithoutPassword));
+
+          this.authState.next({
+            isAuthenticated: true,
+            user: userWithoutPassword as User
+          });
+
+          observer.next({ success: true });
           observer.complete();
-          return;
-        }
-
-        // Remove password from user object
-        const { password: _, ...userWithoutPassword } = user;
-
-        // Set current user
-        localStorage.setItem('gc_user', JSON.stringify(userWithoutPassword));
-        this.authState.next({
-          isAuthenticated: true,
-          user: userWithoutPassword as User
-        });
-
-        observer.next({ success: true });
-        observer.complete();
-
-        // Redirect to dashboard
-        this.router.navigate(['/dashboard']);
-      }, 1000);
-    });
+          this.router.navigate(['/dashboard']);
+        }, 1000);
+      });
+    }
   }
 
   logout(): void {
     localStorage.removeItem('gc_user');
+    this.apiService.removeToken(); // Clear auth token
     this.authState.next({
       isAuthenticated: false,
       user: null
