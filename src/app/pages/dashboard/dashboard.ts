@@ -8,6 +8,10 @@ import { DeviceService, Device } from '../../core/services/device.service';
 import { AddDeviceDialogComponent } from '../../shared/components/device-dialogs/add-device-dialog';
 import { EditDeviceDialogComponent } from '../../shared/components/device-dialogs/edit-device-dialog';
 import { DeleteDeviceDialogComponent } from '../../shared/components/device-dialogs/delete-device-dialog';
+import { UploadDocumentDialogComponent } from '../../shared/components/document-dialogs/upload-document-dialog';
+import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
+import { DeleteDocumentDialogComponent } from '../../shared/components/document-dialogs/delete-document-dialog';
+import { DocumentService, Document } from '../../core/services/document.service';
 
 interface Activity {
   id: string;
@@ -27,7 +31,10 @@ interface Activity {
     ButtonComponent,
     AddDeviceDialogComponent,
     EditDeviceDialogComponent,
-    DeleteDeviceDialogComponent
+    DeleteDeviceDialogComponent,
+    UploadDocumentDialogComponent,
+    ViewDocumentsDialogComponent,
+    DeleteDocumentDialogComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
@@ -43,11 +50,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isDeleteDialogOpen = false;
   selectedDevice: Device | null = null;
 
+  // Document dialog states
+  isUploadDocumentDialogOpen = false;
+  isViewDocumentsDialogOpen = false;
+  isDeleteDocumentDialogOpen = false;
+  selectedDocument: Document | null = null;
+  selectedDeviceForDocs: Device | null = null;
+
   private subscriptions = new Subscription();
 
   constructor(
     private authService: AuthService,
     private deviceService: DeviceService,
+    private documentService: DocumentService,
     private router: Router
   ) {}
 
@@ -285,6 +300,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.openAddDialog();
         break;
       case 'upload-document':
+        this.openUploadDocumentDialog();
+        break;
       case 'renew-warranty':
       case 'view-reports':
         alert(`${action} functionality will be implemented.`);
@@ -342,5 +359,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDeviceDeleted(): void {
     // Device was deleted successfully, dialog will close automatically
     console.log('Device deleted successfully');
+  }
+
+  // Document dialog methods
+  openUploadDocumentDialog(deviceId?: string): void {
+    if (deviceId) {
+      this.selectedDeviceForDocs = this.devices.find(d => d.id === deviceId) || null;
+    } else {
+      this.selectedDeviceForDocs = null;
+    }
+    this.isUploadDocumentDialogOpen = true;
+  }
+
+  openViewDocumentsDialog(device: Device): void {
+    this.selectedDeviceForDocs = device;
+    this.isViewDocumentsDialogOpen = true;
+  }
+
+  openDeleteDocumentDialog(document: Document): void {
+    this.selectedDocument = document;
+    this.isDeleteDocumentDialogOpen = true;
+  }
+
+  closeUploadDocumentDialog(): void {
+    this.isUploadDocumentDialogOpen = false;
+    this.selectedDeviceForDocs = null;
+  }
+
+  closeViewDocumentsDialog(): void {
+    this.isViewDocumentsDialogOpen = false;
+    this.selectedDeviceForDocs = null;
+  }
+
+  closeDeleteDocumentDialog(): void {
+    this.isDeleteDocumentDialogOpen = false;
+    this.selectedDocument = null;
+  }
+
+  onDocumentUploaded(): void {
+    console.log('Document uploaded successfully');
+    // Optionally reload the view documents dialog if it's open
+    if (this.isViewDocumentsDialogOpen && this.selectedDeviceForDocs) {
+      // The ViewDocumentsDialog will auto-reload when reopened
+    }
+  }
+
+  onDocumentDeleted(): void {
+    console.log('Document deleted successfully');
+    // The ViewDocumentsDialog will auto-update via the observable
+  }
+
+  onUploadNewFromViewDialog(): void {
+    // Called when user clicks "Upload New" from the view documents dialog
+    const deviceId = this.selectedDeviceForDocs?.id;
+    this.closeViewDocumentsDialog();
+    if (deviceId) {
+      this.openUploadDocumentDialog(deviceId);
+    }
   }
 }

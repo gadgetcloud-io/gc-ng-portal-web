@@ -1,0 +1,119 @@
+<gc-modal [isOpen]="isOpen" [title]="'Upload Document'" [maxWidth]="'md'" (close)="onClose()">
+  <div class="upload-dialog">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <!-- File Upload -->
+      <div class="form-group">
+        <label for="file-upload" class="form-label required">File</label>
+        <div class="file-upload-area">
+          <input
+            type="file"
+            id="file-upload"
+            (change)="onFileSelected($event)"
+            [accept]="acceptedFileTypes"
+            [disabled]="isUploading"
+            class="file-input"
+          />
+          <label for="file-upload" class="file-upload-label">
+            <span class="upload-icon">📁</span>
+            <span class="upload-text">
+              {{ selectedFileName || 'Click to select a file' }}
+            </span>
+            <span *ngIf="fileSize" class="file-size">{{ fileSize }}</span>
+          </label>
+        </div>
+        <p class="help-text">Accepted: PDF, JPG, PNG, DOC, TXT (Max 10MB)</p>
+      </div>
+
+      <!-- Document Name -->
+      <div class="form-group">
+        <label for="document-name" class="form-label required">Document Name</label>
+        <input
+          type="text"
+          id="document-name"
+          [(ngModel)]="document.name"
+          name="name"
+          placeholder="e.g., iPhone 15 Pro Receipt"
+          [disabled]="isUploading"
+          class="form-input"
+          required
+        />
+      </div>
+
+      <!-- Document Type -->
+      <div class="form-group">
+        <label for="document-type" class="form-label required">Document Type</label>
+        <select
+          id="document-type"
+          [(ngModel)]="document.type"
+          name="type"
+          [disabled]="isUploading"
+          class="form-select"
+          required
+        >
+          <option *ngFor="let type of documentTypes" [value]="type.value">
+            {{ type.icon }} {{ type.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Device Selection -->
+      <div class="form-group">
+        <label for="device-select" class="form-label required">Attach to Device</label>
+        <select
+          id="device-select"
+          [(ngModel)]="document.deviceId"
+          name="deviceId"
+          [disabled]="isUploading"
+          class="form-select"
+          required
+        >
+          <option value="" disabled>Select a device</option>
+          <option *ngFor="let device of devices" [value]="device.id">
+            {{ device.image }} {{ device.name }}
+          </option>
+        </select>
+        <p class="help-text" *ngIf="devices.length === 0">
+          No devices available. Please add a device first.
+        </p>
+      </div>
+
+      <!-- Notes (Optional) -->
+      <div class="form-group">
+        <label for="document-notes" class="form-label">Notes (Optional)</label>
+        <textarea
+          id="document-notes"
+          [(ngModel)]="document.notes"
+          name="notes"
+          placeholder="Add any additional notes about this document"
+          [disabled]="isUploading"
+          class="form-textarea"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="dialog-actions">
+        <gc-button
+          type="button"
+          variant="secondary"
+          (click)="onClose()"
+          [disabled]="isUploading"
+        >
+          Cancel
+        </gc-button>
+        <gc-button
+          type="submit"
+          variant="primary"
+          [disabled]="isUploading || !document.file || !document.name || !document.deviceId"
+        >
+          {{ isUploading ? 'Uploading...' : 'Upload Document' }}
+        </gc-button>
+      </div>
+    </form>
+  </div>
+</gc-modal>

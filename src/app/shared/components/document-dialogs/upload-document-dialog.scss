@@ -1,0 +1,155 @@
+.upload-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.error-message {
+  padding: 0.75rem 1rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  color: #c33;
+  font-size: 0.875rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  &.required::after {
+    content: ' *';
+    color: #e53e3e;
+  }
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+// File Upload Area
+.file-upload-area {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  .upload-icon {
+    font-size: 3rem;
+  }
+
+  .upload-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: center;
+  }
+
+  .file-size {
+    font-size: 0.75rem;
+    color: #6b7280;
+    padding: 0.25rem 0.75rem;
+    background: #fff;
+    border-radius: 12px;
+  }
+}
+
+.file-input:disabled + .file-upload-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+
+  &:hover {
+    border-color: #d1d5db;
+    background: #f9fafb;
+  }
+}
+
+// Dialog Actions
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+@media (max-width: 640px) {
+  .dialog-actions {
+    flex-direction: column-reverse;
+
+    gc-button {
+      width: 100%;
+    }
+  }
+
+  .file-upload-label {
+    padding: 1.5rem 1rem;
+
+    .upload-icon {
+      font-size: 2rem;
+    }
+  }
+}

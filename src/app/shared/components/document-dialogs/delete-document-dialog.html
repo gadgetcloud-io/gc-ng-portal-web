@@ -1,0 +1,63 @@
+<gc-modal [isOpen]="isOpen" [title]="'Delete Document'" [maxWidth]="'sm'" (close)="onClose()">
+  <div class="delete-dialog">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Confirmation Message -->
+    <div class="confirmation-content">
+      <div class="warning-icon">⚠️</div>
+      <p class="warning-text">
+        Are you sure you want to delete <strong>{{ document?.name }}</strong>?
+      </p>
+      <p class="warning-subtext">
+        This action cannot be undone. The document file will be permanently removed.
+      </p>
+    </div>
+
+    <!-- Document Details -->
+    <div *ngIf="document" class="document-details">
+      <div class="detail-row">
+        <span class="detail-label">Type:</span>
+        <span class="detail-value">
+          {{ documentService.getDocumentTypeIcon(document.type) }}
+          {{ documentService.getDocumentTypeLabel(document.type) }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Size:</span>
+        <span class="detail-value">
+          {{ documentService.formatFileSize(document.fileSize) }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Uploaded:</span>
+        <span class="detail-value">
+          {{ document.uploadDate | date: 'MMM d, y' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <gc-button
+        type="button"
+        variant="secondary"
+        (click)="onClose()"
+        [disabled]="isDeleting"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        type="button"
+        variant="primary"
+        (click)="onConfirmDelete()"
+        [disabled]="isDeleting"
+        class="delete-button"
+      >
+        {{ isDeleting ? 'Deleting...' : 'Delete Document' }}
+      </gc-button>
+    </div>
+  </div>
+</gc-modal>

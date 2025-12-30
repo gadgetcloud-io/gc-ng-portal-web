@@ -74,6 +74,13 @@
             </div>
             <div class="device-actions">
               <button
+                class="icon-button docs-button"
+                (click)="openViewDocumentsDialog(device); $event.stopPropagation()"
+                title="View documents"
+              >
+                📄
+              </button>
+              <button
                 class="icon-button edit-button"
                 (click)="openEditDialog(device); $event.stopPropagation()"
                 title="Edit device"
@@ -216,3 +223,27 @@
   (close)="closeDeleteDialog()"
   (deviceDeleted)="onDeviceDeleted()"
 ></gc-delete-device-dialog>
+
+<!-- Document Dialogs -->
+<gc-upload-document-dialog
+  [isOpen]="isUploadDocumentDialogOpen"
+  [preselectedDeviceId]="selectedDeviceForDocs?.id"
+  (close)="closeUploadDocumentDialog()"
+  (documentUploaded)="onDocumentUploaded()"
+></gc-upload-document-dialog>
+
+<gc-view-documents-dialog
+  [isOpen]="isViewDocumentsDialogOpen"
+  [deviceId]="selectedDeviceForDocs?.id"
+  [deviceName]="selectedDeviceForDocs?.name"
+  (close)="closeViewDocumentsDialog()"
+  (deleteDocument)="openDeleteDocumentDialog($event)"
+  (uploadNew)="onUploadNewFromViewDialog()"
+></gc-view-documents-dialog>
+
+<gc-delete-document-dialog
+  [isOpen]="isDeleteDocumentDialogOpen"
+  [document]="selectedDocument"
+  (close)="closeDeleteDocumentDialog()"
+  (documentDeleted)="onDocumentDeleted()"
+></gc-delete-document-dialog>

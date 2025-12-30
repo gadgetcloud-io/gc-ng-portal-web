@@ -1,0 +1,87 @@
+<gc-modal
+  [isOpen]="isOpen"
+  [title]="'Documents - ' + (deviceName || 'Device')"
+  [maxWidth]="'lg'"
+  (close)="onClose()"
+>
+  <div class="documents-dialog">
+    <!-- Header Actions -->
+    <div class="dialog-header">
+      <gc-button variant="primary" size="sm" (click)="onUploadNew()">
+        📤 Upload New Document
+      </gc-button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading documents...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && documents.length === 0" class="empty-state">
+      <div class="empty-icon">📄</div>
+      <h3>No documents yet</h3>
+      <p>Upload receipts, warranties, manuals, and other documents for this device</p>
+      <gc-button variant="primary" (click)="onUploadNew()">
+        📤 Upload Document
+      </gc-button>
+    </div>
+
+    <!-- Documents List -->
+    <div *ngIf="!isLoading && documents.length > 0" class="documents-list">
+      <div *ngFor="let doc of documents" class="document-item">
+        <div class="document-icon">
+          {{ documentService.getDocumentTypeIcon(doc.type) }}
+        </div>
+
+        <div class="document-info">
+          <h4 class="document-name">{{ doc.name }}</h4>
+          <div class="document-meta">
+            <span class="document-type">
+              {{ documentService.getDocumentTypeLabel(doc.type) }}
+            </span>
+            <span class="document-separator">•</span>
+            <span class="document-size">
+              {{ documentService.formatFileSize(doc.fileSize) }}
+            </span>
+            <span class="document-separator">•</span>
+            <span class="document-date">
+              {{ formatDate(doc.uploadDate) }}
+            </span>
+          </div>
+          <p *ngIf="doc.notes" class="document-notes">{{ doc.notes }}</p>
+        </div>
+
+        <div class="document-actions">
+          <button
+            class="action-button download-button"
+            (click)="onDownload(doc)"
+            title="Download"
+          >
+            ⬇️
+          </button>
+          <button
+            class="action-button delete-button"
+            (click)="onDelete(doc)"
+            title="Delete"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div *ngIf="!isLoading && documents.length > 0" class="dialog-footer">
+      <p class="document-count">
+        {{ documents.length }} document{{ documents.length !== 1 ? 's' : '' }} total
+      </p>
+    </div>
+  </div>
+</gc-modal>

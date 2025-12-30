@@ -550,6 +550,10 @@
       transform: scale(1.1);
     }
 
+    &.docs-button:hover {
+      background: rgba(16, 185, 129, 0.1);
+    }
+
     &.edit-button:hover {
       background: rgba(59, 130, 246, 0.1);
     }
