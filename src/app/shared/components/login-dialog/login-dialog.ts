@@ -16,6 +16,7 @@ export class LoginDialogComponent {
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
   @Output() switchToSignup = new EventEmitter<void>();
+  @Output() loginSuccess = new EventEmitter<void>();
 
   formData = {
     email: '',
@@ -46,6 +47,7 @@ export class LoginDialogComponent {
       next: (result) => {
         this.isLoading = false;
         if (result.success) {
+          this.loginSuccess.emit();
           this.onClose();
         } else {
           this.errorMessage = result.error || 'Login failed. Please try again.';

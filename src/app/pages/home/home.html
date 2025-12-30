@@ -279,10 +279,12 @@
   [isOpen]="isLoginDialogOpen"
   (close)="closeLoginDialog()"
   (switchToSignup)="switchToSignup()"
+  (loginSuccess)="onLoginSuccess()"
 ></gc-login-dialog>
 
 <gc-signup-dialog
   [isOpen]="isSignupDialogOpen"
   (close)="closeSignupDialog()"
   (switchToLogin)="switchToLogin()"
+  (signupSuccess)="onSignupSuccess()"
 ></gc-signup-dialog>

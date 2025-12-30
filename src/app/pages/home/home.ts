@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
@@ -8,7 +8,6 @@ import { DeviceService, Device } from '../../core/services/device.service';
 import { DocumentService } from '../../core/services/document.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +16,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   // Stepper state
   currentStep = 1;
   totalSteps = 3;
@@ -34,7 +33,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoginDialogOpen = false;
   isSignupDialogOpen = false;
   pendingDeviceData: any = null;
-  private authSubscription?: Subscription;
 
   // Categories
   categories = [
@@ -78,19 +76,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDevices();
-
-    // Subscribe to auth state changes
-    this.authSubscription = this.authService.authState$.subscribe(state => {
-      if (state.isAuthenticated && this.pendingDeviceData) {
-        // User just logged in and there's a pending device to create
-        this.performDeviceCreation(this.pendingDeviceData);
-        this.pendingDeviceData = null;
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.authSubscription?.unsubscribe();
   }
 
   loadDevices(): void {
@@ -310,6 +295,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   // Auth dialog handlers
+  onLoginSuccess(): void {
+    // User successfully logged in, create the device if there's pending data
+    if (this.pendingDeviceData) {
+      this.performDeviceCreation(this.pendingDeviceData);
+      this.pendingDeviceData = null;
+    }
+  }
+
+  onSignupSuccess(): void {
+    // User successfully signed up, create the device if there's pending data
+    if (this.pendingDeviceData) {
+      this.performDeviceCreation(this.pendingDeviceData);
+      this.pendingDeviceData = null;
+    }
+  }
+
   closeLoginDialog(): void {
     this.isLoginDialogOpen = false;
     // Clear pending data if user cancels login
