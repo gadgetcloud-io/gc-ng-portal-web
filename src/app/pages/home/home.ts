@@ -297,27 +297,31 @@ export class HomeComponent implements OnInit {
 
   // Auth dialog handlers
   onLoginSuccess(): void {
-    // Close the dialog immediately
-    this.isLoginDialogOpen = false;
-    this.cdr.detectChanges();
+    // Close the dialog in next tick to ensure change detection
+    setTimeout(() => {
+      this.isLoginDialogOpen = false;
+      this.cdr.detectChanges();
 
-    // User successfully logged in, create the device if there's pending data
-    if (this.pendingDeviceData) {
-      this.performDeviceCreation(this.pendingDeviceData);
-      this.pendingDeviceData = null;
-    }
+      // User successfully logged in, create the device if there's pending data
+      if (this.pendingDeviceData) {
+        this.performDeviceCreation(this.pendingDeviceData);
+        this.pendingDeviceData = null;
+      }
+    }, 0);
   }
 
   onSignupSuccess(): void {
-    // Close the dialog immediately
-    this.isSignupDialogOpen = false;
-    this.cdr.detectChanges();
+    // Close the dialog in next tick to ensure change detection
+    setTimeout(() => {
+      this.isSignupDialogOpen = false;
+      this.cdr.detectChanges();
 
-    // User successfully signed up, create the device if there's pending data
-    if (this.pendingDeviceData) {
-      this.performDeviceCreation(this.pendingDeviceData);
-      this.pendingDeviceData = null;
-    }
+      // User successfully signed up, create the device if there's pending data
+      if (this.pendingDeviceData) {
+        this.performDeviceCreation(this.pendingDeviceData);
+        this.pendingDeviceData = null;
+      }
+    }, 0);
   }
 
   closeLoginDialog(): void {

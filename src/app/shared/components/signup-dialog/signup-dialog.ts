@@ -71,8 +71,9 @@ export class SignupDialogComponent {
       next: (result) => {
         this.isLoading = false;
         if (result.success) {
+          this.resetForm();
           this.signupSuccess.emit();
-          this.onClose();
+          // Don't call onClose() here - let parent component handle closing
         } else {
           this.errorMessage = result.error || 'Signup failed. Please try again.';
         }
