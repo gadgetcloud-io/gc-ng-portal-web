@@ -14,28 +14,28 @@ export class FooterComponent {
 
   footerLinks = {
     product: [
-      { label: 'Features', path: '/features' },
-      { label: 'Pricing', path: '/pricing' },
-      { label: 'Security', path: '/security' },
-      { label: 'Roadmap', path: '/roadmap' }
+      { label: 'Features', path: '/features', active: true },
+      { label: 'Pricing', path: '/pricing', active: true },
+      { label: 'Security', path: '/security', active: false },
+      { label: 'Roadmap', path: '/roadmap', active: false }
     ],
     company: [
-      { label: 'About Us', path: '/about' },
-      { label: 'Careers', path: '/careers' },
-      { label: 'Blog', path: '/blog' },
-      { label: 'Press Kit', path: '/press' }
+      { label: 'About Us', path: '/about', active: true },
+      { label: 'Careers', path: '/careers', active: false },
+      { label: 'Blog', path: '/blog', active: false },
+      { label: 'Press Kit', path: '/press', active: false }
     ],
     resources: [
-      { label: 'Documentation', path: '/docs' },
-      { label: 'API Reference', path: '/api' },
-      { label: 'Help Center', path: '/help' },
-      { label: 'Community', path: '/community' }
+      { label: 'Documentation', path: '/docs', active: false },
+      { label: 'API Reference', path: '/api', active: false },
+      { label: 'Help Center', path: '/help', active: false },
+      { label: 'Community', path: '/community', active: false }
     ],
     legal: [
-      { label: 'Privacy Policy', path: '/privacy' },
-      { label: 'Terms of Service', path: '/terms' },
-      { label: 'Cookie Policy', path: '/cookies' },
-      { label: 'GDPR', path: '/gdpr' }
+      { label: 'Privacy Policy', path: '/privacy', active: false },
+      { label: 'Terms of Service', path: '/terms', active: false },
+      { label: 'Cookie Policy', path: '/cookies', active: false },
+      { label: 'GDPR', path: '/gdpr', active: false }
     ]
   };
 

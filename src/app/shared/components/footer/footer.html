@@ -54,7 +54,8 @@
           <h3 class="column-title">Product</h3>
           <ul class="link-list">
             <li *ngFor="let link of footerLinks.product">
-              <a [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="link.active" [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="!link.active" href="javascript:void(0)" class="footer-link footer-link-disabled" title="Coming soon">{{ link.label }}</a>
             </li>
           </ul>
         </div>
@@ -64,7 +65,8 @@
           <h3 class="column-title">Company</h3>
           <ul class="link-list">
             <li *ngFor="let link of footerLinks.company">
-              <a [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="link.active" [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="!link.active" href="javascript:void(0)" class="footer-link footer-link-disabled" title="Coming soon">{{ link.label }}</a>
             </li>
           </ul>
         </div>
@@ -74,7 +76,8 @@
           <h3 class="column-title">Resources</h3>
           <ul class="link-list">
             <li *ngFor="let link of footerLinks.resources">
-              <a [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="link.active" [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="!link.active" href="javascript:void(0)" class="footer-link footer-link-disabled" title="Coming soon">{{ link.label }}</a>
             </li>
           </ul>
         </div>
@@ -84,7 +87,8 @@
           <h3 class="column-title">Legal</h3>
           <ul class="link-list">
             <li *ngFor="let link of footerLinks.legal">
-              <a [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="link.active" [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+              <a *ngIf="!link.active" href="javascript:void(0)" class="footer-link footer-link-disabled" title="Coming soon">{{ link.label }}</a>
             </li>
           </ul>
         </div>
