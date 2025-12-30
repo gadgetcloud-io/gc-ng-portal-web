@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { AuthService, User } from '../../core/services/auth.service';
 
 interface Device {
   id: string;
@@ -29,7 +30,22 @@ interface Activity {
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  user: User | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.user = this.authService.getCurrentUser();
+
+    if (!this.user) {
+      // Redirect to home if not authenticated
+      this.router.navigate(['/']);
+    }
+  }
   stats = [
     {
       label: 'Total Devices',
