@@ -1,0 +1,56 @@
+<gc-modal [isOpen]="isOpen" [title]="'Delete Device'" [maxWidth]="'sm'" (close)="onClose()">
+  <div class="delete-dialog">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Confirmation Message -->
+    <div class="confirmation-content">
+      <div class="warning-icon">⚠️</div>
+      <p class="warning-text">
+        Are you sure you want to delete <strong>{{ device?.name }}</strong>?
+      </p>
+      <p class="warning-subtext">
+        This action cannot be undone. All data associated with this device will be permanently removed.
+      </p>
+    </div>
+
+    <!-- Device Details -->
+    <div *ngIf="device" class="device-details">
+      <div class="detail-row">
+        <span class="detail-label">Category:</span>
+        <span class="detail-value">{{ device.category }}</span>
+      </div>
+      <div class="detail-row" *ngIf="device.manufacturer">
+        <span class="detail-label">Manufacturer:</span>
+        <span class="detail-value">{{ device.manufacturer }}</span>
+      </div>
+      <div class="detail-row" *ngIf="device.serialNumber">
+        <span class="detail-label">Serial Number:</span>
+        <span class="detail-value">{{ device.serialNumber }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <gc-button
+        type="button"
+        variant="secondary"
+        (click)="onClose()"
+        [disabled]="isDeleting"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        type="button"
+        variant="primary"
+        (click)="onConfirmDelete()"
+        [disabled]="isDeleting"
+        class="delete-button"
+      >
+        {{ isDeleting ? 'Deleting...' : 'Delete Device' }}
+      </gc-button>
+    </div>
+  </div>
+</gc-modal>

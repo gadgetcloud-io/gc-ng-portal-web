@@ -1,0 +1,104 @@
+.delete-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.error-message {
+  padding: 0.75rem 1rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  color: #c33;
+  font-size: 0.875rem;
+}
+
+.confirmation-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+
+  .warning-icon {
+    font-size: 3rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .warning-text {
+    font-size: 1rem;
+    color: #1a1a1a;
+    margin: 0;
+
+    strong {
+      color: #e53e3e;
+      font-weight: 600;
+    }
+  }
+
+  .warning-subtext {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+.device-details {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+
+    .detail-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .detail-value {
+      color: #1a1a1a;
+      font-weight: 400;
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e5e5;
+
+  .delete-button {
+    background: #e53e3e !important;
+
+    &:hover:not(:disabled) {
+      background: #c53030 !important;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 640px) {
+  .dialog-actions {
+    flex-direction: column-reverse;
+
+    gc-button {
+      width: 100%;
+    }
+  }
+}

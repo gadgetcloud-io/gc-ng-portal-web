@@ -39,9 +39,27 @@
       <div class="content-card devices-card">
         <div class="card-header">
           <h2 class="card-title">Recent Devices</h2>
-          <a routerLink="/devices" class="view-all-link">View all →</a>
+          <span class="device-count">{{ devices.length }} total</span>
         </div>
-        <div class="devices-list">
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading devices...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
+          <div class="empty-icon">📦</div>
+          <h3>No devices yet</h3>
+          <p>Get started by adding your first device</p>
+          <gc-button variant="primary" (click)="openAddDialog()">
+            ➕ Add Device
+          </gc-button>
+        </div>
+
+        <!-- Devices List -->
+        <div *ngIf="!isLoading && devices.length > 0" class="devices-list">
           <div *ngFor="let device of recentDevices" class="device-item" (click)="onViewDevice(device.id)">
             <div class="device-icon">{{ device.image }}</div>
             <div class="device-info">
@@ -53,6 +71,22 @@
                 {{ getStatusLabel(device.status) }}
               </span>
               <p class="warranty-date">Expires: {{ device.warrantyExpires }}</p>
+            </div>
+            <div class="device-actions">
+              <button
+                class="icon-button edit-button"
+                (click)="openEditDialog(device); $event.stopPropagation()"
+                title="Edit device"
+              >
+                ✏️
+              </button>
+              <button
+                class="icon-button delete-button"
+                (click)="openDeleteDialog(device, $event)"
+                title="Delete device"
+              >
+                🗑️
+              </button>
             </div>
           </div>
         </div>
@@ -161,3 +195,24 @@
     </div>
   </div>
 </section>
+
+<!-- Dialogs -->
+<gc-add-device-dialog
+  [isOpen]="isAddDialogOpen"
+  (close)="closeAddDialog()"
+  (deviceAdded)="onDeviceAdded()"
+></gc-add-device-dialog>
+
+<gc-edit-device-dialog
+  [isOpen]="isEditDialogOpen"
+  [device]="selectedDevice"
+  (close)="closeEditDialog()"
+  (deviceUpdated)="onDeviceUpdated()"
+></gc-edit-device-dialog>
+
+<gc-delete-device-dialog
+  [isOpen]="isDeleteDialogOpen"
+  [device]="selectedDevice"
+  (close)="closeDeleteDialog()"
+  (deviceDeleted)="onDeviceDeleted()"
+></gc-delete-device-dialog>

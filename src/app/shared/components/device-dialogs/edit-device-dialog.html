@@ -1,0 +1,168 @@
+<gc-modal [isOpen]="isOpen" [title]="'Edit Device'" [maxWidth]="'lg'" (close)="onClose()">
+  <form (ngSubmit)="onSubmit()" class="device-form">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Basic Information -->
+    <div class="form-section">
+      <h3 class="section-title">Basic Information</h3>
+
+      <div class="form-group">
+        <label for="name" class="required">Device Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          [(ngModel)]="editedDevice.name"
+          placeholder="e.g., MacBook Pro 16&quot;"
+          required
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="category" class="required">Category</label>
+          <select id="category" name="category" [(ngModel)]="editedDevice.category" required>
+            <option value="">Select category...</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="manufacturer">Manufacturer</label>
+          <input
+            type="text"
+            id="manufacturer"
+            name="manufacturer"
+            [(ngModel)]="editedDevice.manufacturer"
+            placeholder="e.g., Apple, Sony, Dell"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="model">Model</label>
+          <input
+            type="text"
+            id="model"
+            name="model"
+            [(ngModel)]="editedDevice.model"
+            placeholder="e.g., M3 Max, XM5"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="serialNumber">Serial Number</label>
+          <input
+            type="text"
+            id="serialNumber"
+            name="serialNumber"
+            [(ngModel)]="editedDevice.serialNumber"
+            placeholder="Serial number"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Purchase Information -->
+    <div class="form-section">
+      <h3 class="section-title">Purchase Information</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="purchaseDate" class="required">Purchase Date</label>
+          <input
+            type="date"
+            id="purchaseDate"
+            name="purchaseDate"
+            [(ngModel)]="editedDevice.purchaseDate"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="purchasePrice">Purchase Price</label>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input
+              type="number"
+              id="purchasePrice"
+              name="purchasePrice"
+              [(ngModel)]="editedDevice.purchasePrice"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warranty Information -->
+    <div class="form-section">
+      <h3 class="section-title">Warranty Information</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="warrantyExpires" class="required">Warranty Expiration</label>
+          <input
+            type="date"
+            id="warrantyExpires"
+            name="warrantyExpires"
+            [(ngModel)]="editedDevice.warrantyExpires"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="warrantyProvider">Warranty Provider</label>
+          <input
+            type="text"
+            id="warrantyProvider"
+            name="warrantyProvider"
+            [(ngModel)]="editedDevice.warrantyProvider"
+            placeholder="e.g., AppleCare+, Manufacturer"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Notes -->
+    <div class="form-section">
+      <h3 class="section-title">Additional Notes</h3>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea
+          id="notes"
+          name="notes"
+          [(ngModel)]="editedDevice.notes"
+          placeholder="Add any additional information..."
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <gc-button
+        type="button"
+        variant="secondary"
+        (click)="onClose()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        type="submit"
+        variant="primary"
+        [disabled]="isSubmitting"
+      >
+        {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+      </gc-button>
+    </div>
+  </form>
+</gc-modal>
