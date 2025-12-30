@@ -1,17 +1,13 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { publicGuard } from './core/guards/public.guard';
 
 export const routes: Routes = [
+  // Public pages (redirect to dashboard if already logged in)
   {
     path: '',
-    loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent)
-  },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.DashboardComponent)
-  },
-  {
-    path: 'profile',
-    loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent)
+    loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent),
+    canActivate: [publicGuard]
   },
   {
     path: 'features',
@@ -28,5 +24,17 @@ export const routes: Routes = [
   {
     path: 'contact',
     loadComponent: () => import('./pages/contact/contact').then(m => m.ContactComponent)
+  },
+
+  // Protected pages (require authentication)
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.DashboardComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent),
+    canActivate: [authGuard]
   }
 ];

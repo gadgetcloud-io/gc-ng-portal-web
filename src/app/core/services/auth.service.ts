@@ -85,7 +85,7 @@ export class AuthService {
               user: response.data.user
             });
 
-            this.router.navigate(['/dashboard']);
+            this.redirectAfterLogin();
             return { success: true };
           }
           return { success: false, error: response.error || 'Signup failed' };
@@ -122,7 +122,7 @@ export class AuthService {
 
           observer.next({ success: true });
           observer.complete();
-          this.router.navigate(['/dashboard']);
+          this.redirectAfterLogin();
         }, 1000);
       });
     }
@@ -146,7 +146,7 @@ export class AuthService {
               user: response.data.user
             });
 
-            this.router.navigate(['/dashboard']);
+            this.redirectAfterLogin();
             return { success: true };
           }
           return { success: false, error: response.error || 'Login failed' };
@@ -178,7 +178,7 @@ export class AuthService {
 
           observer.next({ success: true });
           observer.complete();
-          this.router.navigate(['/dashboard']);
+          this.redirectAfterLogin();
         }, 1000);
       });
     }
@@ -192,6 +192,21 @@ export class AuthService {
       user: null
     });
     this.router.navigate(['/']);
+  }
+
+  /**
+   * Redirect after successful login
+   * Uses stored redirect URL or defaults to dashboard
+   */
+  private redirectAfterLogin(): void {
+    const redirectUrl = localStorage.getItem('gc_redirect_url');
+
+    if (redirectUrl) {
+      localStorage.removeItem('gc_redirect_url');
+      this.router.navigateByUrl(redirectUrl);
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   private getStoredUsers(): any[] {
