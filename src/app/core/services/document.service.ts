@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { delay, map, catchError } from 'rxjs/operators';
+import { ApiService, ApiResponse } from './api.service';
 
 export interface Document {
   id: string;
@@ -41,10 +42,10 @@ export class DocumentService {
   public documents$ = this.documents.asObservable();
 
   // Toggle between mock (localStorage) and real API
-  private useApi = false;
+  private useApi = true; // API mode enabled
   private readonly STORAGE_KEY = 'gc_documents';
 
-  constructor() {
+  constructor(private apiService: ApiService) {
     this.loadDocuments();
   }
 
@@ -53,8 +54,16 @@ export class DocumentService {
    */
   private loadDocuments(): void {
     if (this.useApi) {
-      // TODO: Load from API
-      this.documents.next([]);
+      // API mode: Load all documents from backend
+      this.apiService.get<ApiResponse<Document[]>>('/documents').pipe(
+        map(response => response.data || []),
+        catchError(error => {
+          console.error('Error loading documents from API:', error);
+          return of([]);
+        })
+      ).subscribe(docs => {
+        this.documents.next(docs);
+      });
     } else {
       // Load from localStorage
       const stored = localStorage.getItem(this.STORAGE_KEY);
@@ -116,8 +125,30 @@ export class DocumentService {
     error?: string;
   }> {
     if (this.useApi) {
-      // TODO: Implement API call with FormData
-      return of({ success: false, error: 'API mode not implemented yet' });
+      // API mode: Upload file using FormData
+      const formData = new FormData();
+      formData.append('file', request.file);
+      formData.append('name', request.name);
+      formData.append('type', request.type);
+      formData.append('deviceId', request.deviceId);
+      if (request.notes) {
+        formData.append('notes', request.notes);
+      }
+
+      return this.apiService.post<ApiResponse<Document>>('/documents', formData).pipe(
+        map(response => {
+          if (response.success && response.data) {
+            // Update local state
+            const currentDocs = this.documents.value;
+            this.documents.next([...currentDocs, response.data]);
+            return { success: true, document: response.data };
+          }
+          return { success: false, error: response.error || 'Failed to upload document' };
+        }),
+        catchError(error => {
+          return of({ success: false, error: error.message || 'Failed to upload document' });
+        })
+      );
     }
 
     // Mock implementation with localStorage
@@ -213,8 +244,26 @@ export class DocumentService {
     error?: string;
   }> {
     if (this.useApi) {
-      // TODO: Implement API call
-      return of({ success: false, error: 'API mode not implemented yet' });
+      // API mode: Update document metadata via backend
+      const { id, ...updateData } = update;
+      return this.apiService.put<ApiResponse<Document>>(`/documents/${id}`, updateData).pipe(
+        map(response => {
+          if (response.success && response.data) {
+            // Update local state
+            const currentDocs = this.documents.value;
+            const index = currentDocs.findIndex(doc => doc.id === id);
+            if (index !== -1) {
+              currentDocs[index] = response.data;
+              this.documents.next([...currentDocs]);
+            }
+            return { success: true, document: response.data };
+          }
+          return { success: false, error: response.error || 'Failed to update document' };
+        }),
+        catchError(error => {
+          return of({ success: false, error: error.message || 'Failed to update document' });
+        })
+      );
     }
 
     // Mock implementation
@@ -261,8 +310,21 @@ export class DocumentService {
     error?: string;
   }> {
     if (this.useApi) {
-      // TODO: Implement API call
-      return of({ success: false, error: 'API mode not implemented yet' });
+      // API mode: Delete document via backend
+      return this.apiService.delete<ApiResponse<void>>(`/documents/${id}`).pipe(
+        map(response => {
+          if (response.success) {
+            // Update local state
+            const currentDocs = this.documents.value;
+            this.documents.next(currentDocs.filter(doc => doc.id !== id));
+            return { success: true };
+          }
+          return { success: false, error: response.error || 'Failed to delete document' };
+        }),
+        catchError(error => {
+          return of({ success: false, error: error.message || 'Failed to delete document' });
+        })
+      );
     }
 
     // Mock implementation
@@ -301,8 +363,23 @@ export class DocumentService {
     error?: string;
   }> {
     if (this.useApi) {
-      // TODO: Implement API call to get file URL
-      return of({ success: false, error: 'API mode not implemented yet' });
+      // API mode: Get signed download URL from backend
+      return this.apiService.get<ApiResponse<{ url: string; fileName: string }>>(`/documents/${id}/download`).pipe(
+        map(response => {
+          if (response.success && response.data) {
+            // Return the signed URL - the browser will download from this URL
+            return {
+              success: true,
+              fileData: response.data.url,
+              fileName: response.data.fileName
+            };
+          }
+          return { success: false, error: response.error || 'Failed to get download URL' };
+        }),
+        catchError(error => {
+          return of({ success: false, error: error.message || 'Failed to download document' });
+        })
+      );
     }
 
     // Mock implementation - return base64 data

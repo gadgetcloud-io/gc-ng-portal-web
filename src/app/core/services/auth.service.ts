@@ -37,7 +37,7 @@ export class AuthService {
   public authState$ = this.authState.asObservable();
 
   // Flag to toggle between API and localStorage mode
-  private useApi = false; // Set to true when backend is ready
+  private useApi = true; // API mode enabled
 
   constructor(
     private router: Router,

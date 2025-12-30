@@ -46,7 +46,7 @@ export class DeviceService {
   public devices$ = this.devices.asObservable();
 
   // Flag to toggle between API and localStorage mode
-  private useApi = false; // Set to true when backend is ready
+  private useApi = true; // API mode enabled
 
   constructor(private apiService: ApiService) {
     // Load initial devices
@@ -69,7 +69,7 @@ export class DeviceService {
   getDevices(): Observable<Device[]> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.get<ApiResponse<Device[]>>('/devices').pipe(
+      return this.apiService.get<ApiResponse<Device[]>>('/items').pipe(
         map(response => response.data || []),
         catchError(error => {
           console.error('Error fetching devices:', error);
@@ -96,14 +96,14 @@ export class DeviceService {
   getDeviceById(id: string): Observable<Device | null> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.get<ApiResponse<Device>>(`/devices/${id}`).pipe(
+      return this.apiService.get<ApiResponse<Device>>(`/items/${id}`).pipe(
         map(response => response.data || null),
         catchError(error => {
           console.error('Error fetching device:', error);
           return of(null);
         })
       );
-    } else {
+    } else{
       // localStorage mode: Mock API
       const devices = this.getStoredDevices();
       const device = devices.find(d => d.id === id) || null;
@@ -117,7 +117,7 @@ export class DeviceService {
   createDevice(device: DeviceCreateRequest): Observable<{ success: boolean; device?: Device; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.post<ApiResponse<Device>>('/devices', device).pipe(
+      return this.apiService.post<ApiResponse<Device>>('/items', device).pipe(
         map(response => {
           if (response.success && response.data) {
             // Update local state
