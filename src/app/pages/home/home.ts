@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
@@ -54,7 +54,8 @@ export class HomeComponent implements OnInit {
     public documentService: DocumentService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     this.deviceForm = this.fb.group({
       // Step 1: Basic Info
@@ -297,31 +298,29 @@ export class HomeComponent implements OnInit {
 
   // Auth dialog handlers
   onLoginSuccess(): void {
-    // Close the dialog in next tick to ensure change detection
-    setTimeout(() => {
+    // Run in Angular zone to ensure change detection
+    this.ngZone.run(() => {
       this.isLoginDialogOpen = false;
-      this.cdr.detectChanges();
 
       // User successfully logged in, create the device if there's pending data
       if (this.pendingDeviceData) {
         this.performDeviceCreation(this.pendingDeviceData);
         this.pendingDeviceData = null;
       }
-    }, 0);
+    });
   }
 
   onSignupSuccess(): void {
-    // Close the dialog in next tick to ensure change detection
-    setTimeout(() => {
+    // Run in Angular zone to ensure change detection
+    this.ngZone.run(() => {
       this.isSignupDialogOpen = false;
-      this.cdr.detectChanges();
 
       // User successfully signed up, create the device if there's pending data
       if (this.pendingDeviceData) {
         this.performDeviceCreation(this.pendingDeviceData);
         this.pendingDeviceData = null;
       }
-    }, 0);
+    });
   }
 
   closeLoginDialog(): void {
