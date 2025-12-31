@@ -20,27 +20,26 @@ export class EditDeviceDialogComponent implements OnChanges {
 
   editedDevice: Device = this.getEmptyDevice();
 
-  categories = [
-    'Laptop',
-    'Smartphone',
-    'Tablet',
-    'Headphones',
-    'Smartwatch',
-    'Camera',
-    'Speaker',
-    'TV',
-    'Monitor',
-    'Keyboard',
-    'Mouse',
-    'Printer',
-    'Router',
-    'Other'
-  ];
+  categories: Array<{value: string; label: string; emoji: string}> = [];
 
   isSubmitting = false;
   error = '';
 
-  constructor(private deviceService: DeviceService) {}
+  constructor(private deviceService: DeviceService) {
+    // Load categories from backend
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.deviceService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (error) => {
+        console.error('Error loading categories in edit dialog:', error);
+      }
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['device'] && this.device) {

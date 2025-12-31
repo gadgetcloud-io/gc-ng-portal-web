@@ -30,27 +30,26 @@ export class AddDeviceDialogComponent {
     notes: ''
   };
 
-  categories = [
-    'Laptop',
-    'Smartphone',
-    'Tablet',
-    'Headphones',
-    'Smartwatch',
-    'Camera',
-    'Speaker',
-    'TV',
-    'Monitor',
-    'Keyboard',
-    'Mouse',
-    'Printer',
-    'Router',
-    'Other'
-  ];
+  categories: Array<{value: string; label: string; emoji: string}> = [];
 
   isSubmitting = false;
   error = '';
 
-  constructor(private deviceService: DeviceService) {}
+  constructor(private deviceService: DeviceService) {
+    // Load categories from backend
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.deviceService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (error) => {
+        console.error('Error loading categories in add dialog:', error);
+      }
+    });
+  }
 
   onSubmit(): void {
     // Validate required fields

@@ -73,6 +73,7 @@ export class HomeComponent implements OnInit {
   loadCategories(): void {
     this.deviceService.getCategories().subscribe({
       next: (categories) => {
+        console.log('Categories loaded from backend:', categories);
         this.categories = categories;
       },
       error: (error) => {

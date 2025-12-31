@@ -26,7 +26,7 @@
           <label for="category" class="required">Category</label>
           <select id="category" name="category" [(ngModel)]="editedDevice.category" required>
             <option value="">Select category...</option>
-            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }} {{ cat.emoji }}</option>
           </select>
         </div>
 
