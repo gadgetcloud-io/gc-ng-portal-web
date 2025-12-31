@@ -16,12 +16,14 @@ export interface AuthState {
 }
 
 interface LoginResponse {
-  token: string;
+  access_token: string;
+  token_type: string;
   user: User;
 }
 
 interface SignupResponse {
-  token: string;
+  access_token: string;
+  token_type: string;
   user: User;
 }
 
@@ -69,28 +71,30 @@ export class AuthService {
   signup(name: string, email: string, password: string): Observable<{ success: boolean; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.post<ApiResponse<SignupResponse>>('/auth/signup', {
+      return this.apiService.post<SignupResponse>('/auth/signup', {
         name,
         email,
         password
       }).pipe(
         map(response => {
-          if (response.success && response.data) {
+          console.log('Raw signup response:', response);
+          if (response && response.access_token && response.user) {
             // Store token and user
-            this.apiService.setToken(response.data.token);
-            localStorage.setItem('gc_user', JSON.stringify(response.data.user));
+            this.apiService.setToken(response.access_token);
+            localStorage.setItem('gc_user', JSON.stringify(response.user));
 
             this.authState.next({
               isAuthenticated: true,
-              user: response.data.user
+              user: response.user
             });
 
             this.redirectAfterLogin();
             return { success: true };
           }
-          return { success: false, error: response.error || 'Signup failed' };
+          return { success: false, error: 'Signup failed' };
         }),
         catchError(error => {
+          console.error('Signup error:', error);
           return of({ success: false, error: error.message || 'Signup failed' });
         })
       );
@@ -131,27 +135,29 @@ export class AuthService {
   login(email: string, password: string): Observable<{ success: boolean; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.post<ApiResponse<LoginResponse>>('/auth/login', {
+      return this.apiService.post<LoginResponse>('/auth/login', {
         email,
         password
       }).pipe(
         map(response => {
-          if (response.success && response.data) {
+          console.log('Raw login response:', response);
+          if (response && response.access_token && response.user) {
             // Store token and user
-            this.apiService.setToken(response.data.token);
-            localStorage.setItem('gc_user', JSON.stringify(response.data.user));
+            this.apiService.setToken(response.access_token);
+            localStorage.setItem('gc_user', JSON.stringify(response.user));
 
             this.authState.next({
               isAuthenticated: true,
-              user: response.data.user
+              user: response.user
             });
 
             this.redirectAfterLogin();
             return { success: true };
           }
-          return { success: false, error: response.error || 'Login failed' };
+          return { success: false, error: 'Login failed' };
         }),
         catchError(error => {
+          console.error('Login error:', error);
           return of({ success: false, error: error.message || 'Invalid email or password' });
         })
       );

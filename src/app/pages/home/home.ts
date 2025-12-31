@@ -298,9 +298,17 @@ export class HomeComponent implements OnInit {
 
   // Auth dialog handlers
   onLoginSuccess(): void {
+    console.log('onLoginSuccess called, isLoginDialogOpen before:', this.isLoginDialogOpen);
+
     // Run in Angular zone to ensure change detection
     this.ngZone.run(() => {
       this.isLoginDialogOpen = false;
+      console.log('onLoginSuccess: Set isLoginDialogOpen to false');
+
+      // Force immediate check
+      setTimeout(() => {
+        console.log('After timeout, isLoginDialogOpen:', this.isLoginDialogOpen);
+      }, 100);
 
       // User successfully logged in, create the device if there's pending data
       if (this.pendingDeviceData) {

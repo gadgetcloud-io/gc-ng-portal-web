@@ -45,10 +45,13 @@ export class LoginDialogComponent {
 
     this.authService.login(this.formData.email, this.formData.password).subscribe({
       next: (result) => {
+        console.log('Login result:', result);
         this.isLoading = false;
         if (result.success) {
+          console.log('Login successful, emitting loginSuccess event');
           this.resetForm();
           this.loginSuccess.emit();
+          console.log('loginSuccess event emitted');
           // Don't call onClose() here - let parent component handle closing
         } else {
           this.errorMessage = result.error || 'Login failed. Please try again.';
