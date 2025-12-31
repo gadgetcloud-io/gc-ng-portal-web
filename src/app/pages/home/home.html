@@ -9,7 +9,7 @@
         </div>
 
         <div class="action-cards">
-          <div class="action-card" (click)="openAddGadgetDialog()">
+          <div class="action-card" (click)="openAddDeviceDialog()">
             <div class="action-icon">➕</div>
             <h3 class="action-title">Add New Gadget</h3>
             <p class="action-description">Track your gadget warranties in 3 simple steps</p>
@@ -33,7 +33,7 @@
       <div class="list-section">
         <div class="list-header">
           <h2 class="list-title">Recent Gadgets</h2>
-          <span class="device-count">{{ gadgets.length }} device{{ gadgets.length !== 1 ? 's' : '' }}</span>
+          <span class="device-count">{{ devices.length }} device{{ devices.length !== 1 ? 's' : '' }}</span>
         </div>
 
         <!-- Loading State -->
@@ -43,15 +43,15 @@
         </div>
 
         <!-- Empty State -->
-        <div *ngIf="!isLoading && gadgets.length === 0" class="empty-state">
+        <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
           <div class="empty-icon">📦</div>
           <h3>No gadgets yet</h3>
           <p>Click "Add New Gadget" to get started</p>
         </div>
 
         <!-- Gadget List -->
-        <div *ngIf="!isLoading && gadgets.length > 0" class="device-list">
-          <div *ngFor="let device of gadgets" class="device-card">
+        <div *ngIf="!isLoading && devices.length > 0" class="device-list">
+          <div *ngFor="let device of devices" class="device-card">
             <div class="device-info">
               <div class="device-icon">{{ device.image || '📦' }}</div>
               <div class="device-details">
@@ -73,14 +73,14 @@
             <div class="device-actions">
               <button
                 class="action-btn view-btn"
-                (click)="viewGadget(device)"
+                (click)="viewDevice(device)"
                 title="View Details"
               >
                 👁️
               </button>
               <button
                 class="action-btn edit-btn"
-                (click)="editGadget(device)"
+                (click)="editDevice(device)"
                 title="Edit"
               >
                 ✏️
@@ -94,7 +94,7 @@
               </button>
               <button
                 class="action-btn delete-btn"
-                (click)="deleteGadget(device)"
+                (click)="deleteDevice(device)"
                 title="Delete"
               >
                 🗑️
@@ -104,7 +104,7 @@
         </div>
 
         <!-- View All Link -->
-        <div *ngIf="!isLoading && gadgets.length > 0" class="view-all">
+        <div *ngIf="!isLoading && devices.length > 0" class="view-all">
           <a routerLink="/dashboard" class="view-all-link">
             View all gadgets →
           </a>
@@ -116,9 +116,9 @@
 
 <!-- Add Gadget Dialog -->
 <gc-add-device-dialog
-  [isOpen]="isAddGadgetDialogOpen"
-  (close)="closeAddGadgetDialog()"
-  (deviceAdded)="onGadgetAdded()"
+  [isOpen]="isAddDeviceDialogOpen"
+  (close)="closeAddDeviceDialog()"
+  (deviceAdded)="onDeviceAdded()"
 ></gc-add-device-dialog>
 
 <!-- Auth Dialogs -->

@@ -24,7 +24,7 @@
   <!-- Gadgets List -->
   <div *ngIf="!isLoading && devices.length > 0" class="devices-grid">
     <gc-device-card
-      *ngFor="let device of displayedGadgets"
+      *ngFor="let device of displayedDevices"
       [device]="device"
       (view)="onViewDevice($event)"
       (edit)="onEditDevice($event)"

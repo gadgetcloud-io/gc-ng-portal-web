@@ -10,7 +10,7 @@
           <p class="user-email">{{ userInfo.email }}</p>
           <div class="user-badges">
             <span class="badge badge-primary">{{ userInfo.role }}</span>
-            <span class="badge badge-secondary">{{ userInfo.gadgetsCount }} Gadgets</span>
+            <span class="badge badge-secondary">{{ userInfo.devicesCount }} Gadgets</span>
           </div>
         </div>
         <div class="header-actions">
@@ -194,7 +194,7 @@
 
             <div class="info-item">
               <span class="info-label">Total Gadgets</span>
-              <span class="info-value">{{ userInfo.gadgetsCount }} gadgets</span>
+              <span class="info-value">{{ userInfo.devicesCount }} gadgets</span>
             </div>
 
             <div class="danger-zone">
@@ -229,13 +229,13 @@
       <!-- Gadget List -->
       <div class="gadgets-container">
         <gc-device-list
-          [gadgets]="gadgets"
-          [isLoading]="isLoadingGadgets"
+          [devices]="devices"
+          [isLoading]="isLoadingDevices"
           [showHeader]="false"
-          (addGadget)="openAddDialog()"
-          (viewGadget)="onViewGadget($event)"
-          (editGadget)="openEditDialog($event)"
-          (deleteGadget)="onDeleteGadget($event)"
+          (addDevice)="openAddDialog()"
+          (viewDevice)="onViewDevice($event)"
+          (editDevice)="openEditDialog($event)"
+          (deleteDevice)="onDeleteDevice($event)"
           (viewDocuments)="openViewDocumentsDialog($event)"
         ></gc-device-list>
       </div>
@@ -254,26 +254,26 @@
 <gc-add-device-dialog
   [isOpen]="isAddDialogOpen"
   (close)="closeAddDialog()"
-  (deviceAdded)="onGadgetAdded()"
+  (deviceAdded)="onDeviceAdded()"
 ></gc-add-device-dialog>
 
 <gc-edit-device-dialog
   [isOpen]="isEditDialogOpen"
-  [device]="selectedGadget"
+  [device]="selectedDevice"
   (close)="closeEditDialog()"
-  (deviceUpdated)="onGadgetUpdated()"
+  (deviceUpdated)="onDeviceUpdated()"
 ></gc-edit-device-dialog>
 
 <gc-delete-device-dialog
   [isOpen]="isDeleteDialogOpen"
-  [device]="selectedGadget"
+  [device]="selectedDevice"
   (close)="closeDeleteDialog()"
-  (deviceDeleted)="onGadgetDeleted()"
+  (deviceDeleted)="onDeviceDeleted()"
 ></gc-delete-device-dialog>
 
 <gc-view-documents-dialog
   [isOpen]="isViewDocumentsDialogOpen"
-  [deviceId]="selectedGadgetForDocs?.id"
-  [deviceName]="selectedGadgetForDocs?.name"
+  [deviceId]="selectedDeviceForDocs?.id"
+  [deviceName]="selectedDeviceForDocs?.name"
   (close)="closeViewDocumentsDialog()"
 ></gc-view-documents-dialog>
