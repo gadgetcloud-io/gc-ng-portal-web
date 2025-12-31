@@ -88,6 +88,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isUserMenuOpen = false;
   }
 
+  onLoginSuccess(): void {
+    this.closeLoginDialog();
+  }
+
+  onSignupSuccess(): void {
+    this.closeSignupDialog();
+  }
+
   logout(): void {
     this.authService.logout();
     this.closeUserMenu();
