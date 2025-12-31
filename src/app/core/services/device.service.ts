@@ -112,6 +112,25 @@ export class DeviceService {
   }
 
   /**
+   * Map frontend category to backend category
+   */
+  private mapCategoryToBackend(category: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'Laptop': 'laptop',
+      'Smartphone': 'phone',
+      'Tablet': 'tablet',
+      'Smartwatch': 'watch',
+      'Camera': 'camera',
+      'Headphones': 'other',
+      'Speaker': 'other',
+      'TV': 'other',
+      'Monitor': 'other',
+      'Other': 'other'
+    };
+    return categoryMap[category] || 'other';
+  }
+
+  /**
    * Create new device
    */
   createDevice(device: DeviceCreateRequest): Observable<{ success: boolean; device?: Device; error?: string }> {
@@ -120,8 +139,8 @@ export class DeviceService {
       // Map frontend field names to backend field names
       const backendDevice = {
         name: device.name,
-        category: device.category,
-        brand: device.manufacturer || undefined,  // manufacturer → brand
+        category: this.mapCategoryToBackend(device.category),  // Map category
+        brand: device.manufacturer || 'Unknown',  // brand is required, default to 'Unknown'
         model: device.model || undefined,
         serialNumber: device.serialNumber || undefined,
         purchaseDate: device.purchaseDate,
