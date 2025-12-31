@@ -24,6 +24,7 @@ export class EditDeviceDialogComponent implements OnChanges {
 
   isSubmitting = false;
   error = '';
+  currentTab: 'basic' | 'purchase' | 'notes' = 'basic';
 
   constructor(private deviceService: DeviceService) {
     // Load categories from backend
@@ -91,6 +92,7 @@ export class EditDeviceDialogComponent implements OnChanges {
   onClose(): void {
     this.error = '';
     this.isSubmitting = false;
+    this.currentTab = 'basic'; // Reset to first tab
     this.close.emit();
   }
 

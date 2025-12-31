@@ -1,13 +1,43 @@
 <gc-modal [isOpen]="isOpen" [title]="'Edit Device'" [maxWidth]="'lg'" (close)="onClose()">
-  <form (ngSubmit)="onSubmit()" class="device-form">
-    <!-- Error Message -->
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-    </div>
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
 
-    <!-- Basic Information -->
-    <div class="form-section">
-      <h3 class="section-title">Basic Information</h3>
+  <!-- Tabs -->
+  <div class="form-tabs">
+    <button
+      type="button"
+      class="tab-button"
+      [class.active]="currentTab === 'basic'"
+      (click)="currentTab = 'basic'"
+    >
+      <span class="tab-icon">📱</span>
+      <span class="tab-label">Device Info</span>
+    </button>
+    <button
+      type="button"
+      class="tab-button"
+      [class.active]="currentTab === 'purchase'"
+      (click)="currentTab = 'purchase'"
+    >
+      <span class="tab-icon">💰</span>
+      <span class="tab-label">Purchase & Warranty</span>
+    </button>
+    <button
+      type="button"
+      class="tab-button"
+      [class.active]="currentTab === 'notes'"
+      (click)="currentTab = 'notes'"
+    >
+      <span class="tab-icon">📝</span>
+      <span class="tab-label">Notes</span>
+    </button>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="device-form">
+    <!-- Tab 1: Basic Information -->
+    <div *ngIf="currentTab === 'basic'" class="tab-content">
 
       <div class="form-group">
         <label for="name" class="form-label required">Device Name</label>
@@ -71,9 +101,8 @@
       </div>
     </div>
 
-    <!-- Purchase Information -->
-    <div class="form-section">
-      <h3 class="section-title">Purchase Information</h3>
+    <!-- Tab 2: Purchase & Warranty Information -->
+    <div *ngIf="currentTab === 'purchase'" class="tab-content">
 
       <div class="form-row">
         <div class="form-group">
@@ -105,11 +134,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Warranty Information -->
-    <div class="form-section">
-      <h3 class="section-title">Warranty Information</h3>
 
       <div class="form-row">
         <div class="form-group">
@@ -138,9 +162,8 @@
       </div>
     </div>
 
-    <!-- Additional Notes -->
-    <div class="form-section">
-      <h3 class="section-title">Additional Notes</h3>
+    <!-- Tab 3: Additional Notes -->
+    <div *ngIf="currentTab === 'notes'" class="tab-content">
 
       <div class="form-group">
         <label for="notes" class="form-label">Notes</label>
