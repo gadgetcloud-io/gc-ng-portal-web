@@ -33,6 +33,15 @@
       <span class="tab-icon">📝</span>
       <span class="tab-label">Notes</span>
     </button>
+    <button
+      type="button"
+      class="tab-button"
+      [class.active]="currentTab === 'documents'"
+      (click)="currentTab = 'documents'; loadDocuments()"
+    >
+      <span class="tab-icon">📎</span>
+      <span class="tab-label">Documents</span>
+    </button>
   </div>
 
   <form (ngSubmit)="onSubmit()" class="device-form">
@@ -175,6 +184,75 @@
           placeholder="Add any additional information..."
           rows="3"
         ></textarea>
+      </div>
+    </div>
+
+    <!-- Tab 4: Documents -->
+    <div *ngIf="currentTab === 'documents'" class="tab-content documents-tab">
+      <!-- Upload Section -->
+      <div class="upload-section">
+        <div class="upload-header">
+          <h4 class="upload-title">Device Documents</h4>
+          <button type="button" class="upload-button" (click)="fileInput.click()">
+            <span class="upload-icon">📎</span>
+            Upload Document
+          </button>
+          <input
+            #fileInput
+            type="file"
+            style="display: none"
+            (change)="onFileSelected($event)"
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            multiple
+          />
+        </div>
+        <p class="upload-hint">Upload receipts, warranty documents, manuals, or photos</p>
+      </div>
+
+      <!-- Documents List -->
+      <div class="documents-list">
+        <!-- Loading State -->
+        <div *ngIf="documentsLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading documents...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!documentsLoading && documents.length === 0" class="empty-state">
+          <span class="empty-icon">📄</span>
+          <h4>No documents yet</h4>
+          <p>Upload receipts, warranty docs, or photos for this device</p>
+        </div>
+
+        <!-- Documents Grid -->
+        <div *ngIf="!documentsLoading && documents.length > 0" class="documents-grid">
+          <div *ngFor="let doc of documents" class="document-card">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name" [title]="doc.name">{{ doc.name }}</div>
+              <div class="doc-meta">
+                <span class="doc-size">{{ formatFileSize(doc.size) }}</span>
+                <span class="doc-date">{{ formatDate(doc.uploadDate) }}</span>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="doc-action-btn" (click)="downloadDocument(doc)" title="Download">
+                ⬇️
+              </button>
+              <button type="button" class="doc-action-btn delete" (click)="deleteDocument(doc)" title="Delete">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Progress -->
+      <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="upload-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+        <span class="progress-text">Uploading... {{ uploadProgress }}%</span>
       </div>
     </div>
 

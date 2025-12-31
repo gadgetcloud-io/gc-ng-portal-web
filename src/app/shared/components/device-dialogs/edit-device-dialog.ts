@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../modal/modal';
 import { ButtonComponent } from '../button/button';
 import { DeviceService, Device } from '../../../core/services/device.service';
+import { DocumentService, Document } from '../../../core/services/document.service';
 
 @Component({
   selector: 'gc-edit-device-dialog',
@@ -24,9 +25,17 @@ export class EditDeviceDialogComponent implements OnChanges {
 
   isSubmitting = false;
   error = '';
-  currentTab: 'basic' | 'purchase' | 'notes' = 'basic';
+  currentTab: 'basic' | 'purchase' | 'notes' | 'documents' = 'basic';
 
-  constructor(private deviceService: DeviceService) {
+  // Document management
+  documents: Document[] = [];
+  documentsLoading = false;
+  uploadProgress = 0;
+
+  constructor(
+    private deviceService: DeviceService,
+    private documentService: DocumentService
+  ) {
     // Load categories from backend
     this.loadCategories();
   }
@@ -112,5 +121,121 @@ export class EditDeviceDialogComponent implements OnChanges {
       image: '',
       notes: ''
     };
+  }
+
+  // Document Management Methods
+  loadDocuments(): void {
+    if (!this.editedDevice.id) return;
+
+    this.documentsLoading = true;
+    this.documentService.getDocumentsByDevice(this.editedDevice.id).subscribe({
+      next: (docs) => {
+        this.documents = docs.sort((a, b) =>
+          new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
+        );
+        this.documentsLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading documents:', error);
+        this.documentsLoading = false;
+      }
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const files = Array.from(input.files);
+    this.uploadFiles(files);
+    input.value = ''; // Reset input
+  }
+
+  uploadFiles(files: File[]): void {
+    if (!this.editedDevice.id) {
+      alert('Please save the device first before uploading documents');
+      return;
+    }
+
+    files.forEach(file => {
+      this.uploadProgress = 10;
+
+      this.documentService.uploadDocument({
+        file,
+        parentType: 'item',
+        parentId: this.editedDevice.id,
+        documentType: 'other'
+      }).subscribe({
+        next: (result) => {
+          this.uploadProgress = 100;
+          if (result.success) {
+            this.loadDocuments(); // Reload list
+            setTimeout(() => this.uploadProgress = 0, 1000);
+          } else {
+            alert('Upload failed: ' + (result.error || 'Unknown error'));
+            this.uploadProgress = 0;
+          }
+        },
+        error: (error) => {
+          console.error('Upload error:', error);
+          alert('Upload failed: ' + error.message);
+          this.uploadProgress = 0;
+        }
+      });
+    });
+  }
+
+  downloadDocument(doc: Document): void {
+    this.documentService.downloadDocument(doc.id).subscribe({
+      next: (result) => {
+        if (result.success && result.fileData) {
+          const link = document.createElement('a');
+          link.href = result.fileData;
+          link.download = result.fileName || doc.name;
+          link.click();
+        } else {
+          alert('Download failed: ' + (result.error || 'Unknown error'));
+        }
+      },
+      error: (error) => {
+        console.error('Download error:', error);
+        alert('Download failed');
+      }
+    });
+  }
+
+  deleteDocument(doc: Document): void {
+    if (!confirm(`Delete "${doc.name}"?`)) return;
+
+    this.documentService.deleteDocument(doc.id).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.loadDocuments(); // Reload list
+        } else {
+          alert('Delete failed: ' + (result.error || 'Unknown error'));
+        }
+      },
+      error: (error) => {
+        console.error('Delete error:', error);
+        alert('Delete failed');
+      }
+    });
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   }
 }
