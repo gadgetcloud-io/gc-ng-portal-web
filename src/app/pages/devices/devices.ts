@@ -124,7 +124,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.filteredDevices = this.devices.filter(device => {
       const matchesSearch = !this.searchTerm ||
         device.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        device.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        device.manufacturer?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         device.model?.toLowerCase().includes(this.searchTerm.toLowerCase());
 
       const matchesCategory = this.selectedCategory === 'all' || device.category === this.selectedCategory;
