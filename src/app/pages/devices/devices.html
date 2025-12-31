@@ -116,16 +116,20 @@
 
         <div class="device-actions">
           <button class="action-btn action-btn-secondary" (click)="openEditDialog(device)" title="Edit device">
-            ✏️
+            <span class="btn-icon">✏️</span>
+            <span class="btn-text">Edit</span>
           </button>
           <button class="action-btn action-btn-secondary" (click)="openViewDocumentsDialog(device)" title="View documents">
-            📄
+            <span class="btn-icon">📄</span>
+            <span class="btn-text">Docs</span>
           </button>
           <button class="action-btn action-btn-secondary" (click)="openUploadDocumentDialog(device)" title="Upload document">
-            📤
+            <span class="btn-icon">📤</span>
+            <span class="btn-text">Upload</span>
           </button>
           <button class="action-btn action-btn-danger" (click)="openDeleteDialog(device)" title="Delete device">
-            🗑️
+            <span class="btn-icon">🗑️</span>
+            <span class="btn-text">Delete</span>
           </button>
         </div>
       </div>
