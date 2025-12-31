@@ -1,0 +1,122 @@
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">My Service Requests</h1>
+        <p class="page-subtitle">Track and manage your device service requests</p>
+      </div>
+      <gc-button variant="primary" size="md" (click)="openNewRequestDialog()">
+        ➕ New Request
+      </gc-button>
+    </div>
+  </div>
+</section>
+
+<!-- Filters Section -->
+<section class="filters-section">
+  <div class="container">
+    <div class="filter-controls">
+      <select class="filter-select" [value]="selectedStatus" (change)="onStatusChange($event)">
+        <option *ngFor="let status of statuses" [value]="status.value">
+          {{ status.label }}
+        </option>
+      </select>
+
+      <select class="filter-select" [value]="selectedType" (change)="onTypeChange($event)">
+        <option *ngFor="let type of types" [value]="type.value">
+          {{ type.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="results-count">
+      <span>{{ filteredRequests.length}} {{ filteredRequests.length === 1 ? 'request' : 'requests' }} found</span>
+    </div>
+  </div>
+</section>
+
+<!-- Service Requests Section -->
+<section class="requests-section">
+  <div class="container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading service requests...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredRequests.length === 0 && serviceRequests.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h2 class="empty-title">No service requests yet</h2>
+      <p class="empty-text">Create your first service request to get support for your devices</p>
+      <gc-button variant="primary" size="lg" (click)="openNewRequestDialog()">
+        ➕ Create Service Request
+      </gc-button>
+    </div>
+
+    <!-- No Results State -->
+    <div *ngIf="!isLoading && filteredRequests.length === 0 && serviceRequests.length > 0" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h2 class="empty-title">No requests match your filters</h2>
+      <p class="empty-text">Try adjusting your filters</p>
+    </div>
+
+    <!-- Requests List -->
+    <div *ngIf="!isLoading && filteredRequests.length > 0" class="requests-list">
+      <div *ngFor="let request of filteredRequests" class="request-card" (click)="viewRequestDetails(request)">
+        <div class="request-header">
+          <div class="request-type">
+            <span class="type-icon">{{ getTypeIcon(request.requestType) }}</span>
+            <span class="type-label">{{ getTypeLabel(request.requestType) }}</span>
+          </div>
+          <div class="request-badges">
+            <span class="badge priority-badge" [class]="getPriorityColor(request.priority)">
+              {{ getPriorityLabel(request.priority) }}
+            </span>
+            <span class="badge status-badge" [class]="getStatusColor(request.status)">
+              {{ getStatusLabel(request.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="request-content">
+          <div class="request-id">#{{ request.id }}</div>
+          <h3 class="request-subject">{{ request.subject }}</h3>
+          <p class="request-description">{{ request.description }}</p>
+          <div class="request-device">
+            <span class="device-icon">📱</span>
+            <span>{{ request.deviceName }}</span>
+          </div>
+        </div>
+
+        <div class="request-footer">
+          <div class="request-dates">
+            <div class="date-item">
+              <span class="date-label">Created:</span>
+              <span class="date-value">{{ formatDate(request.createdAt) }}</span>
+            </div>
+            <div class="date-item">
+              <span class="date-label">Updated:</span>
+              <span class="date-value">{{ formatDate(request.updatedAt) }}</span>
+            </div>
+          </div>
+          <div class="request-assigned" *ngIf="request.assignedTo">
+            <span class="assigned-icon">👤</span>
+            <span>{{ request.assignedTo }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Note about mock data -->
+<section class="note-section" *ngIf="!isLoading && filteredRequests.length > 0">
+  <div class="container">
+    <div class="info-box">
+      <span class="info-icon">ℹ️</span>
+      <p>This page is currently showing mock data. API integration with the backend is pending.</p>
+    </div>
+  </div>
+</section>

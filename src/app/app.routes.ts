@@ -36,5 +36,15 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'devices',
+    loadComponent: () => import('./pages/devices/devices').then(m => m.DevicesComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'service-requests',
+    loadComponent: () => import('./pages/service-requests/service-requests').then(m => m.ServiceRequestsComponent),
+    canActivate: [authGuard]
   }
 ];

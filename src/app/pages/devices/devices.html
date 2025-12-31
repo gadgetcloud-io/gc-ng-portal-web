@@ -1,0 +1,178 @@
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">My Devices</h1>
+        <p class="page-subtitle">Manage all your devices and warranties in one place</p>
+      </div>
+      <gc-button variant="primary" size="md" (click)="openAddDialog()">
+        ➕ Add Device
+      </gc-button>
+    </div>
+  </div>
+</section>
+
+<!-- Filters Section -->
+<section class="filters-section">
+  <div class="container">
+    <div class="filters-container">
+      <div class="search-box">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search devices by name, brand, or model..."
+          [value]="searchTerm"
+          (input)="onSearchChange($event)"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="filter-controls">
+        <select class="filter-select" [value]="selectedCategory" (change)="onCategoryChange($event)">
+          <option *ngFor="let category of categories" [value]="category.value">
+            {{ category.label }}
+          </option>
+        </select>
+
+        <select class="filter-select" [value]="selectedStatus" (change)="onStatusChange($event)">
+          <option *ngFor="let status of statuses" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results-count">
+      <span>{{ filteredDevices.length }} {{ filteredDevices.length === 1 ? 'device' : 'devices' }} found</span>
+    </div>
+  </div>
+</section>
+
+<!-- Devices Grid -->
+<section class="devices-section">
+  <div class="container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading devices...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredDevices.length === 0 && devices.length === 0" class="empty-state">
+      <div class="empty-icon">📱</div>
+      <h2 class="empty-title">No devices yet</h2>
+      <p class="empty-text">Start adding devices to keep track of warranties and documents</p>
+      <gc-button variant="primary" size="lg" (click)="openAddDialog()">
+        ➕ Add Your First Device
+      </gc-button>
+    </div>
+
+    <!-- No Results State -->
+    <div *ngIf="!isLoading && filteredDevices.length === 0 && devices.length > 0" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h2 class="empty-title">No devices match your filters</h2>
+      <p class="empty-text">Try adjusting your search or filters</p>
+    </div>
+
+    <!-- Devices Grid -->
+    <div *ngIf="!isLoading && filteredDevices.length > 0" class="devices-grid">
+      <div *ngFor="let device of filteredDevices" class="device-card">
+        <div class="device-icon">{{ getCategoryIcon(device.category) }}</div>
+
+        <div class="device-header">
+          <h3 class="device-name">{{ device.name }}</h3>
+          <span class="device-status" [class]="getStatusColor(device.status)">
+            {{ getStatusLabel(device.status) }}
+          </span>
+        </div>
+
+        <div class="device-details">
+          <div class="detail-row">
+            <span class="detail-label">Brand:</span>
+            <span class="detail-value">{{ device.brand }}</span>
+          </div>
+          <div class="detail-row" *ngIf="device.model">
+            <span class="detail-label">Model:</span>
+            <span class="detail-value">{{ device.model }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Category:</span>
+            <span class="detail-value">{{ device.category }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Purchase Date:</span>
+            <span class="detail-value">{{ formatDate(device.purchaseDate) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Warranty Expires:</span>
+            <span class="detail-value">{{ formatDate(device.warrantyExpires) }}</span>
+          </div>
+          <div class="detail-row" *ngIf="device.serialNumber">
+            <span class="detail-label">Serial Number:</span>
+            <span class="detail-value">{{ device.serialNumber }}</span>
+          </div>
+        </div>
+
+        <div class="device-actions">
+          <button class="action-btn action-btn-secondary" (click)="openEditDialog(device)" title="Edit device">
+            ✏️
+          </button>
+          <button class="action-btn action-btn-secondary" (click)="openViewDocumentsDialog(device)" title="View documents">
+            📄
+          </button>
+          <button class="action-btn action-btn-secondary" (click)="openUploadDocumentDialog(device)" title="Upload document">
+            📤
+          </button>
+          <button class="action-btn action-btn-danger" (click)="openDeleteDialog(device)" title="Delete device">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dialogs -->
+<gc-add-device-dialog
+  [isOpen]="isAddDialogOpen"
+  (close)="closeAddDialog()"
+  (deviceAdded)="onDeviceAdded()"
+></gc-add-device-dialog>
+
+<gc-edit-device-dialog
+  [isOpen]="isEditDialogOpen"
+  [device]="selectedDevice"
+  (close)="closeEditDialog()"
+  (deviceUpdated)="onDeviceUpdated()"
+></gc-edit-device-dialog>
+
+<gc-delete-device-dialog
+  [isOpen]="isDeleteDialogOpen"
+  [device]="selectedDevice"
+  (close)="closeDeleteDialog()"
+  (deviceDeleted)="onDeviceDeleted()"
+></gc-delete-device-dialog>
+
+<gc-upload-document-dialog
+  [isOpen]="isUploadDocumentDialogOpen"
+  [preselectedDeviceId]="selectedDeviceForDocs?.id"
+  (close)="closeUploadDocumentDialog()"
+  (documentUploaded)="onDocumentUploaded()"
+></gc-upload-document-dialog>
+
+<gc-view-documents-dialog
+  [isOpen]="isViewDocumentsDialogOpen"
+  [deviceId]="selectedDeviceForDocs?.id"
+  [deviceName]="selectedDeviceForDocs?.name"
+  (close)="closeViewDocumentsDialog()"
+  (deleteDocument)="openDeleteDocumentDialog($event)"
+  (uploadNew)="onUploadNewFromViewDialog()"
+></gc-view-documents-dialog>
+
+<gc-delete-document-dialog
+  [isOpen]="isDeleteDocumentDialogOpen"
+  [document]="selectedDocument"
+  (close)="closeDeleteDocumentDialog()"
+  (documentDeleted)="onDocumentDeleted()"
+></gc-delete-document-dialog>
