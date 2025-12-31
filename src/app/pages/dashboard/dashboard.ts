@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -66,7 +66,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private deviceService: DeviceService,
     private documentService: DocumentService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -89,10 +90,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.devices = devices;
         this.isLoading = false;
         this.updateStats();
+        this.cdr.detectChanges(); // Explicitly trigger change detection
       },
       error: (error) => {
         console.error('Error loading devices:', error);
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
 
@@ -106,6 +109,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error fetching devices:', error);
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -409,16 +413,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDeviceAdded(): void {
     // Device was added successfully, dialog will close automatically
     console.log('Device added successfully');
+    this.cdr.detectChanges();
   }
 
   onDeviceUpdated(): void {
     // Device was updated successfully, dialog will close automatically
     console.log('Device updated successfully');
+    this.cdr.detectChanges();
   }
 
   onDeviceDeleted(): void {
     // Device was deleted successfully, dialog will close automatically
     console.log('Device deleted successfully');
+    this.cdr.detectChanges();
   }
 
   // Document dialog methods
@@ -458,6 +465,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onDocumentUploaded(): void {
     console.log('Document uploaded successfully');
+    this.cdr.detectChanges();
     // Optionally reload the view documents dialog if it's open
     if (this.isViewDocumentsDialogOpen && this.selectedDeviceForDocs) {
       // The ViewDocumentsDialog will auto-reload when reopened
@@ -466,6 +474,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onDocumentDeleted(): void {
     console.log('Document deleted successfully');
+    this.cdr.detectChanges();
     // The ViewDocumentsDialog will auto-update via the observable
   }
 
