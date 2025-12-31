@@ -1,0 +1,129 @@
+<div class="device-detail-page">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading gadget details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <h2>{{ error }}</h2>
+    <a routerLink="/devices" class="back-link">← Back to My Gadgets</a>
+  </div>
+
+  <!-- Device Details -->
+  <div *ngIf="device && !loading" class="device-content">
+    <!-- Header -->
+    <div class="header">
+      <a routerLink="/devices" class="back-link">
+        <span class="back-icon">←</span>
+        Back to My Gadgets
+      </a>
+      <div class="actions">
+        <button class="btn btn-secondary" (click)="editDevice()">
+          <span class="btn-icon">✏️</span>
+          Edit
+        </button>
+        <button class="btn btn-danger" (click)="deleteDevice()">
+          <span class="btn-icon">🗑️</span>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="gadget-image">
+        <div class="image-container">
+          {{ getDeviceIcon() }}
+        </div>
+      </div>
+      <div class="gadget-info">
+        <h1 class="gadget-name">{{ device.name }}</h1>
+        <p class="gadget-metadata">
+          <span *ngIf="device.manufacturer">{{ device.manufacturer }}</span>
+          <span *ngIf="device.manufacturer && device.model" class="separator">•</span>
+          <span *ngIf="device.model">Model: {{ device.model }}</span>
+        </p>
+        <p class="gadget-metadata" *ngIf="device.serialNumber">
+          <span class="label">Serial Number:</span>
+          <span class="value">{{ device.serialNumber }}</span>
+        </p>
+        <div class="status-badge" [ngClass]="getStatusClass()">
+          <span class="status-dot">●</span>
+          {{ getStatusText() }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Specifications Section -->
+    <div class="info-section">
+      <h2 class="section-title">Specifications</h2>
+      <div class="field-grid">
+        <div class="field">
+          <div class="field-label">Category</div>
+          <div class="field-value">{{ device.category || 'N/A' }}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Manufacturer</div>
+          <div class="field-value">{{ device.manufacturer || 'N/A' }}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Model</div>
+          <div class="field-value">{{ device.model || 'N/A' }}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Serial Number</div>
+          <div class="field-value">{{ device.serialNumber || 'N/A' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purchase & Warranty Section -->
+    <div class="info-section">
+      <h2 class="section-title">Purchase & Warranty Information</h2>
+      <div class="field-grid">
+        <div class="field">
+          <div class="field-label">Purchase Date</div>
+          <div class="field-value">{{ formatDate(device.purchaseDate) }}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Purchase Price</div>
+          <div class="field-value">{{ formatCurrency(device.purchasePrice) }}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Warranty Expires</div>
+          <div class="field-value">{{ formatDate(device.warrantyExpires) }}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Warranty Provider</div>
+          <div class="field-value">{{ device.warrantyProvider || 'N/A' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="info-section" *ngIf="device.notes">
+      <h2 class="section-title">Notes</h2>
+      <div class="notes-content">
+        {{ device.notes }}
+      </div>
+    </div>
+
+    <!-- Metadata Section -->
+    <div class="info-section metadata-section">
+      <h2 class="section-title">Record Information</h2>
+      <div class="field-grid">
+        <div class="field" *ngIf="device.createdAt">
+          <div class="field-label">Created</div>
+          <div class="field-value">{{ formatDate(device.createdAt) }}</div>
+        </div>
+        <div class="field" *ngIf="device.updatedAt">
+          <div class="field-label">Last Updated</div>
+          <div class="field-value">{{ formatDate(device.updatedAt) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

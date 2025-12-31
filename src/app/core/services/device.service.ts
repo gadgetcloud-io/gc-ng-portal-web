@@ -14,7 +14,7 @@ export interface Device {
   purchasePrice?: number;
   warrantyExpires: string;
   warrantyProvider?: string;
-  status: 'active' | 'expiring-soon' | 'expired';
+  status: 'active' | 'expiring-soon' | 'expired' | 'no-warranty';
   image?: string;
   notes?: string;
   createdAt?: string;

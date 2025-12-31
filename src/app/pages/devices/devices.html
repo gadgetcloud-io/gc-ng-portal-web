@@ -13,6 +13,45 @@
   </div>
 </section>
 
+<!-- Stats Section -->
+<section class="stats-section" *ngIf="!isLoading && devices.length > 0">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card stat-total">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().total }}</div>
+          <div class="stat-label">Total Gadgets</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-active">
+        <div class="stat-icon">✓</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().active }}</div>
+          <div class="stat-label">Active Warranty</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-warning">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().expiringSoon }}</div>
+          <div class="stat-label">Expiring Soon</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-expired">
+        <div class="stat-icon">✕</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().expired }}</div>
+          <div class="stat-label">Expired</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Filters Section -->
 <section class="filters-section">
   <div class="container">
@@ -44,7 +83,22 @@
     </div>
 
     <div class="results-count">
+      <div class="select-all-container" *ngIf="filteredDevices.length > 0">
+        <label class="select-all-label">
+          <input
+            type="checkbox"
+            class="select-all-checkbox"
+            [checked]="isAllSelected()"
+            [indeterminate]="isSomeSelected()"
+            (change)="toggleSelectAll()"
+          />
+          <span class="select-all-text">Select All</span>
+        </label>
+      </div>
       <span>{{ filteredDevices.length }} {{ filteredDevices.length === 1 ? 'gadget' : 'gadgets' }} found</span>
+      <span *ngIf="getSelectedCount() > 0" class="selected-count">
+        ({{ getSelectedCount() }} selected)
+      </span>
     </div>
   </div>
 </section>
@@ -77,7 +131,17 @@
 
     <!-- Devices Grid -->
     <div *ngIf="!isLoading && filteredDevices.length > 0" class="devices-grid">
-      <div *ngFor="let device of filteredDevices" class="device-card">
+      <div *ngFor="let device of filteredDevices" class="device-card" [class.selected]="isDeviceSelected(device.id)">
+        <div class="device-select">
+          <input
+            type="checkbox"
+            class="device-checkbox"
+            [checked]="isDeviceSelected(device.id)"
+            (change)="toggleDeviceSelection(device.id)"
+            (click)="$event.stopPropagation()"
+          />
+        </div>
+
         <div class="device-icon">{{ getCategoryIcon(device.category) }}</div>
 
         <div class="device-header">
@@ -115,6 +179,10 @@
         </div>
 
         <div class="device-actions">
+          <button class="action-btn action-btn-primary" (click)="viewDevice(device)" title="View details">
+            <span class="btn-icon">👁️</span>
+            <span class="btn-text">View</span>
+          </button>
           <button class="action-btn action-btn-secondary" (click)="openEditDialog(device)" title="Edit gadget">
             <span class="btn-icon">✏️</span>
             <span class="btn-text">Edit</span>
@@ -176,3 +244,11 @@
   (close)="closeDeleteDocumentDialog()"
   (documentDeleted)="onDocumentDeleted()"
 ></gc-delete-document-dialog>
+
+<!-- Bulk Action Bar -->
+<gc-bulk-action-bar
+  [selectedCount]="getSelectedCount()"
+  (clearSelection)="clearSelection()"
+  (bulkDelete)="onBulkDelete()"
+  (bulkChangeStatus)="onBulkChangeStatus($event)"
+></gc-bulk-action-bar>

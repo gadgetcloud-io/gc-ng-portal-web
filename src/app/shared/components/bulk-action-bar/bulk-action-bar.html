@@ -1,0 +1,48 @@
+<div class="bulk-action-bar" *ngIf="selectedCount > 0">
+  <div class="bar-content">
+    <div class="selection-info">
+      <span class="selection-icon">✓</span>
+      <span class="selection-text">
+        <strong>{{ selectedCount }}</strong> gadget{{ selectedCount > 1 ? 's' : '' }} selected
+      </span>
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-btn btn-change-status" (click)="toggleStatusMenu()">
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">Change Status</span>
+        <span class="dropdown-icon">▼</span>
+      </button>
+
+      <!-- Status dropdown menu -->
+      <div class="status-menu" *ngIf="showStatusMenu">
+        <button class="status-option" (click)="onChangeStatus('active')">
+          <span class="status-dot status-active">●</span>
+          Active Warranty
+        </button>
+        <button class="status-option" (click)="onChangeStatus('expiring-soon')">
+          <span class="status-dot status-warning">●</span>
+          Expiring Soon
+        </button>
+        <button class="status-option" (click)="onChangeStatus('expired')">
+          <span class="status-dot status-expired">●</span>
+          Expired
+        </button>
+        <button class="status-option" (click)="onChangeStatus('no-warranty')">
+          <span class="status-dot status-none">●</span>
+          No Warranty
+        </button>
+      </div>
+
+      <button class="action-btn btn-delete" (click)="onBulkDelete()">
+        <span class="btn-icon">🗑️</span>
+        <span class="btn-text">Delete</span>
+      </button>
+
+      <button class="action-btn btn-clear" (click)="onClearSelection()">
+        <span class="btn-icon">✕</span>
+        <span class="btn-text">Clear Selection</span>
+      </button>
+    </div>
+  </div>
+</div>

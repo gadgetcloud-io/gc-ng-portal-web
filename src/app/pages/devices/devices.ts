@@ -12,6 +12,7 @@ import { UploadDocumentDialogComponent } from '../../shared/components/document-
 import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
 import { DeleteDocumentDialogComponent } from '../../shared/components/document-dialogs/delete-document-dialog';
 import { DocumentService, Document } from '../../core/services/document.service';
+import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/bulk-action-bar';
 
 @Component({
   selector: 'app-devices',
@@ -24,7 +25,8 @@ import { DocumentService, Document } from '../../core/services/document.service'
     DeleteDeviceDialogComponent,
     UploadDocumentDialogComponent,
     ViewDocumentsDialogComponent,
-    DeleteDocumentDialogComponent
+    DeleteDocumentDialogComponent,
+    BulkActionBarComponent
   ],
   templateUrl: './devices.html',
   styleUrl: './devices.scss'
@@ -50,6 +52,9 @@ export class DevicesComponent implements OnInit, OnDestroy {
   isDeleteDocumentDialogOpen = false;
   selectedDocument: Document | null = null;
   selectedDeviceForDocs: Device | null = null;
+
+  // Bulk selection state
+  selectedDeviceIds: Set<string> = new Set();
 
   private subscriptions = new Subscription();
 
@@ -88,6 +93,23 @@ export class DevicesComponent implements OnInit, OnDestroy {
     }
 
     this.loadDevices();
+  }
+
+  // Stats calculations
+  getStats() {
+    const total = this.devices.length;
+    const active = this.devices.filter(d => d.status === 'active').length;
+    const expiringSoon = this.devices.filter(d => d.status === 'expiring-soon').length;
+    const expired = this.devices.filter(d => d.status === 'expired').length;
+    const noWarranty = this.devices.filter(d => d.status === 'no-warranty').length;
+
+    return {
+      total,
+      active,
+      expiringSoon,
+      expired,
+      noWarranty
+    };
   }
 
   private loadDevices(): void {
@@ -206,6 +228,11 @@ export class DevicesComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Navigation methods
+  viewDevice(device: Device): void {
+    this.router.navigate(['/devices', device.id]);
+  }
+
   // Dialog methods
   openAddDialog(): void {
     this.isAddDialogOpen = true;
@@ -303,5 +330,147 @@ export class DevicesComponent implements OnInit, OnDestroy {
     if (device) {
       this.openUploadDocumentDialog(device);
     }
+  }
+
+  // Bulk selection methods
+  toggleDeviceSelection(deviceId: string): void {
+    if (this.selectedDeviceIds.has(deviceId)) {
+      this.selectedDeviceIds.delete(deviceId);
+    } else {
+      this.selectedDeviceIds.add(deviceId);
+    }
+    this.cdr.detectChanges();
+  }
+
+  isDeviceSelected(deviceId: string): boolean {
+    return this.selectedDeviceIds.has(deviceId);
+  }
+
+  toggleSelectAll(): void {
+    if (this.isAllSelected()) {
+      this.selectedDeviceIds.clear();
+    } else {
+      this.filteredDevices.forEach(device => {
+        this.selectedDeviceIds.add(device.id);
+      });
+    }
+    this.cdr.detectChanges();
+  }
+
+  isAllSelected(): boolean {
+    return this.filteredDevices.length > 0 &&
+           this.filteredDevices.every(device => this.selectedDeviceIds.has(device.id));
+  }
+
+  isSomeSelected(): boolean {
+    return this.selectedDeviceIds.size > 0 && !this.isAllSelected();
+  }
+
+  getSelectedCount(): number {
+    return this.selectedDeviceIds.size;
+  }
+
+  clearSelection(): void {
+    this.selectedDeviceIds.clear();
+    this.cdr.detectChanges();
+  }
+
+  // Bulk action handlers
+  onBulkDelete(): void {
+    const selectedIds = Array.from(this.selectedDeviceIds);
+    let successCount = 0;
+    let errorCount = 0;
+
+    // Delete each selected device
+    selectedIds.forEach((deviceId, index) => {
+      this.deviceService.deleteDevice(deviceId).subscribe({
+        next: (result) => {
+          if (result.success) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+
+          // After all deletes complete
+          if (index === selectedIds.length - 1) {
+            if (successCount > 0) {
+              alert(`Successfully deleted ${successCount} gadget${successCount > 1 ? 's' : ''}`);
+            }
+            if (errorCount > 0) {
+              alert(`Failed to delete ${errorCount} gadget${errorCount > 1 ? 's' : ''}`);
+            }
+            this.clearSelection();
+            this.cdr.detectChanges();
+          }
+        },
+        error: (error) => {
+          errorCount++;
+          console.error('Error deleting device:', error);
+
+          // After all deletes complete
+          if (index === selectedIds.length - 1) {
+            if (successCount > 0) {
+              alert(`Successfully deleted ${successCount} gadget${successCount > 1 ? 's' : ''}`);
+            }
+            if (errorCount > 0) {
+              alert(`Failed to delete ${errorCount} gadget${errorCount > 1 ? 's' : ''}`);
+            }
+            this.clearSelection();
+            this.cdr.detectChanges();
+          }
+        }
+      });
+    });
+  }
+
+  onBulkChangeStatus(newStatus: string): void {
+    const selectedIds = Array.from(this.selectedDeviceIds);
+    let successCount = 0;
+    let errorCount = 0;
+
+    // Update status for each selected device
+    selectedIds.forEach((deviceId, index) => {
+      const device = this.devices.find(d => d.id === deviceId);
+      if (device) {
+        const updatedDevice = { id: deviceId, status: newStatus };
+        this.deviceService.updateDevice(updatedDevice).subscribe({
+          next: (result) => {
+            if (result) {
+              successCount++;
+            } else {
+              errorCount++;
+            }
+
+            // After all updates complete
+            if (index === selectedIds.length - 1) {
+              if (successCount > 0) {
+                alert(`Successfully updated status for ${successCount} gadget${successCount > 1 ? 's' : ''}`);
+              }
+              if (errorCount > 0) {
+                alert(`Failed to update ${errorCount} gadget${errorCount > 1 ? 's' : ''}`);
+              }
+              this.clearSelection();
+              this.cdr.detectChanges();
+            }
+          },
+          error: (error) => {
+            errorCount++;
+            console.error('Error updating device status:', error);
+
+            // After all updates complete
+            if (index === selectedIds.length - 1) {
+              if (successCount > 0) {
+                alert(`Successfully updated status for ${successCount} gadget${successCount > 1 ? 's' : ''}`);
+              }
+              if (errorCount > 0) {
+                alert(`Failed to update ${errorCount} gadget${errorCount > 1 ? 's' : ''}`);
+              }
+              this.clearSelection();
+              this.cdr.detectChanges();
+            }
+          }
+        });
+      }
+    });
   }
 }

@@ -32,6 +32,119 @@
   }
 }
 
+.stats-section {
+  background: #f9fafb;
+  padding: 2rem 0;
+  border-bottom: 1px solid #e5e7eb;
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .stat-content {
+      flex: 1;
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+      }
+    }
+
+    &.stat-total {
+      border-color: #e5e7eb;
+
+      .stat-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .stat-value {
+        color: #667eea;
+      }
+    }
+
+    &.stat-active {
+      border-color: #d1fae5;
+
+      .stat-icon {
+        background: #d1fae5;
+      }
+
+      .stat-value {
+        color: #10b981;
+      }
+    }
+
+    &.stat-warning {
+      border-color: #fef3c7;
+
+      .stat-icon {
+        background: #fef3c7;
+      }
+
+      .stat-value {
+        color: #f59e0b;
+      }
+    }
+
+    &.stat-expired {
+      border-color: #fee2e2;
+
+      .stat-icon {
+        background: #fee2e2;
+      }
+
+      .stat-value {
+        color: #ef4444;
+      }
+    }
+  }
+}
+
 .filters-section {
   background: white;
   padding: 2rem 0;
@@ -101,8 +214,42 @@
   }
 
   .results-count {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     font-size: 0.875rem;
     color: #6b7280;
+
+    .select-all-container {
+      .select-all-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+
+        .select-all-checkbox {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          accent-color: #00B4A6;
+        }
+
+        .select-all-text {
+          font-weight: 500;
+          color: #374151;
+        }
+
+        &:hover .select-all-text {
+          color: #00B4A6;
+        }
+      }
+    }
+
+    .selected-count {
+      font-weight: 600;
+      color: #00B4A6;
+    }
   }
 }
 
@@ -170,6 +317,34 @@
       transform: translateY(-4px);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       border-color: #00B4A6;
+    }
+
+    &.selected {
+      border-color: #00B4A6;
+      background: rgba(0, 180, 166, 0.02);
+      box-shadow: 0 0 0 2px rgba(0, 180, 166, 0.2);
+    }
+
+    .device-select {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+
+      .device-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #00B4A6;
+        border: 2px solid #d1d5db;
+        border-radius: 4px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #00B4A6;
+          transform: scale(1.1);
+        }
+      }
     }
 
     .device-icon {
@@ -276,6 +451,17 @@
         .btn-text {
           font-size: 0.875rem;
           line-height: 1;
+        }
+
+        &.action-btn-primary {
+          background: #00B4A6;
+          color: white;
+
+          &:hover {
+            background: #00968C;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 180, 166, 0.4);
+          }
         }
 
         &.action-btn-secondary {
