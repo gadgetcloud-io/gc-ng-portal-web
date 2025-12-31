@@ -78,7 +78,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Subscribe to devices
+    // Load devices first
+    this.loadDevicesData();
+  }
+
+  private loadDevicesData(): void {
+    // Subscribe to devices observable
     const devicesSub = this.deviceService.devices$.subscribe({
       next: (devices) => {
         this.devices = devices;
@@ -92,6 +97,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(devicesSub);
+
+    // Explicitly trigger a devices reload to ensure fresh data
+    this.deviceService.getDevices().subscribe({
+      next: () => {
+        // Data will be updated via the devices$ subscription above
+      },
+      error: (error) => {
+        console.error('Error fetching devices:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   ngOnDestroy(): void {
