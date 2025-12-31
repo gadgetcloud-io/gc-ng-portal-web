@@ -4,5 +4,14 @@
     "stg": "gadgetcloud-stg",
     "prd": "gadgetcloud-prd"
   },
+  "targets": {
+    "gadgetcloud-prd": {
+      "hosting": {
+        "web": [
+          "gadgetcloud-web-prd"
+        ]
+      }
+    }
+  },
   "etags": {}
 }
