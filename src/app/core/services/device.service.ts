@@ -54,6 +54,26 @@ export class DeviceService {
   }
 
   /**
+   * Get available categories from backend
+   */
+  getCategories(): Observable<Array<{value: string; label: string; emoji: string}>> {
+    return this.apiService.get<Array<{value: string; label: string; emoji: string}>>('/items/categories').pipe(
+      catchError(error => {
+        console.error('Error fetching categories:', error);
+        // Return default categories as fallback
+        return of([
+          { value: 'laptop', label: 'Laptop', emoji: '💻' },
+          { value: 'phone', label: 'Smartphone', emoji: '📱' },
+          { value: 'tablet', label: 'Tablet', emoji: '📱' },
+          { value: 'watch', label: 'Smartwatch', emoji: '⌚' },
+          { value: 'camera', label: 'Camera', emoji: '📷' },
+          { value: 'other', label: 'Other', emoji: '📦' }
+        ]);
+      })
+    );
+  }
+
+  /**
    * Load all devices
    */
   private loadDevices(): void {
@@ -113,21 +133,25 @@ export class DeviceService {
 
   /**
    * Map frontend category to backend category
+   * Backend now uses lowercase: phone, laptop, tablet, watch, camera, other
    */
   private mapCategoryToBackend(category: string): string {
+    // If already lowercase (from backend), return as-is
+    if (['phone', 'laptop', 'tablet', 'watch', 'camera', 'other'].includes(category.toLowerCase())) {
+      return category.toLowerCase();
+    }
+
+    // Legacy mapping for old frontend categories (if any still exist)
     const categoryMap: { [key: string]: string } = {
-      'Laptop': 'laptop',
       'Smartphone': 'phone',
-      'Tablet': 'tablet',
       'Smartwatch': 'watch',
-      'Camera': 'camera',
       'Headphones': 'other',
       'Speaker': 'other',
       'TV': 'other',
-      'Monitor': 'other',
-      'Other': 'other'
+      'Monitor': 'other'
     };
-    return categoryMap[category] || 'other';
+
+    return categoryMap[category] || category.toLowerCase();
   }
 
   /**

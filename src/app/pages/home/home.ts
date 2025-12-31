@@ -34,19 +34,8 @@ export class HomeComponent implements OnInit {
   isSignupDialogOpen = false;
   pendingDeviceData: any = null;
 
-  // Categories
-  categories = [
-    { value: 'Laptop', label: 'Laptop 💻' },
-    { value: 'Smartphone', label: 'Smartphone 📱' },
-    { value: 'Tablet', label: 'Tablet 📱' },
-    { value: 'Headphones', label: 'Headphones 🎧' },
-    { value: 'Smartwatch', label: 'Smartwatch ⌚' },
-    { value: 'Camera', label: 'Camera 📷' },
-    { value: 'Speaker', label: 'Speaker 🔊' },
-    { value: 'TV', label: 'TV 📺' },
-    { value: 'Monitor', label: 'Monitor 🖥️' },
-    { value: 'Other', label: 'Other 📦' }
-  ];
+  // Categories - will be loaded from backend
+  categories: Array<{value: string; label: string; emoji: string}> = [];
 
   constructor(
     private fb: FormBuilder,
@@ -78,6 +67,19 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDevices();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.deviceService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        // Fallback categories are already handled in the service
+      }
+    });
   }
 
   loadDevices(): void {

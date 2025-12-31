@@ -56,7 +56,7 @@
               >
                 <option value="">Select category</option>
                 <option *ngFor="let cat of categories" [value]="cat.value">
-                  {{ cat.label }}
+                  {{ cat.label }} {{ cat.emoji }}
                 </option>
               </select>
               <span *ngIf="isFieldInvalid('category')" class="error-message">
