@@ -3,11 +3,11 @@
   <div class="container">
     <div class="header-content">
       <div class="header-text">
-        <h1 class="page-title">My Devices</h1>
-        <p class="page-subtitle">Manage all your devices and warranties in one place</p>
+        <h1 class="page-title">My Gadgets</h1>
+        <p class="page-subtitle">Manage all your gadgets and warranties in one place</p>
       </div>
       <gc-button variant="primary" size="md" (click)="openAddDialog()">
-        ➕ Add Device
+        ➕ Add Gadget
       </gc-button>
     </div>
   </div>
@@ -21,7 +21,7 @@
         <input
           type="text"
           class="search-input"
-          placeholder="Search devices by name, brand, or model..."
+          placeholder="Search gadgets by name, brand, or model..."
           [value]="searchTerm"
           (input)="onSearchChange($event)"
         />
@@ -44,7 +44,7 @@
     </div>
 
     <div class="results-count">
-      <span>{{ filteredDevices.length }} {{ filteredDevices.length === 1 ? 'device' : 'devices' }} found</span>
+      <span>{{ filteredDevices.length }} {{ filteredDevices.length === 1 ? 'gadget' : 'gadgets' }} found</span>
     </div>
   </div>
 </section>
@@ -55,23 +55,23 @@
     <!-- Loading State -->
     <div *ngIf="isLoading" class="loading-state">
       <div class="spinner"></div>
-      <p>Loading devices...</p>
+      <p>Loading gadgets...</p>
     </div>
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && filteredDevices.length === 0 && devices.length === 0" class="empty-state">
       <div class="empty-icon">📱</div>
-      <h2 class="empty-title">No devices yet</h2>
-      <p class="empty-text">Start adding devices to keep track of warranties and documents</p>
+      <h2 class="empty-title">No gadgets yet</h2>
+      <p class="empty-text">Start adding gadgets to keep track of warranties and documents</p>
       <gc-button variant="primary" size="lg" (click)="openAddDialog()">
-        ➕ Add Your First Device
+        ➕ Add Your First Gadget
       </gc-button>
     </div>
 
     <!-- No Results State -->
     <div *ngIf="!isLoading && filteredDevices.length === 0 && devices.length > 0" class="empty-state">
       <div class="empty-icon">🔍</div>
-      <h2 class="empty-title">No devices match your filters</h2>
+      <h2 class="empty-title">No gadgets match your filters</h2>
       <p class="empty-text">Try adjusting your search or filters</p>
     </div>
 
@@ -115,19 +115,15 @@
         </div>
 
         <div class="device-actions">
-          <button class="action-btn action-btn-secondary" (click)="openEditDialog(device)" title="Edit device">
+          <button class="action-btn action-btn-secondary" (click)="openEditDialog(device)" title="Edit gadget">
             <span class="btn-icon">✏️</span>
             <span class="btn-text">Edit</span>
           </button>
-          <button class="action-btn action-btn-secondary" (click)="openViewDocumentsDialog(device)" title="View documents">
-            <span class="btn-icon">📄</span>
-            <span class="btn-text">Docs</span>
+          <button class="action-btn action-btn-secondary" (click)="openDocumentsDialog(device)" title="Manage documents">
+            <span class="btn-icon">📁</span>
+            <span class="btn-text">Documents</span>
           </button>
-          <button class="action-btn action-btn-secondary" (click)="openUploadDocumentDialog(device)" title="Upload document">
-            <span class="btn-icon">📤</span>
-            <span class="btn-text">Upload</span>
-          </button>
-          <button class="action-btn action-btn-danger" (click)="openDeleteDialog(device)" title="Delete device">
+          <button class="action-btn action-btn-danger" (click)="openDeleteDialog(device)" title="Delete gadget">
             <span class="btn-icon">🗑️</span>
             <span class="btn-text">Delete</span>
           </button>

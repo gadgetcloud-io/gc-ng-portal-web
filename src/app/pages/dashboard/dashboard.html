@@ -4,10 +4,10 @@
     <div class="header-content">
       <div class="header-text">
         <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Welcome back, {{ user?.name }}! Here's an overview of your devices and warranties.</p>
+        <p class="page-subtitle">Welcome back, {{ user?.name }}! Here's an overview of your gadgets and warranties.</p>
       </div>
       <gc-button variant="primary" size="md" (click)="onQuickAction('add-device')">
-        ➕ Add Device
+        ➕ Add Gadget
       </gc-button>
     </div>
   </div>
@@ -56,7 +56,7 @@
         <div class="empty-state" *ngIf="recentActivity.length === 0">
           <div class="empty-icon">📋</div>
           <p class="empty-text">No recent activity</p>
-          <p class="empty-subtext">Activity will appear here when you add devices</p>
+          <p class="empty-subtext">Activity will appear here when you add gadgets</p>
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-active"></span>
-              <span>Active: {{ coverageData.active.count }} device{{ coverageData.active.count !== 1 ? 's' : '' }} ({{ coverageData.active.percentage }}%)</span>
+              <span>Active: {{ coverageData.active.count }} gadget{{ coverageData.active.count !== 1 ? 's' : '' }} ({{ coverageData.active.percentage }}%)</span>
             </div>
           </div>
           <div class="coverage-item">
@@ -134,7 +134,7 @@
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-expiring"></span>
-              <span>Expiring Soon: {{ coverageData.expiringSoon.count }} device{{ coverageData.expiringSoon.count !== 1 ? 's' : '' }} ({{ coverageData.expiringSoon.percentage }}%)</span>
+              <span>Expiring Soon: {{ coverageData.expiringSoon.count }} gadget{{ coverageData.expiringSoon.count !== 1 ? 's' : '' }} ({{ coverageData.expiringSoon.percentage }}%)</span>
             </div>
           </div>
           <div class="coverage-item">
@@ -143,7 +143,7 @@
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-expired"></span>
-              <span>Expired: {{ coverageData.expired.count }} device{{ coverageData.expired.count !== 1 ? 's' : '' }} ({{ coverageData.expired.percentage }}%)</span>
+              <span>Expired: {{ coverageData.expired.count }} gadget{{ coverageData.expired.count !== 1 ? 's' : '' }} ({{ coverageData.expired.percentage }}%)</span>
             </div>
           </div>
         </div>
