@@ -231,8 +231,8 @@ export class DocumentService {
    */
   getDocumentsByParent(parentType: string, parentId: string): Observable<Document[]> {
     if (this.useApi) {
-      // Fetch from API with parent filters
-      return this.apiService.get<Document[]>(`/documents?parentType=${parentType}&parentId=${parentId}`).pipe(
+      // Fetch from API with parent filters (trailing slash required)
+      return this.apiService.get<Document[]>(`/documents/?parentType=${parentType}&parentId=${parentId}`).pipe(
         map((docs: any) => {
           // Handle both direct array and wrapped response
           const documents = Array.isArray(docs) ? docs : (docs.data || []);
