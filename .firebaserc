@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "gadgetcloud-stg",
+    "stg": "gadgetcloud-stg",
+    "prd": "gadgetcloud-prd"
+  },
+  "etags": {}
+}
