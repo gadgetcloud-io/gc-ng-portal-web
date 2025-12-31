@@ -171,43 +171,101 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.stats[3].value = expired.toString();
     this.stats[3].change = expired > 0 ? 'Needs renewal' : 'All covered';
     this.stats[3].trend = expired > 0 ? 'down' : 'up';
+
+    // Update coverage data for the chart
+    this.coverageData = {
+      active: {
+        count: active,
+        percentage: total > 0 ? Math.round((active / total) * 100) : 0
+      },
+      expiringSoon: {
+        count: expiringSoon,
+        percentage: total > 0 ? Math.round((expiringSoon / total) * 100) : 0
+      },
+      expired: {
+        count: expired,
+        percentage: total > 0 ? Math.round((expired / total) * 100) : 0
+      }
+    };
+
+    // Update recent activity and reminders based on real devices
+    this.updateRecentActivity();
+    this.updateUpcomingReminders();
   }
 
+  recentActivity: Activity[] = [];
 
-  recentActivity: Activity[] = [
-    {
-      id: '1',
-      type: 'device-added',
-      title: 'New device added',
-      description: 'MacBook Pro 16" added to inventory',
-      timestamp: '2 hours ago',
-      icon: '➕'
-    },
-    {
-      id: '2',
-      type: 'document-uploaded',
-      title: 'Document uploaded',
-      description: 'Receipt uploaded for iPhone 15 Pro',
-      timestamp: '5 hours ago',
-      icon: '📄'
-    },
-    {
-      id: '3',
-      type: 'warranty-renewed',
-      title: 'Warranty renewed',
-      description: 'AppleCare+ extended for iPad Pro',
-      timestamp: '1 day ago',
-      icon: '🔄'
-    },
-    {
-      id: '4',
-      type: 'service-scheduled',
-      title: 'Service scheduled',
-      description: 'Battery replacement for MacBook Air',
-      timestamp: '2 days ago',
-      icon: '🔧'
-    }
-  ];
+  // Warranty coverage percentages
+  coverageData = {
+    active: { count: 0, percentage: 0 },
+    expiringSoon: { count: 0, percentage: 0 },
+    expired: { count: 0, percentage: 0 }
+  };
+
+  private updateRecentActivity(): void {
+    this.recentActivity = [];
+
+    // Generate activity from devices (sorted by creation date, most recent first)
+    const sortedDevices = [...this.devices].sort((a, b) => {
+      const dateA = new Date(a.purchaseDate || 0).getTime();
+      const dateB = new Date(b.purchaseDate || 0).getTime();
+      return dateB - dateA;
+    });
+
+    // Add device additions to activity (limit to 5 most recent)
+    sortedDevices.slice(0, 5).forEach((device, index) => {
+      const purchaseDate = new Date(device.purchaseDate);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - purchaseDate.getTime());
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      let timestamp = '';
+      if (diffDays === 0) {
+        timestamp = 'Today';
+      } else if (diffDays === 1) {
+        timestamp = 'Yesterday';
+      } else if (diffDays < 7) {
+        timestamp = `${diffDays} days ago`;
+      } else if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        timestamp = `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+      } else {
+        const months = Math.floor(diffDays / 30);
+        timestamp = `${months} month${months > 1 ? 's' : ''} ago`;
+      }
+
+      this.recentActivity.push({
+        id: `device-${device.id}`,
+        type: 'device-added',
+        title: 'Device registered',
+        description: `${device.name} added to inventory`,
+        timestamp,
+        icon: '📱'
+      });
+    });
+
+    // Add warranty expiration warnings for devices expiring soon
+    const expiringDevices = this.devices.filter(d => d.status === 'expiring-soon');
+    expiringDevices.slice(0, 3).forEach(device => {
+      const expiryDate = new Date(device.warrantyExpires);
+      const now = new Date();
+      const diffTime = expiryDate.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      this.recentActivity.push({
+        id: `warranty-${device.id}`,
+        type: 'warranty-renewed',
+        title: 'Warranty expiring soon',
+        description: `${device.name} warranty expires in ${diffDays} days`,
+        timestamp: `${diffDays} days remaining`,
+        icon: '⚠️'
+      });
+    });
+
+    // Sort all activities by most recent (based on timestamp text for now)
+    // In a real implementation, you'd store actual timestamps
+    this.recentActivity = this.recentActivity.slice(0, 8);
+  }
 
   quickActions = [
     {
@@ -236,32 +294,52 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   ];
 
-  upcomingReminders = [
-    {
-      id: '1',
-      title: 'iPhone 15 Pro warranty expiring',
-      date: '2025-03-15',
-      daysLeft: 75,
-      type: 'warranty',
-      priority: 'high'
-    },
-    {
-      id: '2',
-      title: 'MacBook Air service due',
-      date: '2025-02-10',
-      daysLeft: 42,
-      type: 'service',
-      priority: 'medium'
-    },
-    {
-      id: '3',
-      title: 'AppleCare+ renewal available',
-      date: '2025-04-01',
-      daysLeft: 92,
-      type: 'renewal',
-      priority: 'low'
-    }
-  ];
+  upcomingReminders: Array<{
+    id: string;
+    title: string;
+    date: string;
+    daysLeft: number;
+    type: string;
+    priority: string;
+  }> = [];
+
+  private updateUpcomingReminders(): void {
+    this.upcomingReminders = [];
+
+    // Generate reminders for devices with warranties expiring in the next 120 days
+    const now = new Date();
+
+    this.devices.forEach(device => {
+      const expiryDate = new Date(device.warrantyExpires);
+      const diffTime = expiryDate.getTime() - now.getTime();
+      const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      // Only show reminders for warranties expiring in the next 120 days
+      if (daysLeft > 0 && daysLeft <= 120) {
+        let priority = 'low';
+        if (daysLeft <= 30) {
+          priority = 'high';
+        } else if (daysLeft <= 60) {
+          priority = 'medium';
+        }
+
+        this.upcomingReminders.push({
+          id: device.id,
+          title: `${device.name} warranty expiring`,
+          date: device.warrantyExpires,
+          daysLeft,
+          type: 'warranty',
+          priority
+        });
+      }
+    });
+
+    // Sort by days left (most urgent first)
+    this.upcomingReminders.sort((a, b) => a.daysLeft - b.daysLeft);
+
+    // Limit to top 5 reminders
+    this.upcomingReminders = this.upcomingReminders.slice(0, 5);
+  }
 
 
   getPriorityColor(priority: string): string {

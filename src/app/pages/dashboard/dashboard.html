@@ -43,7 +43,7 @@
         <div class="card-header">
           <h2 class="card-title">Recent Activity</h2>
         </div>
-        <div class="activity-list">
+        <div class="activity-list" *ngIf="recentActivity.length > 0">
           <div *ngFor="let activity of recentActivity" class="activity-item">
             <div class="activity-icon">{{ activity.icon }}</div>
             <div class="activity-content">
@@ -52,6 +52,11 @@
               <span class="activity-timestamp">{{ activity.timestamp }}</span>
             </div>
           </div>
+        </div>
+        <div class="empty-state" *ngIf="recentActivity.length === 0">
+          <div class="empty-icon">📋</div>
+          <p class="empty-text">No recent activity</p>
+          <p class="empty-subtext">Activity will appear here when you add devices</p>
         </div>
       </div>
     </div>
@@ -85,7 +90,7 @@
         <div class="card-header">
           <h2 class="card-title">Upcoming Reminders</h2>
         </div>
-        <div class="reminders-list">
+        <div class="reminders-list" *ngIf="upcomingReminders.length > 0">
           <div *ngFor="let reminder of upcomingReminders" class="reminder-item">
             <div class="reminder-priority" [class]="getPriorityColor(reminder.priority)"></div>
             <div class="reminder-content">
@@ -95,13 +100,18 @@
             </div>
           </div>
         </div>
+        <div class="empty-state" *ngIf="upcomingReminders.length === 0">
+          <div class="empty-icon">🔔</div>
+          <p class="empty-text">No upcoming reminders</p>
+          <p class="empty-subtext">Warranty expiration reminders will appear here</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Warranty Coverage Chart (Placeholder) -->
-<section class="chart-section">
+<!-- Warranty Coverage Chart -->
+<section class="chart-section" *ngIf="devices.length > 0">
   <div class="container">
     <div class="content-card chart-card">
       <div class="card-header">
@@ -111,29 +121,29 @@
         <div class="coverage-stats">
           <div class="coverage-item">
             <div class="coverage-bar">
-              <div class="coverage-fill coverage-active" style="width: 75%"></div>
+              <div class="coverage-fill coverage-active" [style.width.%]="coverageData.active.percentage"></div>
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-active"></span>
-              <span>Active: 18 devices (75%)</span>
+              <span>Active: {{ coverageData.active.count }} device{{ coverageData.active.count !== 1 ? 's' : '' }} ({{ coverageData.active.percentage }}%)</span>
             </div>
           </div>
           <div class="coverage-item">
             <div class="coverage-bar">
-              <div class="coverage-fill coverage-expiring" style="width: 12.5%"></div>
+              <div class="coverage-fill coverage-expiring" [style.width.%]="coverageData.expiringSoon.percentage"></div>
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-expiring"></span>
-              <span>Expiring Soon: 3 devices (12.5%)</span>
+              <span>Expiring Soon: {{ coverageData.expiringSoon.count }} device{{ coverageData.expiringSoon.count !== 1 ? 's' : '' }} ({{ coverageData.expiringSoon.percentage }}%)</span>
             </div>
           </div>
           <div class="coverage-item">
             <div class="coverage-bar">
-              <div class="coverage-fill coverage-expired" style="width: 12.5%"></div>
+              <div class="coverage-fill coverage-expired" [style.width.%]="coverageData.expired.percentage"></div>
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-expired"></span>
-              <span>Expired: 3 devices (12.5%)</span>
+              <span>Expired: {{ coverageData.expired.count }} device{{ coverageData.expired.count !== 1 ? 's' : '' }} ({{ coverageData.expired.percentage }}%)</span>
             </div>
           </div>
         </div>

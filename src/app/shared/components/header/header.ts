@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -30,7 +30,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { path: '/contact', label: 'Contact' }
   ];
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.authService.authState$.subscribe(
@@ -89,11 +92,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onLoginSuccess(): void {
-    this.closeLoginDialog();
+    this.ngZone.run(() => {
+      this.closeLoginDialog();
+    });
   }
 
   onSignupSuccess(): void {
-    this.closeSignupDialog();
+    this.ngZone.run(() => {
+      this.closeSignupDialog();
+    });
   }
 
   logout(): void {
