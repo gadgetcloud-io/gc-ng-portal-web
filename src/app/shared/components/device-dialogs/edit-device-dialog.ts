@@ -160,13 +160,13 @@ export class EditDeviceDialogComponent implements OnChanges {
     files.forEach(file => {
       this.uploadProgress = 10;
 
-      this.documentService.uploadDocument({
-        file,
-        parentType: 'item',
-        parentId: this.editedDevice.id,
-        documentType: 'other'
+      this.documentService.createDocument({
+        name: file.name,
+        type: 'other',
+        deviceId: this.editedDevice.id,
+        file
       }).subscribe({
-        next: (result) => {
+        next: (result: any) => {
           this.uploadProgress = 100;
           if (result.success) {
             this.loadDocuments(); // Reload list
@@ -176,7 +176,7 @@ export class EditDeviceDialogComponent implements OnChanges {
             this.uploadProgress = 0;
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Upload error:', error);
           alert('Upload failed: ' + error.message);
           this.uploadProgress = 0;
