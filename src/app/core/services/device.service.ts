@@ -89,8 +89,20 @@ export class DeviceService {
   getDevices(): Observable<Device[]> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.get<ApiResponse<Device[]>>('/items').pipe(
-        map(response => response.data || []),
+      return this.apiService.get<any[]>('/items').pipe(
+        map(backendDevices => {
+          // Backend returns array directly, not wrapped in ApiResponse
+          // Map backend field names to frontend field names
+          return backendDevices.map(device => ({
+            ...device,
+            manufacturer: device.brand,  // brand → manufacturer
+            warrantyExpires: device.warrantyExpiry  // warrantyExpiry → warrantyExpires
+          }));
+        }),
+        tap(devices => {
+          // Update the BehaviorSubject
+          this.devices.next(devices);
+        }),
         catchError(error => {
           console.error('Error fetching devices:', error);
           return of([]);
@@ -116,8 +128,16 @@ export class DeviceService {
   getDeviceById(id: string): Observable<Device | null> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.get<ApiResponse<Device>>(`/items/${id}`).pipe(
-        map(response => response.data || null),
+      return this.apiService.get<any>(`/items/${id}`).pipe(
+        map(backendDevice => {
+          if (!backendDevice) return null;
+          // Map backend field names to frontend field names
+          return {
+            ...backendDevice,
+            manufacturer: backendDevice.brand,  // brand → manufacturer
+            warrantyExpires: backendDevice.warrantyExpiry  // warrantyExpiry → warrantyExpires
+          };
+        }),
         catchError(error => {
           console.error('Error fetching device:', error);
           return of(null);
