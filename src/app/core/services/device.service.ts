@@ -57,7 +57,7 @@ export class DeviceService {
    * Get available categories from backend
    */
   getCategories(): Observable<Array<{value: string; label: string; emoji: string}>> {
-    return this.apiService.get<Array<{value: string; label: string; emoji: string}>>('/items/categories').pipe(
+    return this.apiService.get<Array<{value: string; label: string; emoji: string}>>('/items/categories/').pipe(
       catchError(error => {
         console.error('Error fetching categories:', error);
         // Return default categories as fallback
@@ -89,7 +89,7 @@ export class DeviceService {
   getDevices(): Observable<Device[]> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.get<any[]>('/items').pipe(
+      return this.apiService.get<any[]>('/items/').pipe(
         map(backendDevices => {
           // Backend returns array directly, not wrapped in ApiResponse
           // Map backend field names to frontend field names
@@ -194,7 +194,7 @@ export class DeviceService {
         notes: device.notes || undefined
       };
 
-      return this.apiService.post<any>('/items', backendDevice).pipe(
+      return this.apiService.post<any>('/items/', backendDevice).pipe(
         map(response => {
           console.log('Create device response:', response);
           // Backend returns device directly, not wrapped in ApiResponse
@@ -248,7 +248,7 @@ export class DeviceService {
   updateDevice(deviceUpdate: DeviceUpdateRequest): Observable<{ success: boolean; device?: Device; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.put<ApiResponse<Device>>(`/devices/${deviceUpdate.id}`, deviceUpdate).pipe(
+      return this.apiService.put<ApiResponse<Device>>(`/items/${deviceUpdate.id}/`, deviceUpdate).pipe(
         map(response => {
           if (response.success && response.data) {
             // Update local state
@@ -305,7 +305,7 @@ export class DeviceService {
   deleteDevice(id: string): Observable<{ success: boolean; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.delete<ApiResponse<void>>(`/devices/${id}`).pipe(
+      return this.apiService.delete<ApiResponse<void>>(`/items/${id}/`).pipe(
         map(response => {
           if (response.success) {
             // Update local state

@@ -10,11 +10,12 @@
       <h3 class="section-title">Basic Information</h3>
 
       <div class="form-group">
-        <label for="name" class="required">Device Name</label>
+        <label for="name" class="form-label required">Device Name</label>
         <input
           type="text"
           id="name"
           name="name"
+          class="form-input"
           [(ngModel)]="editedDevice.name"
           placeholder="e.g., MacBook Pro 16&quot;"
           required
@@ -23,19 +24,20 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="category" class="required">Category</label>
-          <select id="category" name="category" [(ngModel)]="editedDevice.category" required>
+          <label for="category" class="form-label required">Category</label>
+          <select id="category" name="category" class="form-input" [(ngModel)]="editedDevice.category" required>
             <option value="">Select category...</option>
             <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }} {{ cat.emoji }}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="manufacturer">Manufacturer</label>
+          <label for="manufacturer" class="form-label">Manufacturer</label>
           <input
             type="text"
             id="manufacturer"
             name="manufacturer"
+            class="form-input"
             [(ngModel)]="editedDevice.manufacturer"
             placeholder="e.g., Apple, Sony, Dell"
           />
@@ -44,22 +46,24 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="model">Model</label>
+          <label for="model" class="form-label">Model</label>
           <input
             type="text"
             id="model"
             name="model"
+            class="form-input"
             [(ngModel)]="editedDevice.model"
             placeholder="e.g., M3 Max, XM5"
           />
         </div>
 
         <div class="form-group">
-          <label for="serialNumber">Serial Number</label>
+          <label for="serialNumber" class="form-label">Serial Number</label>
           <input
             type="text"
             id="serialNumber"
             name="serialNumber"
+            class="form-input"
             [(ngModel)]="editedDevice.serialNumber"
             placeholder="Serial number"
           />
@@ -73,24 +77,26 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="purchaseDate" class="required">Purchase Date</label>
+          <label for="purchaseDate" class="form-label required">Purchase Date</label>
           <input
             type="date"
             id="purchaseDate"
             name="purchaseDate"
+            class="form-input"
             [(ngModel)]="editedDevice.purchaseDate"
             required
           />
         </div>
 
         <div class="form-group">
-          <label for="purchasePrice">Purchase Price</label>
+          <label for="purchasePrice" class="form-label">Purchase Price</label>
           <div class="input-group">
             <span class="input-prefix">$</span>
             <input
               type="number"
               id="purchasePrice"
               name="purchasePrice"
+              class="form-input"
               [(ngModel)]="editedDevice.purchasePrice"
               placeholder="0.00"
               min="0"
@@ -107,22 +113,24 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="warrantyExpires" class="required">Warranty Expiration</label>
+          <label for="warrantyExpires" class="form-label required">Warranty Expiration</label>
           <input
             type="date"
             id="warrantyExpires"
             name="warrantyExpires"
+            class="form-input"
             [(ngModel)]="editedDevice.warrantyExpires"
             required
           />
         </div>
 
         <div class="form-group">
-          <label for="warrantyProvider">Warranty Provider</label>
+          <label for="warrantyProvider" class="form-label">Warranty Provider</label>
           <input
             type="text"
             id="warrantyProvider"
             name="warrantyProvider"
+            class="form-input"
             [(ngModel)]="editedDevice.warrantyProvider"
             placeholder="e.g., AppleCare+, Manufacturer"
           />
@@ -135,10 +143,11 @@
       <h3 class="section-title">Additional Notes</h3>
 
       <div class="form-group">
-        <label for="notes">Notes</label>
+        <label for="notes" class="form-label">Notes</label>
         <textarea
           id="notes"
           name="notes"
+          class="form-input form-textarea"
           [(ngModel)]="editedDevice.notes"
           placeholder="Add any additional information..."
           rows="3"
