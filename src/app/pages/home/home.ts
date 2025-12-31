@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ButtonComponent } from '../../shared/components/button/button';
+import { RouterModule } from '@angular/router';
 import { LoginDialogComponent } from '../../shared/components/login-dialog/login-dialog';
 import { SignupDialogComponent } from '../../shared/components/signup-dialog/signup-dialog';
+import { AddDeviceDialogComponent } from '../../shared/components/device-dialogs/add-device-dialog';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { DocumentService } from '../../core/services/document.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,75 +12,31 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonComponent, LoginDialogComponent, SignupDialogComponent],
+  imports: [CommonModule, RouterModule, LoginDialogComponent, SignupDialogComponent, AddDeviceDialogComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
 export class HomeComponent implements OnInit {
-  // Stepper state
-  currentStep = 1;
-  totalSteps = 3;
-
-  // Forms
-  deviceForm: FormGroup;
-
   // Data
   devices: Device[] = [];
   isLoading = false;
-  isSaving = false;
 
-  // Auth dialogs
+  // Dialogs
   isLoginDialogOpen = false;
   isSignupDialogOpen = false;
-  pendingDeviceData: any = null;
-
-  // Categories - will be loaded from backend
-  categories: Array<{value: string; label: string; emoji: string}> = [];
+  isAddDeviceDialogOpen = false;
 
   constructor(
-    private fb: FormBuilder,
     private deviceService: DeviceService,
     public documentService: DocumentService,
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
-  ) {
-    this.deviceForm = this.fb.group({
-      // Step 1: Basic Info
-      name: ['', [Validators.required]],
-      category: ['', [Validators.required]],
-      manufacturer: [''],
-      model: [''],
-
-      // Step 2: Purchase & Warranty
-      purchaseDate: ['', [Validators.required]],
-      purchasePrice: [''],
-      warrantyExpires: ['', [Validators.required]],
-      warrantyProvider: [''],
-
-      // Step 3: Additional Details
-      serialNumber: [''],
-      notes: ['']
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadDevices();
-    this.loadCategories();
-  }
-
-  loadCategories(): void {
-    this.deviceService.getCategories().subscribe({
-      next: (categories) => {
-        console.log('Categories loaded from backend:', categories);
-        this.categories = categories;
-      },
-      error: (error) => {
-        console.error('Error loading categories:', error);
-        // Fallback categories are already handled in the service
-      }
-    });
   }
 
   loadDevices(): void {
@@ -97,118 +53,22 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Stepper navigation
-  nextStep(): void {
-    if (this.currentStep < this.totalSteps) {
-      if (this.validateCurrentStep()) {
-        this.currentStep++;
-      }
-    } else {
-      this.submitDevice();
-    }
-  }
-
-  previousStep(): void {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
-  }
-
-  goToStep(step: number): void {
-    if (step <= this.currentStep || this.validateStepsUpTo(step - 1)) {
-      this.currentStep = step;
-    }
-  }
-
-  validateCurrentStep(): boolean {
-    const controls = this.getStepControls(this.currentStep);
-    let isValid = true;
-
-    controls.forEach(controlName => {
-      const control = this.deviceForm.get(controlName);
-      if (control) {
-        control.markAsTouched();
-        if (control.invalid) {
-          isValid = false;
-        }
-      }
-    });
-
-    return isValid;
-  }
-
-  validateStepsUpTo(step: number): boolean {
-    for (let i = 1; i <= step; i++) {
-      if (!this.validateStep(i)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  validateStep(step: number): boolean {
-    const controls = this.getStepControls(step);
-    return controls.every(controlName => {
-      const control = this.deviceForm.get(controlName);
-      return control ? control.valid : true;
-    });
-  }
-
-  getStepControls(step: number): string[] {
-    switch (step) {
-      case 1:
-        return ['name', 'category'];
-      case 2:
-        return ['purchaseDate', 'warrantyExpires'];
-      case 3:
-        return [];
-      default:
-        return [];
-    }
-  }
-
-  submitDevice(): void {
-    if (this.deviceForm.invalid) {
-      Object.keys(this.deviceForm.controls).forEach(key => {
-        this.deviceForm.get(key)?.markAsTouched();
-      });
-      return;
-    }
-
-    // Check if user is authenticated
+  // Add device dialog
+  openAddDeviceDialog(): void {
     if (!this.authService.isAuthenticated()) {
-      // Store the form data and show login dialog
-      this.pendingDeviceData = this.deviceForm.value;
       this.isLoginDialogOpen = true;
       return;
     }
-
-    // User is authenticated, proceed with creation
-    this.performDeviceCreation(this.deviceForm.value);
+    this.isAddDeviceDialogOpen = true;
   }
 
-  private performDeviceCreation(deviceData: any): void {
-    this.isSaving = true;
+  closeAddDeviceDialog(): void {
+    this.isAddDeviceDialogOpen = false;
+  }
 
-    this.deviceService.createDevice(deviceData).subscribe({
-      next: (result) => {
-        if (result.success) {
-          this.deviceForm.reset();
-          this.currentStep = 1;
-          this.isSaving = false;
-          // Reload the page to show the newly created device
-          window.location.reload();
-        } else {
-          alert('Failed to create device: ' + (result.error || 'Unknown error'));
-          this.isSaving = false;
-        }
-      },
-      error: (error) => {
-        console.error('Error creating device:', error);
-        alert('Failed to create device');
-        this.isSaving = false;
-      }
-    });
+  onDeviceAdded(): void {
+    this.closeAddDeviceDialog();
+    this.loadDevices();
   }
 
   // Device actions
@@ -219,20 +79,9 @@ export class HomeComponent implements OnInit {
   }
 
   editDevice(device: Device): void {
-    // Populate form with device data
-    this.deviceForm.patchValue({
-      name: device.name,
-      category: device.category,
-      manufacturer: device.manufacturer,
-      model: device.model,
-      purchaseDate: device.purchaseDate,
-      purchasePrice: device.purchasePrice,
-      warrantyExpires: device.warrantyExpires,
-      warrantyProvider: device.warrantyProvider,
-      serialNumber: device.serialNumber,
-      notes: device.notes
+    this.router.navigate(['/dashboard'], {
+      queryParams: { deviceId: device.id, mode: 'edit' }
     });
-    this.currentStep = 1;
   }
 
   deleteDevice(device: Device): void {
@@ -294,60 +143,29 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.deviceForm.get(fieldName);
-    return !!(field && field.invalid && field.touched);
-  }
-
   // Auth dialog handlers
   onLoginSuccess(): void {
-    console.log('onLoginSuccess called, isLoginDialogOpen before:', this.isLoginDialogOpen);
-
-    // Run in Angular zone to ensure change detection
     this.ngZone.run(() => {
       this.isLoginDialogOpen = false;
-      console.log('onLoginSuccess: Set isLoginDialogOpen to false');
-
-      // Force immediate check
-      setTimeout(() => {
-        console.log('After timeout, isLoginDialogOpen:', this.isLoginDialogOpen);
-      }, 100);
-
-      // User successfully logged in, create the device if there's pending data
-      if (this.pendingDeviceData) {
-        this.performDeviceCreation(this.pendingDeviceData);
-        this.pendingDeviceData = null;
-      }
+      // Open add device dialog after successful login
+      this.isAddDeviceDialogOpen = true;
     });
   }
 
   onSignupSuccess(): void {
-    // Run in Angular zone to ensure change detection
     this.ngZone.run(() => {
       this.isSignupDialogOpen = false;
-
-      // User successfully signed up, create the device if there's pending data
-      if (this.pendingDeviceData) {
-        this.performDeviceCreation(this.pendingDeviceData);
-        this.pendingDeviceData = null;
-      }
+      // Open add device dialog after successful signup
+      this.isAddDeviceDialogOpen = true;
     });
   }
 
   closeLoginDialog(): void {
     this.isLoginDialogOpen = false;
-    // Clear pending data if user cancels login
-    if (!this.authService.isAuthenticated()) {
-      this.pendingDeviceData = null;
-    }
   }
 
   closeSignupDialog(): void {
     this.isSignupDialogOpen = false;
-    // Clear pending data if user cancels signup
-    if (!this.authService.isAuthenticated()) {
-      this.pendingDeviceData = null;
-    }
   }
 
   switchToSignup(): void {

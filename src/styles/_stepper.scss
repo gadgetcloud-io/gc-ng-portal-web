@@ -1,0 +1,98 @@
+/**
+ * Shared Stepper Styles
+ * Reusable stepper component styling for multi-step forms
+ */
+
+// ===== STEPPER =====
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #e5e7eb;
+    z-index: 0;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+
+    .step-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: all 0.2s;
+
+      .step-number {
+        font-size: 1.125rem;
+        color: #6b7280;
+      }
+
+      .step-check {
+        font-size: 1.25rem;
+        color: white;
+      }
+    }
+
+    .step-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-align: center;
+      transition: color 0.2s;
+    }
+
+    &.active {
+      .step-circle {
+        background: linear-gradient(135deg, #06b6d4, #3b82f6);
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+
+        .step-number {
+          color: white;
+        }
+      }
+
+      .step-label {
+        color: #1e3a8a;
+        font-weight: 600;
+      }
+    }
+
+    &.completed {
+      .step-circle {
+        background: linear-gradient(135deg, #06b6d4, #3b82f6);
+        border-color: #3b82f6;
+      }
+
+      .step-label {
+        color: #2563eb;
+      }
+    }
+  }
+}
+
+// Stepper form step animation
+.form-step {
+  min-height: 300px;
+}

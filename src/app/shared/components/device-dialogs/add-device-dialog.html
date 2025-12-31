@@ -1,97 +1,112 @@
 <gc-modal [isOpen]="isOpen" [title]="'Add New Device'" [maxWidth]="'lg'" (close)="onClose()">
-  <form (ngSubmit)="onSubmit()" class="device-form">
-    <!-- Error Message -->
-    <div *ngIf="error" class="error-message">
-      {{ error }}
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div
+      *ngFor="let step of [1, 2, 3]"
+      class="step"
+      [class.active]="currentStep === step"
+      [class.completed]="currentStep > step"
+      (click)="goToStep(step)"
+    >
+      <div class="step-circle">
+        <span *ngIf="currentStep <= step" class="step-number">{{ step }}</span>
+        <span *ngIf="currentStep > step" class="step-check">✓</span>
+      </div>
+      <div class="step-label">
+        <span *ngIf="step === 1">Basic Info</span>
+        <span *ngIf="step === 2">Warranty</span>
+        <span *ngIf="step === 3">Details</span>
+      </div>
     </div>
+  </div>
 
-    <!-- Basic Information -->
-    <div class="form-section">
-      <h3 class="section-title">Basic Information</h3>
-
+  <!-- Form -->
+  <form [formGroup]="deviceForm" class="device-form">
+    <!-- Step 1: Basic Info -->
+    <div *ngIf="currentStep === 1" class="form-step">
       <div class="form-group">
-        <label for="name" class="required">Device Name</label>
+        <label class="form-label">Device Name *</label>
         <input
           type="text"
-          id="name"
-          name="name"
-          [(ngModel)]="device.name"
+          formControlName="name"
+          class="form-input"
+          [class.invalid]="isFieldInvalid('name')"
           placeholder="e.g., MacBook Pro 16&quot;"
-          required
         />
+        <span *ngIf="isFieldInvalid('name')" class="error-text">
+          Device name is required
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select
+          formControlName="category"
+          class="form-input"
+          [class.invalid]="isFieldInvalid('category')"
+        >
+          <option value="">Select category</option>
+          <option *ngFor="let cat of categories" [value]="cat.value">
+            {{ cat.label }} {{ cat.emoji }}
+          </option>
+        </select>
+        <span *ngIf="isFieldInvalid('category')" class="error-text">
+          Category is required
+        </span>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="category" class="required">Category</label>
-          <select id="category" name="category" [(ngModel)]="device.category" required>
-            <option value="">Select category...</option>
-            <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }} {{ cat.emoji }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="manufacturer">Manufacturer</label>
+          <label class="form-label">Manufacturer</label>
           <input
             type="text"
-            id="manufacturer"
-            name="manufacturer"
-            [(ngModel)]="device.manufacturer"
-            placeholder="e.g., Apple, Sony, Dell"
-          />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="model">Model</label>
-          <input
-            type="text"
-            id="model"
-            name="model"
-            [(ngModel)]="device.model"
-            placeholder="e.g., M3 Max, XM5"
+            formControlName="manufacturer"
+            class="form-input"
+            placeholder="e.g., Apple"
           />
         </div>
 
         <div class="form-group">
-          <label for="serialNumber">Serial Number</label>
+          <label class="form-label">Model</label>
           <input
             type="text"
-            id="serialNumber"
-            name="serialNumber"
-            [(ngModel)]="device.serialNumber"
-            placeholder="Serial number"
+            formControlName="model"
+            class="form-input"
+            placeholder="e.g., M3 Max"
           />
         </div>
       </div>
     </div>
 
-    <!-- Purchase Information -->
-    <div class="form-section">
-      <h3 class="section-title">Purchase Information</h3>
-
+    <!-- Step 2: Purchase & Warranty -->
+    <div *ngIf="currentStep === 2" class="form-step">
       <div class="form-row">
         <div class="form-group">
-          <label for="purchaseDate" class="required">Purchase Date</label>
+          <label class="form-label">Purchase Date *</label>
           <input
             type="date"
-            id="purchaseDate"
-            name="purchaseDate"
-            [(ngModel)]="device.purchaseDate"
-            required
+            formControlName="purchaseDate"
+            class="form-input"
+            [class.invalid]="isFieldInvalid('purchaseDate')"
           />
+          <span *ngIf="isFieldInvalid('purchaseDate')" class="error-text">
+            Purchase date is required
+          </span>
         </div>
 
         <div class="form-group">
-          <label for="purchasePrice">Purchase Price</label>
+          <label class="form-label">Purchase Price</label>
           <div class="input-group">
             <span class="input-prefix">$</span>
             <input
               type="number"
-              id="purchasePrice"
-              name="purchasePrice"
-              [(ngModel)]="device.purchasePrice"
+              formControlName="purchasePrice"
+              class="form-input"
               placeholder="0.00"
               min="0"
               step="0.01"
@@ -99,49 +114,52 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Warranty Information -->
-    <div class="form-section">
-      <h3 class="section-title">Warranty Information</h3>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="warrantyExpires" class="required">Warranty Expiration</label>
+          <label class="form-label">Warranty Expires *</label>
           <input
             type="date"
-            id="warrantyExpires"
-            name="warrantyExpires"
-            [(ngModel)]="device.warrantyExpires"
-            required
+            formControlName="warrantyExpires"
+            class="form-input"
+            [class.invalid]="isFieldInvalid('warrantyExpires')"
           />
+          <span *ngIf="isFieldInvalid('warrantyExpires')" class="error-text">
+            Warranty expiration is required
+          </span>
         </div>
 
         <div class="form-group">
-          <label for="warrantyProvider">Warranty Provider</label>
+          <label class="form-label">Warranty Provider</label>
           <input
             type="text"
-            id="warrantyProvider"
-            name="warrantyProvider"
-            [(ngModel)]="device.warrantyProvider"
-            placeholder="e.g., AppleCare+, Manufacturer"
+            formControlName="warrantyProvider"
+            class="form-input"
+            placeholder="e.g., AppleCare+"
           />
         </div>
       </div>
     </div>
 
-    <!-- Additional Notes -->
-    <div class="form-section">
-      <h3 class="section-title">Additional Notes</h3>
+    <!-- Step 3: Additional Details -->
+    <div *ngIf="currentStep === 3" class="form-step">
+      <div class="form-group">
+        <label class="form-label">Serial Number</label>
+        <input
+          type="text"
+          formControlName="serialNumber"
+          class="form-input"
+          placeholder="e.g., C02YX3ABMD6T"
+        />
+      </div>
 
       <div class="form-group">
-        <label for="notes">Notes</label>
+        <label class="form-label">Notes</label>
         <textarea
-          id="notes"
-          name="notes"
-          [(ngModel)]="device.notes"
-          placeholder="Add any additional information..."
-          rows="3"
+          formControlName="notes"
+          class="form-input form-textarea"
+          rows="4"
+          placeholder="Add any additional notes about this device..."
         ></textarea>
       </div>
     </div>
@@ -149,19 +167,23 @@
     <!-- Form Actions -->
     <div class="form-actions">
       <gc-button
-        type="button"
+        *ngIf="currentStep > 1"
         variant="secondary"
-        (click)="onClose()"
+        (onClick)="previousStep()"
         [disabled]="isSubmitting"
       >
-        Cancel
+        Back
       </gc-button>
+
       <gc-button
-        type="submit"
         variant="primary"
+        (onClick)="nextStep()"
         [disabled]="isSubmitting"
+        class="next-button"
       >
-        {{ isSubmitting ? 'Adding...' : 'Add Device' }}
+        <span *ngIf="currentStep < totalSteps">Next Step</span>
+        <span *ngIf="currentStep === totalSteps && !isSubmitting">Add Device</span>
+        <span *ngIf="isSubmitting">Adding...</span>
       </gc-button>
     </div>
   </form>

@@ -1,16 +1,15 @@
+/**
+ * Delete Device Dialog Styles
+ * Imports shared error-message style, adds delete-specific styles
+ */
+
+// Import shared styles (only error message)
+@import '../../../../styles/dialog-forms';
+
 .delete-dialog {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
-
-.error-message {
-  padding: 0.75rem 1rem;
-  background: #fee;
-  border: 1px solid #fcc;
-  border-radius: 8px;
-  color: #c33;
-  font-size: 0.875rem;
 }
 
 .confirmation-content {
@@ -82,6 +81,14 @@
       background: #c53030 !important;
     }
   }
+
+  @media (max-width: 640px) {
+    flex-direction: column-reverse;
+
+    gc-button {
+      width: 100%;
+    }
+  }
 }
 
 @keyframes pulse {
@@ -90,15 +97,5 @@
   }
   50% {
     transform: scale(1.1);
-  }
-}
-
-@media (max-width: 640px) {
-  .dialog-actions {
-    flex-direction: column-reverse;
-
-    gc-button {
-      width: 100%;
-    }
   }
 }
