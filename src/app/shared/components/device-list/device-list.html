@@ -1,7 +1,7 @@
 <div class="device-list-container">
   <!-- Header -->
   <div *ngIf="showHeader" class="list-header">
-    <h2 class="list-title">Recent Devices</h2>
+    <h2 class="list-title">Recent Gadgets</h2>
     <span class="device-count">{{ devices.length }} total</span>
   </div>
 
@@ -21,10 +21,10 @@
     </gc-button>
   </div>
 
-  <!-- Devices List -->
+  <!-- Gadgets List -->
   <div *ngIf="!isLoading && devices.length > 0" class="devices-grid">
     <gc-device-card
-      *ngFor="let device of displayedDevices"
+      *ngFor="let device of displayedGadgets"
       [device]="device"
       (view)="onViewDevice($event)"
       (edit)="onEditDevice($event)"

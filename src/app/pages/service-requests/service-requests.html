@@ -4,7 +4,7 @@
     <div class="header-content">
       <div class="header-text">
         <h1 class="page-title">My Service Requests</h1>
-        <p class="page-subtitle">Track and manage your device service requests</p>
+        <p class="page-subtitle">Track and manage your gadget service requests</p>
       </div>
       <gc-button variant="primary" size="md" (click)="openNewRequestDialog()">
         ➕ New Request
@@ -49,7 +49,7 @@
     <div *ngIf="!isLoading && filteredRequests.length === 0 && serviceRequests.length === 0" class="empty-state">
       <div class="empty-icon">📋</div>
       <h2 class="empty-title">No service requests yet</h2>
-      <p class="empty-text">Create your first service request to get support for your devices</p>
+      <p class="empty-text">Create your first service request to get support for your gadgets</p>
       <gc-button variant="primary" size="lg" (click)="openNewRequestDialog()">
         ➕ Create Service Request
       </gc-button>
@@ -84,9 +84,9 @@
           <div class="request-id">#{{ request.id }}</div>
           <h3 class="request-subject">{{ request.subject }}</h3>
           <p class="request-description">{{ request.description }}</p>
-          <div class="request-device">
-            <span class="device-icon">📱</span>
-            <span>{{ request.deviceName }}</span>
+          <div class="request-gadget">
+            <span class="gadget-icon">📱</span>
+            <span>{{ request.gadgetName }}</span>
           </div>
         </div>
 

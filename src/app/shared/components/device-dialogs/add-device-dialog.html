@@ -1,4 +1,4 @@
-<gc-modal [isOpen]="isOpen" [title]="'Add New Device'" [maxWidth]="'lg'" (close)="onClose()">
+<gc-modal [isOpen]="isOpen" [title]="'Add New Gadget'" [maxWidth]="'lg'" (close)="onClose()">
   <!-- Error Message -->
   <div *ngIf="error" class="error-message">
     {{ error }}
@@ -30,7 +30,7 @@
     <!-- Step 1: Basic Info -->
     <div *ngIf="currentStep === 1" class="form-step">
       <div class="form-group">
-        <label class="form-label">Device Name *</label>
+        <label class="form-label">Gadget Name *</label>
         <input
           type="text"
           formControlName="name"
@@ -39,7 +39,7 @@
           placeholder="e.g., MacBook Pro 16&quot;"
         />
         <span *ngIf="isFieldInvalid('name')" class="error-text">
-          Device name is required
+          Gadget name is required
         </span>
       </div>
 
@@ -182,7 +182,7 @@
         class="next-button"
       >
         <span *ngIf="currentStep < totalSteps">Next Step</span>
-        <span *ngIf="currentStep === totalSteps && !isSubmitting">Add Device</span>
+        <span *ngIf="currentStep === totalSteps && !isSubmitting">Add Gadget</span>
         <span *ngIf="isSubmitting">Adding...</span>
       </gc-button>
     </div>

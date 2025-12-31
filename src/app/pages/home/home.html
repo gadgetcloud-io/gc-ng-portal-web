@@ -5,53 +5,53 @@
       <div class="actions-section">
         <div class="actions-header">
           <h2 class="actions-title">Quick Actions</h2>
-          <p class="actions-subtitle">Manage your devices and warranties</p>
+          <p class="actions-subtitle">Manage your gadgets and warranties</p>
         </div>
 
         <div class="action-cards">
-          <div class="action-card" (click)="openAddDeviceDialog()">
+          <div class="action-card" (click)="openAddGadgetDialog()">
             <div class="action-icon">➕</div>
-            <h3 class="action-title">Add New Device</h3>
-            <p class="action-description">Track your device warranties in 3 simple steps</p>
+            <h3 class="action-title">Add New Gadget</h3>
+            <p class="action-description">Track your gadget warranties in 3 simple steps</p>
           </div>
 
           <div class="action-card" routerLink="/dashboard">
             <div class="action-icon">📱</div>
-            <h3 class="action-title">View All Devices</h3>
-            <p class="action-description">See all your devices and their warranty status</p>
+            <h3 class="action-title">View All Gadgets</h3>
+            <p class="action-description">See all your gadgets and their warranty status</p>
           </div>
 
           <div class="action-card" *ngIf="!authService.isAuthenticated()" (click)="isLoginDialogOpen = true">
             <div class="action-icon">🔐</div>
             <h3 class="action-title">Sign In</h3>
-            <p class="action-description">Access your account and manage devices</p>
+            <p class="action-description">Access your account and manage gadgets</p>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT SIDE: Device List -->
+      <!-- RIGHT SIDE: Gadget List -->
       <div class="list-section">
         <div class="list-header">
-          <h2 class="list-title">Recent Devices</h2>
-          <span class="device-count">{{ devices.length }} device{{ devices.length !== 1 ? 's' : '' }}</span>
+          <h2 class="list-title">Recent Gadgets</h2>
+          <span class="device-count">{{ gadgets.length }} device{{ gadgets.length !== 1 ? 's' : '' }}</span>
         </div>
 
         <!-- Loading State -->
         <div *ngIf="isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>Loading devices...</p>
+          <p>Loading gadgets...</p>
         </div>
 
         <!-- Empty State -->
-        <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
+        <div *ngIf="!isLoading && gadgets.length === 0" class="empty-state">
           <div class="empty-icon">📦</div>
-          <h3>No devices yet</h3>
-          <p>Click "Add New Device" to get started</p>
+          <h3>No gadgets yet</h3>
+          <p>Click "Add New Gadget" to get started</p>
         </div>
 
-        <!-- Device List -->
-        <div *ngIf="!isLoading && devices.length > 0" class="device-list">
-          <div *ngFor="let device of devices" class="device-card">
+        <!-- Gadget List -->
+        <div *ngIf="!isLoading && gadgets.length > 0" class="device-list">
+          <div *ngFor="let device of gadgets" class="device-card">
             <div class="device-info">
               <div class="device-icon">{{ device.image || '📦' }}</div>
               <div class="device-details">
@@ -73,14 +73,14 @@
             <div class="device-actions">
               <button
                 class="action-btn view-btn"
-                (click)="viewDevice(device)"
+                (click)="viewGadget(device)"
                 title="View Details"
               >
                 👁️
               </button>
               <button
                 class="action-btn edit-btn"
-                (click)="editDevice(device)"
+                (click)="editGadget(device)"
                 title="Edit"
               >
                 ✏️
@@ -94,7 +94,7 @@
               </button>
               <button
                 class="action-btn delete-btn"
-                (click)="deleteDevice(device)"
+                (click)="deleteGadget(device)"
                 title="Delete"
               >
                 🗑️
@@ -104,9 +104,9 @@
         </div>
 
         <!-- View All Link -->
-        <div *ngIf="!isLoading && devices.length > 0" class="view-all">
+        <div *ngIf="!isLoading && gadgets.length > 0" class="view-all">
           <a routerLink="/dashboard" class="view-all-link">
-            View all devices →
+            View all gadgets →
           </a>
         </div>
       </div>
@@ -114,11 +114,11 @@
   </div>
 </div>
 
-<!-- Add Device Dialog -->
+<!-- Add Gadget Dialog -->
 <gc-add-device-dialog
-  [isOpen]="isAddDeviceDialogOpen"
-  (close)="closeAddDeviceDialog()"
-  (deviceAdded)="onDeviceAdded()"
+  [isOpen]="isAddGadgetDialogOpen"
+  (close)="closeAddGadgetDialog()"
+  (deviceAdded)="onGadgetAdded()"
 ></gc-add-device-dialog>
 
 <!-- Auth Dialogs -->

@@ -10,7 +10,7 @@
           <p class="user-email">{{ userInfo.email }}</p>
           <div class="user-badges">
             <span class="badge badge-primary">{{ userInfo.role }}</span>
-            <span class="badge badge-secondary">{{ userInfo.devicesCount }} Devices</span>
+            <span class="badge badge-secondary">{{ userInfo.gadgetsCount }} Gadgets</span>
           </div>
         </div>
         <div class="header-actions">
@@ -98,7 +98,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <h3 class="setting-title">Email Notifications</h3>
-                <p class="setting-description">Receive email updates about your devices and services</p>
+                <p class="setting-description">Receive email updates about your gadgets and services</p>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" checked />
@@ -193,8 +193,8 @@
             </div>
 
             <div class="info-item">
-              <span class="info-label">Total Devices</span>
-              <span class="info-value">{{ userInfo.devicesCount }} devices</span>
+              <span class="info-label">Total Gadgets</span>
+              <span class="info-value">{{ userInfo.gadgetsCount }} gadgets</span>
             </div>
 
             <div class="danger-zone">
@@ -209,33 +209,33 @@
       </div>
     </div>
 
-    <!-- My Devices Section -->
-    <section class="devices-section">
+    <!-- My Gadgets Section -->
+    <section class="gadgets-section">
       <div class="section-header-with-action">
         <div>
-          <h2 class="section-title-large">My Devices</h2>
-          <p class="section-description">Manage your registered devices and warranties</p>
+          <h2 class="section-title-large">My Gadgets</h2>
+          <p class="section-description">Manage your registered gadgets and warranties</p>
         </div>
         <gc-button variant="primary" size="md" (click)="openAddDialog()">
-          ➕ Add Device
+          ➕ Add Gadget
         </gc-button>
       </div>
 
-      <!-- Device Stats -->
+      <!-- Gadget Stats -->
       <div class="stats-container">
         <gc-device-stats [stats]="stats"></gc-device-stats>
       </div>
 
-      <!-- Device List -->
-      <div class="devices-container">
+      <!-- Gadget List -->
+      <div class="gadgets-container">
         <gc-device-list
-          [devices]="devices"
-          [isLoading]="isLoadingDevices"
+          [gadgets]="gadgets"
+          [isLoading]="isLoadingGadgets"
           [showHeader]="false"
-          (addDevice)="openAddDialog()"
-          (viewDevice)="onViewDevice($event)"
-          (editDevice)="openEditDialog($event)"
-          (deleteDevice)="onDeleteDevice($event)"
+          (addGadget)="openAddDialog()"
+          (viewGadget)="onViewGadget($event)"
+          (editGadget)="openEditDialog($event)"
+          (deleteGadget)="onDeleteGadget($event)"
           (viewDocuments)="openViewDocumentsDialog($event)"
         ></gc-device-list>
       </div>
@@ -254,26 +254,26 @@
 <gc-add-device-dialog
   [isOpen]="isAddDialogOpen"
   (close)="closeAddDialog()"
-  (deviceAdded)="onDeviceAdded()"
+  (deviceAdded)="onGadgetAdded()"
 ></gc-add-device-dialog>
 
 <gc-edit-device-dialog
   [isOpen]="isEditDialogOpen"
-  [device]="selectedDevice"
+  [device]="selectedGadget"
   (close)="closeEditDialog()"
-  (deviceUpdated)="onDeviceUpdated()"
+  (deviceUpdated)="onGadgetUpdated()"
 ></gc-edit-device-dialog>
 
 <gc-delete-device-dialog
   [isOpen]="isDeleteDialogOpen"
-  [device]="selectedDevice"
+  [device]="selectedGadget"
   (close)="closeDeleteDialog()"
-  (deviceDeleted)="onDeviceDeleted()"
+  (deviceDeleted)="onGadgetDeleted()"
 ></gc-delete-device-dialog>
 
 <gc-view-documents-dialog
   [isOpen]="isViewDocumentsDialogOpen"
-  [deviceId]="selectedDeviceForDocs?.id"
-  [deviceName]="selectedDeviceForDocs?.name"
+  [deviceId]="selectedGadgetForDocs?.id"
+  [deviceName]="selectedGadgetForDocs?.name"
   (close)="closeViewDocumentsDialog()"
 ></gc-view-documents-dialog>

@@ -1,4 +1,4 @@
-<gc-modal [isOpen]="isOpen" [title]="'Edit Device'" [maxWidth]="'lg'" (close)="onClose()">
+<gc-modal [isOpen]="isOpen" [title]="'Edit Gadget'" [maxWidth]="'lg'" (close)="onClose()">
   <!-- Error Message -->
   <div *ngIf="error" class="error-message">
     {{ error }}
@@ -13,7 +13,7 @@
       (click)="currentTab = 'basic'"
     >
       <span class="tab-icon">📱</span>
-      <span class="tab-label">Device Info</span>
+      <span class="tab-label">Gadget Info</span>
     </button>
     <button
       type="button"
@@ -49,13 +49,13 @@
     <div *ngIf="currentTab === 'basic'" class="tab-content">
 
       <div class="form-group">
-        <label for="name" class="form-label required">Device Name</label>
+        <label for="name" class="form-label required">Gadget Name</label>
         <input
           type="text"
           id="name"
           name="name"
           class="form-input"
-          [(ngModel)]="editedDevice.name"
+          [(ngModel)]="editedGadget.name"
           placeholder="e.g., MacBook Pro 16&quot;"
           required
         />
@@ -64,7 +64,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="category" class="form-label required">Category</label>
-          <select id="category" name="category" class="form-input" [(ngModel)]="editedDevice.category" required>
+          <select id="category" name="category" class="form-input" [(ngModel)]="editedGadget.category" required>
             <option value="">Select category...</option>
             <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }} {{ cat.emoji }}</option>
           </select>
@@ -77,7 +77,7 @@
             id="manufacturer"
             name="manufacturer"
             class="form-input"
-            [(ngModel)]="editedDevice.manufacturer"
+            [(ngModel)]="editedGadget.manufacturer"
             placeholder="e.g., Apple, Sony, Dell"
           />
         </div>
@@ -91,7 +91,7 @@
             id="model"
             name="model"
             class="form-input"
-            [(ngModel)]="editedDevice.model"
+            [(ngModel)]="editedGadget.model"
             placeholder="e.g., M3 Max, XM5"
           />
         </div>
@@ -103,7 +103,7 @@
             id="serialNumber"
             name="serialNumber"
             class="form-input"
-            [(ngModel)]="editedDevice.serialNumber"
+            [(ngModel)]="editedGadget.serialNumber"
             placeholder="Serial number"
           />
         </div>
@@ -121,7 +121,7 @@
             id="purchaseDate"
             name="purchaseDate"
             class="form-input"
-            [(ngModel)]="editedDevice.purchaseDate"
+            [(ngModel)]="editedGadget.purchaseDate"
             required
           />
         </div>
@@ -135,7 +135,7 @@
               id="purchasePrice"
               name="purchasePrice"
               class="form-input"
-              [(ngModel)]="editedDevice.purchasePrice"
+              [(ngModel)]="editedGadget.purchasePrice"
               placeholder="0.00"
               min="0"
               step="0.01"
@@ -152,7 +152,7 @@
             id="warrantyExpires"
             name="warrantyExpires"
             class="form-input"
-            [(ngModel)]="editedDevice.warrantyExpires"
+            [(ngModel)]="editedGadget.warrantyExpires"
             required
           />
         </div>
@@ -164,7 +164,7 @@
             id="warrantyProvider"
             name="warrantyProvider"
             class="form-input"
-            [(ngModel)]="editedDevice.warrantyProvider"
+            [(ngModel)]="editedGadget.warrantyProvider"
             placeholder="e.g., AppleCare+, Manufacturer"
           />
         </div>
@@ -180,7 +180,7 @@
           id="notes"
           name="notes"
           class="form-input form-textarea"
-          [(ngModel)]="editedDevice.notes"
+          [(ngModel)]="editedGadget.notes"
           placeholder="Add any additional information..."
           rows="3"
         ></textarea>
@@ -192,7 +192,7 @@
       <!-- Upload Section -->
       <div class="upload-section">
         <div class="upload-header">
-          <h4 class="upload-title">Device Documents</h4>
+          <h4 class="upload-title">Gadget Documents</h4>
           <button type="button" class="upload-button" (click)="fileInput.click()">
             <span class="upload-icon">📎</span>
             Upload Document

@@ -261,6 +261,12 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.isViewDocumentsDialogOpen = true;
   }
 
+  openDocumentsDialog(device: Device): void {
+    // Combined documents dialog - opens view documents which includes upload functionality
+    this.selectedDeviceForDocs = device;
+    this.isViewDocumentsDialogOpen = true;
+  }
+
   openDeleteDocumentDialog(document: Document): void {
     this.selectedDocument = document;
     this.isDeleteDocumentDialogOpen = true;
