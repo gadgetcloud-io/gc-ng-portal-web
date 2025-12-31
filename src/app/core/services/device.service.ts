@@ -117,13 +117,36 @@ export class DeviceService {
   createDevice(device: DeviceCreateRequest): Observable<{ success: boolean; device?: Device; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.post<ApiResponse<Device>>('/items', device).pipe(
+      // Map frontend field names to backend field names
+      const backendDevice = {
+        name: device.name,
+        category: device.category,
+        brand: device.manufacturer || undefined,  // manufacturer → brand
+        model: device.model || undefined,
+        serialNumber: device.serialNumber || undefined,
+        purchaseDate: device.purchaseDate,
+        purchasePrice: device.purchasePrice || undefined,
+        warrantyExpiry: device.warrantyExpires,  // warrantyExpires → warrantyExpiry
+        warrantyProvider: device.warrantyProvider || undefined,
+        notes: device.notes || undefined
+      };
+
+      return this.apiService.post<any>('/items', backendDevice).pipe(
         map(response => {
-          if (response.success && response.data) {
+          console.log('Create device response:', response);
+          // Backend returns device directly, not wrapped in ApiResponse
+          if (response && response.id) {
+            // Map backend fields to frontend fields
+            const frontendDevice: Device = {
+              ...response,
+              manufacturer: response.brand,  // brand → manufacturer
+              warrantyExpires: response.warrantyExpiry  // warrantyExpiry → warrantyExpires
+            };
+
             // Update local state
             const currentDevices = this.devices.value;
-            this.devices.next([...currentDevices, response.data]);
-            return { success: true, device: response.data };
+            this.devices.next([...currentDevices, frontendDevice]);
+            return { success: true, device: frontendDevice };
           }
           return { success: false, error: response.error || 'Failed to create device' };
         }),
