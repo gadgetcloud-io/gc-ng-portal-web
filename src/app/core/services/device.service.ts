@@ -248,7 +248,7 @@ export class DeviceService {
   updateDevice(deviceUpdate: DeviceUpdateRequest): Observable<{ success: boolean; device?: Device; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.put<ApiResponse<Device>>(`/items/${deviceUpdate.id}/`, deviceUpdate).pipe(
+      return this.apiService.put<ApiResponse<Device>>(`/items/${deviceUpdate.id}`, deviceUpdate).pipe(
         map(response => {
           if (response.success && response.data) {
             // Update local state
@@ -305,7 +305,7 @@ export class DeviceService {
   deleteDevice(id: string): Observable<{ success: boolean; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.delete<ApiResponse<void>>(`/items/${id}/`).pipe(
+      return this.apiService.delete<ApiResponse<void>>(`/items/${id}`).pipe(
         map(response => {
           if (response.success) {
             // Update local state
