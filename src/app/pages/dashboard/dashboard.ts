@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
@@ -12,6 +12,8 @@ import { UploadDocumentDialogComponent } from '../../shared/components/document-
 import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
 import { DeleteDocumentDialogComponent } from '../../shared/components/document-dialogs/delete-document-dialog';
 import { DocumentService, Document } from '../../core/services/document.service';
+import { DeviceStatsComponent, DeviceStat } from '../../shared/components/device-stats/device-stats';
+import { DeviceListComponent } from '../../shared/components/device-list/device-list';
 
 interface Activity {
   id: string;
@@ -27,14 +29,15 @@ interface Activity {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     ButtonComponent,
     AddDeviceDialogComponent,
     EditDeviceDialogComponent,
     DeleteDeviceDialogComponent,
     UploadDocumentDialogComponent,
     ViewDocumentsDialogComponent,
-    DeleteDocumentDialogComponent
+    DeleteDocumentDialogComponent,
+    DeviceStatsComponent,
+    DeviceListComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
@@ -95,14 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  stats: Array<{
-    label: string;
-    value: string;
-    change: string;
-    trend: 'up' | 'down' | 'neutral';
-    icon: string;
-    color: string;
-  }> = [
+  stats: DeviceStat[] = [
     {
       label: 'Total Devices',
       value: '0',
@@ -161,10 +157,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.stats[3].trend = expired > 0 ? 'down' : 'up';
   }
 
-  get recentDevices(): Device[] {
-    // Return the most recent 4 devices
-    return this.devices.slice(0, 4);
-  }
 
   recentActivity: Activity[] = [
     {
@@ -255,31 +247,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   ];
 
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'status-active';
-      case 'expiring-soon':
-        return 'status-warning';
-      case 'expired':
-        return 'status-danger';
-      default:
-        return '';
-    }
-  }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'Active';
-      case 'expiring-soon':
-        return 'Expiring Soon';
-      case 'expired':
-        return 'Expired';
-      default:
-        return status;
-    }
-  }
 
   getPriorityColor(priority: string): string {
     switch (priority) {
@@ -326,8 +293,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.isEditDialogOpen = true;
   }
 
-  openDeleteDialog(device: Device, event: Event): void {
-    event.stopPropagation(); // Prevent triggering onViewDevice
+  onDeleteDevice(device: Device): void {
     this.selectedDevice = device;
     this.isDeleteDialogOpen = true;
   }

@@ -1,0 +1,36 @@
+<div class="device-card" (click)="onCardClick()">
+  <div class="device-icon">{{ device.image }}</div>
+  <div class="device-info">
+    <h3 class="device-name">{{ device.name }}</h3>
+    <p class="device-category">{{ device.category }}</p>
+  </div>
+  <div class="device-status">
+    <span class="status-badge" [class]="getStatusColor(device.status)">
+      {{ getStatusLabel(device.status) }}
+    </span>
+    <p class="warranty-date">Expires: {{ device.warrantyExpires }}</p>
+  </div>
+  <div class="device-actions" *ngIf="showActions">
+    <button
+      class="icon-button docs-button"
+      (click)="onViewDocuments($event)"
+      title="View documents"
+    >
+      📄
+    </button>
+    <button
+      class="icon-button edit-button"
+      (click)="onEdit($event)"
+      title="Edit device"
+    >
+      ✏️
+    </button>
+    <button
+      class="icon-button delete-button"
+      (click)="onDelete($event)"
+      title="Delete device"
+    >
+      🗑️
+    </button>
+  </div>
+</div>

@@ -16,18 +16,7 @@
 <!-- Stats Grid -->
 <section class="stats-section">
   <div class="container">
-    <div class="stats-grid">
-      <div *ngFor="let stat of stats" class="stat-card" [class]="'stat-' + stat.color">
-        <div class="stat-icon">{{ stat.icon }}</div>
-        <div class="stat-content">
-          <div class="stat-value">{{ stat.value }}</div>
-          <div class="stat-label">{{ stat.label }}</div>
-          <div class="stat-change" [class]="'trend-' + stat.trend">
-            {{ stat.change }}
-          </div>
-        </div>
-      </div>
-    </div>
+    <gc-device-stats [stats]="stats"></gc-device-stats>
   </div>
 </section>
 
@@ -37,66 +26,16 @@
     <div class="content-grid">
       <!-- Recent Devices -->
       <div class="content-card devices-card">
-        <div class="card-header">
-          <h2 class="card-title">Recent Devices</h2>
-          <span class="device-count">{{ devices.length }} total</span>
-        </div>
-
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Loading devices...</p>
-        </div>
-
-        <!-- Empty State -->
-        <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
-          <div class="empty-icon">📦</div>
-          <h3>No devices yet</h3>
-          <p>Get started by adding your first device</p>
-          <gc-button variant="primary" (click)="openAddDialog()">
-            ➕ Add Device
-          </gc-button>
-        </div>
-
-        <!-- Devices List -->
-        <div *ngIf="!isLoading && devices.length > 0" class="devices-list">
-          <div *ngFor="let device of recentDevices" class="device-item" (click)="onViewDevice(device.id)">
-            <div class="device-icon">{{ device.image }}</div>
-            <div class="device-info">
-              <h3 class="device-name">{{ device.name }}</h3>
-              <p class="device-category">{{ device.category }}</p>
-            </div>
-            <div class="device-status">
-              <span class="status-badge" [class]="getStatusColor(device.status)">
-                {{ getStatusLabel(device.status) }}
-              </span>
-              <p class="warranty-date">Expires: {{ device.warrantyExpires }}</p>
-            </div>
-            <div class="device-actions">
-              <button
-                class="icon-button docs-button"
-                (click)="openViewDocumentsDialog(device); $event.stopPropagation()"
-                title="View documents"
-              >
-                📄
-              </button>
-              <button
-                class="icon-button edit-button"
-                (click)="openEditDialog(device); $event.stopPropagation()"
-                title="Edit device"
-              >
-                ✏️
-              </button>
-              <button
-                class="icon-button delete-button"
-                (click)="openDeleteDialog(device, $event)"
-                title="Delete device"
-              >
-                🗑️
-              </button>
-            </div>
-          </div>
-        </div>
+        <gc-device-list
+          [devices]="devices"
+          [isLoading]="isLoading"
+          [maxDevices]="4"
+          (addDevice)="openAddDialog()"
+          (viewDevice)="onViewDevice($event)"
+          (editDevice)="openEditDialog($event)"
+          (deleteDevice)="onDeleteDevice($event)"
+          (viewDocuments)="openViewDocumentsDialog($event)"
+        ></gc-device-list>
       </div>
 
       <!-- Recent Activity -->

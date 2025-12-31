@@ -1,0 +1,35 @@
+<div class="device-list-container">
+  <!-- Header -->
+  <div *ngIf="showHeader" class="list-header">
+    <h2 class="list-title">Recent Devices</h2>
+    <span class="device-count">{{ devices.length }} total</span>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading devices...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h3>No devices yet</h3>
+    <p>Get started by adding your first device</p>
+    <gc-button *ngIf="showAddButton" variant="primary" (click)="onAddDevice()">
+      ➕ Add Device
+    </gc-button>
+  </div>
+
+  <!-- Devices List -->
+  <div *ngIf="!isLoading && devices.length > 0" class="devices-grid">
+    <gc-device-card
+      *ngFor="let device of displayedDevices"
+      [device]="device"
+      (view)="onViewDevice($event)"
+      (edit)="onEditDevice($event)"
+      (delete)="onDeleteDevice($event)"
+      (viewDocuments)="onViewDocuments($event)"
+    ></gc-device-card>
+  </div>
+</div>
