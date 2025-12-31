@@ -209,6 +209,39 @@
       </div>
     </div>
 
+    <!-- My Devices Section -->
+    <section class="devices-section">
+      <div class="section-header-with-action">
+        <div>
+          <h2 class="section-title-large">My Devices</h2>
+          <p class="section-description">Manage your registered devices and warranties</p>
+        </div>
+        <gc-button variant="primary" size="md" (click)="openAddDialog()">
+          ➕ Add Device
+        </gc-button>
+      </div>
+
+      <!-- Device Stats -->
+      <div class="stats-container">
+        <gc-device-stats [stats]="stats"></gc-device-stats>
+      </div>
+
+      <!-- Device List -->
+      <div class="devices-container">
+        <gc-device-list
+          [devices]="devices"
+          [isLoading]="isLoadingDevices"
+          [showHeader]="false"
+          (addDevice)="openAddDialog()"
+          (viewDevice)="onViewDevice($event)"
+          (editDevice)="openEditDialog($event)"
+          (deleteDevice)="onDeleteDevice($event)"
+          (viewDocuments)="openViewDocumentsDialog($event)"
+        ></gc-device-list>
+      </div>
+    </section>
+  </div>
+
     <!-- Back to Home -->
     <div class="profile-footer">
       <gc-button variant="ghost" size="md" routerLink="/">
@@ -217,3 +250,31 @@
     </div>
   </div>
 </div>
+
+<!-- Dialogs -->
+<gc-add-device-dialog
+  [isOpen]="isAddDialogOpen"
+  (close)="closeAddDialog()"
+  (deviceAdded)="onDeviceAdded()"
+></gc-add-device-dialog>
+
+<gc-edit-device-dialog
+  [isOpen]="isEditDialogOpen"
+  [device]="selectedDevice"
+  (close)="closeEditDialog()"
+  (deviceUpdated)="onDeviceUpdated()"
+></gc-edit-device-dialog>
+
+<gc-delete-device-dialog
+  [isOpen]="isDeleteDialogOpen"
+  [device]="selectedDevice"
+  (close)="closeDeleteDialog()"
+  (deviceDeleted)="onDeviceDeleted()"
+></gc-delete-device-dialog>
+
+<gc-view-documents-dialog
+  [isOpen]="isViewDocumentsDialogOpen"
+  [deviceId]="selectedDeviceForDocs?.id"
+  [deviceName]="selectedDeviceForDocs?.name"
+  (close)="closeViewDocumentsDialog()"
+></gc-view-documents-dialog>
