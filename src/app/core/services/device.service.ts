@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, catchError, delay } from 'rxjs/operators';
+import { map, catchError, delay, tap } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
 
 export interface Device {
@@ -99,7 +99,7 @@ export class DeviceService {
             warrantyExpires: device.warrantyExpiry  // warrantyExpiry → warrantyExpires
           }));
         }),
-        tap(devices => {
+        tap((devices: Device[]) => {
           // Update the BehaviorSubject
           this.devices.next(devices);
         }),
