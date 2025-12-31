@@ -227,6 +227,31 @@ export class DocumentService {
   }
 
   /**
+   * Get documents by parent type and ID (from API)
+   */
+  getDocumentsByParent(parentType: string, parentId: string): Observable<Document[]> {
+    if (this.useApi) {
+      // Fetch from API with parent filters
+      return this.apiService.get<Document[]>(`/documents?parentType=${parentType}&parentId=${parentId}`).pipe(
+        map((docs: any) => {
+          // Handle both direct array and wrapped response
+          const documents = Array.isArray(docs) ? docs : (docs.data || []);
+          return documents;
+        }),
+        catchError(error => {
+          console.error('Error fetching documents by parent:', error);
+          return of([]);
+        })
+      );
+    } else {
+      // Fallback to local filtering (for mock mode)
+      return this.documents$.pipe(
+        map(docs => docs.filter(doc => doc.deviceId === parentId))
+      );
+    }
+  }
+
+  /**
    * Get a single document by ID
    */
   getDocumentById(id: string): Observable<Document | undefined> {

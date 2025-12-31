@@ -128,7 +128,9 @@ export class EditDeviceDialogComponent implements OnChanges {
     if (!this.editedDevice.id) return;
 
     this.documentsLoading = true;
-    this.documentService.getDocumentsByDevice(this.editedDevice.id).subscribe({
+
+    // Fetch documents directly from API with parent type and ID
+    this.documentService.getDocumentsByParent('item', this.editedDevice.id).subscribe({
       next: (docs) => {
         this.documents = docs.sort((a, b) =>
           new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
@@ -138,6 +140,16 @@ export class EditDeviceDialogComponent implements OnChanges {
       error: (error) => {
         console.error('Error loading documents:', error);
         this.documentsLoading = false;
+        // Fallback to deviceId-based filter
+        this.documentService.getDocumentsByDevice(this.editedDevice.id).subscribe({
+          next: (docs) => {
+            this.documents = docs;
+            this.documentsLoading = false;
+          },
+          error: () => {
+            this.documentsLoading = false;
+          }
+        });
       }
     });
   }
