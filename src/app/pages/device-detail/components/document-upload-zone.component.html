@@ -1,0 +1,104 @@
+<div class="upload-zone">
+  <!-- Drop Zone -->
+  <div
+    class="drop-zone"
+    [class.dragging]="isDragging"
+    [class.has-files]="selectedFiles.length > 0"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="openFilePicker()">
+
+    <input
+      #fileInput
+      type="file"
+      class="file-input"
+      multiple
+      [accept]="ALLOWED_EXTENSIONS.join(',')"
+      (change)="onFileInputChange($event)"
+      hidden />
+
+    <div class="drop-zone-content">
+      <div class="drop-icon">☁️</div>
+      <p class="drop-title">{{ isDragging ? 'Drop files here' : 'Drag & drop files here' }}</p>
+      <p class="drop-subtitle">or click to browse</p>
+      <p class="drop-hint">PDF, PNG, JPG up to 10MB</p>
+    </div>
+  </div>
+
+  <!-- Upload Settings -->
+  <div class="upload-settings" *ngIf="selectedFiles.length === 0">
+    <div class="setting-group">
+      <label class="setting-label">Document Type</label>
+      <select class="setting-select" [(ngModel)]="defaultDocumentType">
+        <option *ngFor="let type of documentTypes" [value]="type.value">
+          {{ type.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="setting-group">
+      <label class="setting-label">Notes (Optional)</label>
+      <input
+        type="text"
+        class="setting-input"
+        [(ngModel)]="notes"
+        placeholder="Add notes about these documents..."
+        maxlength="200" />
+    </div>
+  </div>
+
+  <!-- Selected Files -->
+  <div class="selected-files" *ngIf="selectedFiles.length > 0">
+    <div class="files-header">
+      <h4 class="files-title">Selected Files ({{ selectedFiles.length }})</h4>
+      <button class="btn-clear-all" (click)="clearAll()">Clear All</button>
+    </div>
+
+    <div class="files-list">
+      <div
+        *ngFor="let uploadFile of selectedFiles; let i = index"
+        class="file-item"
+        [class.has-error]="uploadFile.error">
+
+        <div class="file-icon">{{ getFileIcon(uploadFile.file.name) }}</div>
+
+        <div class="file-info">
+          <div class="file-name">{{ uploadFile.file.name }}</div>
+          <div class="file-meta">
+            <span class="file-size">{{ formatFileSize(uploadFile.file.size) }}</span>
+            <span class="meta-separator" *ngIf="!uploadFile.error">•</span>
+            <span class="file-type" *ngIf="!uploadFile.error">{{ uploadFile.file.type || 'Unknown' }}</span>
+          </div>
+          <div class="file-error" *ngIf="uploadFile.error">
+            ⚠️ {{ uploadFile.error }}
+          </div>
+        </div>
+
+        <button class="btn-remove" (click)="removeFile(i)" title="Remove file">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <div class="upload-footer">
+      <div class="upload-info">
+        <span class="info-label">Total Size:</span>
+        <span class="info-value">{{ formatFileSize(totalSize) }}</span>
+      </div>
+
+      <div class="upload-actions">
+        <button class="btn-cancel" (click)="clearAll()">
+          Cancel
+        </button>
+        <button
+          class="btn-upload"
+          (click)="uploadFiles()"
+          [disabled]="!hasValidFiles">
+          <span class="btn-icon">⬆️</span>
+          Upload {{ validFilesCount }} File(s)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

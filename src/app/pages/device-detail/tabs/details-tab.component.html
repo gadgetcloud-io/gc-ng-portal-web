@@ -1,0 +1,259 @@
+<div class="details-tab">
+  <div class="field-grid">
+    <!-- Name Field -->
+    <div class="field-item">
+      <label class="field-label">Name</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['name']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('name') }}</span>
+          <button
+            *ngIf="isFieldEditable('name')"
+            class="edit-button"
+            (click)="enterEditMode('name')"
+            [disabled]="isUpdating"
+            aria-label="Edit name">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['name']" class="field-edit-mode">
+          <input
+            type="text"
+            class="field-input"
+            [(ngModel)]="editValues['name']"
+            [attr.maxlength]="fieldConfigs['name']?.maxLength"
+            (keyup.enter)="saveField('name')"
+            (keyup.escape)="cancelEdit('name')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('name')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('name')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manufacturer Field -->
+    <div class="field-item">
+      <label class="field-label">Manufacturer</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['manufacturer']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('manufacturer') }}</span>
+          <button
+            *ngIf="isFieldEditable('manufacturer')"
+            class="edit-button"
+            (click)="enterEditMode('manufacturer')"
+            [disabled]="isUpdating"
+            aria-label="Edit manufacturer">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['manufacturer']" class="field-edit-mode">
+          <input
+            type="text"
+            class="field-input"
+            [(ngModel)]="editValues['manufacturer']"
+            [attr.maxlength]="fieldConfigs['manufacturer']?.maxLength"
+            (keyup.enter)="saveField('manufacturer')"
+            (keyup.escape)="cancelEdit('manufacturer')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('manufacturer')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('manufacturer')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Field -->
+    <div class="field-item">
+      <label class="field-label">Model</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['model']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('model') }}</span>
+          <button
+            *ngIf="isFieldEditable('model')"
+            class="edit-button"
+            (click)="enterEditMode('model')"
+            [disabled]="isUpdating"
+            aria-label="Edit model">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['model']" class="field-edit-mode">
+          <input
+            type="text"
+            class="field-input"
+            [(ngModel)]="editValues['model']"
+            [attr.maxlength]="fieldConfigs['model']?.maxLength"
+            (keyup.enter)="saveField('model')"
+            (keyup.escape)="cancelEdit('model')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('model')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('model')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Field -->
+    <div class="field-item">
+      <label class="field-label">Category</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['category']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('category') }}</span>
+          <button
+            *ngIf="isFieldEditable('category')"
+            class="edit-button"
+            (click)="enterEditMode('category')"
+            [disabled]="isUpdating"
+            aria-label="Edit category">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['category']" class="field-edit-mode">
+          <select
+            class="field-select"
+            [(ngModel)]="editValues['category']"
+            (change)="saveField('category')"
+            autofocus>
+            <option *ngFor="let option of fieldConfigs['category']?.allowedValues" [value]="option">
+              {{ formatEnumValue(option) }}
+            </option>
+          </select>
+          <div class="edit-actions">
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('category')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Serial Number Field -->
+    <div class="field-item">
+      <label class="field-label">Serial Number</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['serialNumber']" class="field-value-display">
+          <span class="field-value field-value-mono">{{ formatFieldValue('serialNumber') }}</span>
+          <button
+            *ngIf="isFieldEditable('serialNumber')"
+            class="edit-button"
+            (click)="enterEditMode('serialNumber')"
+            [disabled]="isUpdating"
+            aria-label="Edit serial number">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['serialNumber']" class="field-edit-mode">
+          <input
+            type="text"
+            class="field-input"
+            [(ngModel)]="editValues['serialNumber']"
+            [attr.maxlength]="fieldConfigs['serialNumber']?.maxLength"
+            (keyup.enter)="saveField('serialNumber')"
+            (keyup.escape)="cancelEdit('serialNumber')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('serialNumber')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('serialNumber')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Field -->
+    <div class="field-item">
+      <label class="field-label">Status</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['status']" class="field-value-display">
+          <span class="status-badge" [ngClass]="getStatusBadgeClass(device?.status || '')">
+            {{ formatFieldValue('status') }}
+          </span>
+          <button
+            *ngIf="isFieldEditable('status')"
+            class="edit-button"
+            (click)="enterEditMode('status')"
+            [disabled]="isUpdating"
+            aria-label="Edit status">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['status']" class="field-edit-mode">
+          <select
+            class="field-select"
+            [(ngModel)]="editValues['status']"
+            (change)="saveField('status')"
+            autofocus>
+            <option *ngFor="let option of fieldConfigs['status']?.allowedValues" [value]="option">
+              {{ formatEnumValue(option) }}
+            </option>
+          </select>
+          <div class="edit-actions">
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('status')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loadingFieldConfigs" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading field configurations...</p>
+  </div>
+</div>

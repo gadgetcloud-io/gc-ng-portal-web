@@ -1,0 +1,50 @@
+<div class="notes-tab">
+  <div class="notes-header">
+    <h3 class="notes-title">Notes & Comments</h3>
+    <div class="notes-meta">
+      <span class="save-status" *ngIf="saveStatusText">
+        <span class="save-indicator" [class.saving]="isSaving"></span>
+        {{ saveStatusText }}
+      </span>
+      <span class="character-count" [ngClass]="characterCountClass">
+        {{ characterCount }} / {{ maxLength }}
+      </span>
+    </div>
+  </div>
+
+  <div class="notes-container">
+    <textarea
+      class="notes-textarea"
+      [(ngModel)]="notes"
+      (ngModelChange)="onNotesChange()"
+      [maxlength]="maxLength"
+      [disabled]="isUpdating"
+      placeholder="Add notes, comments, or additional information about this gadget...
+
+Examples:
+• Purchase location and details
+• Warranty terms and conditions
+• Maintenance history
+• Usage instructions
+• Known issues or quirks
+• Accessories included"
+      rows="12"
+      aria-label="Device notes"></textarea>
+
+    <div class="notes-footer">
+      <div class="notes-hint">
+        <span class="hint-icon">💡</span>
+        <span class="hint-text">Notes are auto-saved 2 seconds after you stop typing</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!notes && !isUpdating" class="empty-state">
+    <div class="empty-icon">📝</div>
+    <p class="empty-title">No notes yet</p>
+    <p class="empty-description">
+      Add notes to keep track of important information, maintenance history, or any other details about this gadget.
+    </p>
+  </div>
+</div>

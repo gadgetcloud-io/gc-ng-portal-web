@@ -1,14 +1,27 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { RbacService, FieldConfig, FieldUpdateRequest } from '../../core/services/rbac.service';
+import { BreadcrumbService } from '../../core/services/breadcrumb.service';
+import { TabsComponent, Tab } from '../../shared/components/tabs/tabs.component';
+import { DetailsTabComponent } from './tabs/details-tab.component';
+import { WarrantyTabComponent } from './tabs/warranty-tab.component';
+import { DocumentsTabComponent } from './tabs/documents-tab.component';
+import { NotesTabComponent } from './tabs/notes-tab.component';
 
 @Component({
   selector: 'gc-device-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    TabsComponent,
+    DetailsTabComponent,
+    WarrantyTabComponent,
+    DocumentsTabComponent,
+    NotesTabComponent
+  ],
   templateUrl: './device-detail.html',
   styleUrls: ['./device-detail.scss']
 })
@@ -18,41 +31,41 @@ export class DeviceDetailComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
-  // Edit mode state
-  editMode: { [field: string]: boolean } = {};
-  editValues: { [field: string]: any } = {};
+  // Tab state
+  activeTabId: string = 'details';
+  tabs: Tab[] = [
+    { id: 'details', label: 'Details', icon: '📋' },
+    { id: 'warranty', label: 'Warranty', icon: '🛡️' },
+    { id: 'documents', label: 'Documents', icon: '📁' },
+    { id: 'notes', label: 'Notes', icon: '📝' }
+  ];
+
+  // RBAC state
   fieldConfigs: { [field: string]: FieldConfig } = {};
   isUpdating = false;
   updateError: string | null = null;
   updateSuccess: string | null = null;
   loadingFieldConfigs = false;
 
-  // Editable fields for gc-items collection
-  editableFields = [
-    'name',
-    'manufacturer',
-    'model',
-    'serialNumber',
-    'category',
-    'status',
-    'purchaseDate',
-    'warrantyExpires',
-    'purchasePrice',
-    'warrantyProvider',
-    'notes'
-  ];
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private deviceService: DeviceService,
     private rbacService: RbacService,
+    private breadcrumbService: BreadcrumbService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     // Get device ID from route params
     this.deviceId = this.route.snapshot.paramMap.get('id') || '';
+
+    // Get tab from query params
+    const tabParam = this.route.snapshot.queryParamMap.get('tab');
+    if (tabParam && this.tabs.some(t => t.id === tabParam)) {
+      this.activeTabId = tabParam;
+    }
+
     if (this.deviceId) {
       this.loadDevice();
       this.loadFieldConfigs();
@@ -60,6 +73,98 @@ export class DeviceDetailComponent implements OnInit {
       this.error = 'No device ID provided';
       this.loading = false;
     }
+  }
+
+  /**
+   * Handle tab change
+   */
+  onTabChange(tabId: string): void {
+    this.activeTabId = tabId;
+
+    // Update URL with query param (optional - for shareable URLs)
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tabId },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  /**
+   * Handle field update from tab components
+   */
+  onFieldUpdate(event: { field: string; value: any; reason?: string }): void {
+    if (!this.device || this.isUpdating) return;
+
+    const { field, value, reason } = event;
+    const oldValue = this.device[field as keyof Device];
+
+    // Validate field value if config available
+    const fieldConfig = this.fieldConfigs[field];
+    if (fieldConfig) {
+      const validation = this.rbacService.validateFieldValue(value, fieldConfig);
+      if (!validation.valid) {
+        this.updateError = validation.error || 'Invalid value';
+        this.cdr.detectChanges();
+        return;
+      }
+    }
+
+    // Prepare update request
+    const updateRequest: FieldUpdateRequest = {
+      collection: 'gc-items',
+      documentId: this.deviceId,
+      field: field,
+      value: value,
+      reason: reason || `Updated ${this.formatFieldName(field)} via web interface`
+    };
+
+    // Optimistic update
+    const previousValue = this.device[field as keyof Device];
+    if (this.device) {
+      (this.device as any)[field] = value;
+    }
+
+    // Clear any existing messages
+    this.updateError = null;
+    this.updateSuccess = null;
+    this.cdr.detectChanges();
+
+    // Update field via RBAC API in background
+    this.rbacService.updateField(updateRequest).subscribe({
+      next: (response) => {
+        // Update with server response value
+        if (this.device) {
+          (this.device as any)[field] = response.newValue;
+        }
+
+        // Show brief success message
+        this.updateSuccess = `${this.formatFieldName(field)} updated`;
+
+        // Auto-hide success message after 1.5 seconds
+        setTimeout(() => {
+          this.updateSuccess = null;
+          this.cdr.detectChanges();
+        }, 1500);
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        // Revert optimistic update on error
+        if (this.device) {
+          (this.device as any)[field] = previousValue;
+        }
+
+        this.updateError = err.message || 'Failed to update field';
+
+        // Auto-hide error message after 5 seconds
+        setTimeout(() => {
+          this.updateError = null;
+          this.cdr.detectChanges();
+        }, 5000);
+
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   /**
@@ -73,6 +178,8 @@ export class DeviceDetailComponent implements OnInit {
       next: (device) => {
         if (device) {
           this.device = device;
+          // Update breadcrumb with device name
+          this.breadcrumbService.setLabel(`/my-gadgets/${this.deviceId}`, device.name);
         } else {
           this.error = 'Device not found';
         }
@@ -150,14 +257,6 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   /**
-   * Format currency
-   */
-  formatCurrency(value: number | undefined): string {
-    if (!value) return 'N/A';
-    return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  }
-
-  /**
    * Format date
    */
   formatDate(dateString: string | undefined): string {
@@ -221,188 +320,15 @@ export class DeviceDetailComponent implements OnInit {
       error: (err) => {
         console.error('Error loading field configs:', err);
         this.loadingFieldConfigs = false;
-        // Field configs are optional, so don't show error to user
         this.cdr.detectChanges();
       }
     });
-  }
-
-  /**
-   * Check if a field is editable
-   */
-  isFieldEditable(field: string): boolean {
-    // Check if field is in editable list and configs have loaded
-    if (!this.editableFields.includes(field) || this.loadingFieldConfigs) {
-      return false;
-    }
-
-    // For enum fields (category, status), ensure we have allowed values
-    if (field === 'category' || field === 'status') {
-      const config = this.fieldConfigs[field];
-      return !!(config && config.allowedValues && config.allowedValues.length > 0);
-    }
-
-    return true;
-  }
-
-  /**
-   * Enter edit mode for a field
-   */
-  enterEditMode(field: string): void {
-    if (!this.device || this.isUpdating) return;
-
-    // Store current value
-    let value = this.device[field as keyof Device];
-
-    // Format date fields for date input (YYYY-MM-DD)
-    if (field === 'purchaseDate' || field === 'warrantyExpires') {
-      value = this.formatDateForInput(value as string) as any;
-    }
-
-    this.editValues[field] = value;
-    this.editMode[field] = true;
-    this.updateError = null;
-    this.updateSuccess = null;
-    this.cdr.detectChanges();
-  }
-
-  /**
-   * Cancel edit mode for a field
-   */
-  cancelEdit(field: string): void {
-    delete this.editMode[field];
-    delete this.editValues[field];
-    this.updateError = null;
-    this.cdr.detectChanges();
-  }
-
-  /**
-   * Save field update via RBAC API
-   */
-  saveField(field: string, reason?: string): void {
-    if (!this.device || this.isUpdating) return;
-
-    const newValue = this.editValues[field];
-    const oldValue = this.device[field as keyof Device];
-
-    // Check if value changed
-    if (newValue === oldValue) {
-      this.cancelEdit(field);
-      return;
-    }
-
-    // Validate field value
-    const fieldConfig = this.fieldConfigs[field];
-    if (fieldConfig) {
-      const validation = this.rbacService.validateFieldValue(newValue, fieldConfig);
-      if (!validation.valid) {
-        this.updateError = validation.error || 'Invalid value';
-        this.cdr.detectChanges();
-        return;
-      }
-    }
-
-    // Prepare update request with default reason if not provided
-    const updateReason = reason || `Updated ${this.formatFieldName(field)} via web interface`;
-    const updateRequest: FieldUpdateRequest = {
-      collection: 'gc-items',
-      documentId: this.deviceId,
-      field: field,
-      value: newValue,
-      reason: updateReason
-    };
-
-    // Optimistic update: Update UI immediately for better UX
-    const previousValue = this.device[field as keyof Device];
-    if (this.device) {
-      (this.device as any)[field] = newValue;
-    }
-
-    // Exit edit mode immediately
-    delete this.editMode[field];
-    delete this.editValues[field];
-
-    // Clear any existing errors
-    this.updateError = null;
-    this.updateSuccess = null;
-    this.cdr.detectChanges();
-
-    // Update field via RBAC API in background
-    this.rbacService.updateField(updateRequest).subscribe({
-      next: (response) => {
-        console.log('Field updated successfully:', response);
-
-        // Update with server response value (in case of transformations)
-        if (this.device) {
-          (this.device as any)[field] = response.newValue;
-        }
-
-        // Show brief success message
-        this.updateSuccess = `${this.formatFieldName(field)} updated`;
-
-        // Auto-hide success message after 1.5 seconds
-        setTimeout(() => {
-          this.updateSuccess = null;
-          this.cdr.detectChanges();
-        }, 1500);
-
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error updating field:', err);
-
-        // Revert optimistic update on error
-        if (this.device) {
-          (this.device as any)[field] = previousValue;
-        }
-
-        this.updateError = err.message || 'Failed to update field';
-
-        // Auto-hide error message after 5 seconds
-        setTimeout(() => {
-          this.updateError = null;
-          this.cdr.detectChanges();
-        }, 5000);
-
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  /**
-   * Get input type for a field based on its configuration
-   */
-  getFieldType(field: string): string {
-    const config = this.fieldConfigs[field];
-    if (!config) return 'text';
-
-    switch (config.type) {
-      case 'number':
-        return 'number';
-      case 'date':
-        return 'date';
-      case 'enum':
-        return 'select';
-      case 'boolean':
-        return 'checkbox';
-      default:
-        return 'text';
-    }
-  }
-
-  /**
-   * Get allowed values for enum fields
-   */
-  getAllowedValues(field: string): string[] {
-    const config = this.fieldConfigs[field];
-    return config?.allowedValues || [];
   }
 
   /**
    * Format field name for display
    */
   formatFieldName(field: string): string {
-    // Convert camelCase to Title Case
     return field
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, (str) => str.toUpperCase())
@@ -410,51 +336,13 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   /**
-   * Get formatted field value for display
+   * Format currency
    */
-  getFieldDisplayValue(field: string): string {
-    if (!this.device) return 'N/A';
-
-    const value = this.device[field as keyof Device];
-    const config = this.fieldConfigs[field];
-
-    if (value === null || value === undefined || value === '') {
-      return 'N/A';
-    }
-
-    // Special handling for certain fields
-    if (field === 'purchasePrice') {
-      return this.formatCurrency(value as number);
-    }
-
-    if (field === 'purchaseDate' || field === 'warrantyExpires') {
-      return this.formatDate(value as string);
-    }
-
-    if (config) {
-      return this.rbacService.formatFieldValue(value, config);
-    }
-
-    return String(value);
-  }
-
-  /**
-   * Check if any field is currently in edit mode
-   */
-  isAnyFieldInEditMode(): boolean {
-    return Object.keys(this.editMode).some(key => this.editMode[key]);
-  }
-
-  /**
-   * Convert date string to YYYY-MM-DD format for date input
-   */
-  formatDateForInput(dateString: string | undefined): string {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      return date.toISOString().split('T')[0];
-    } catch {
-      return '';
-    }
+  formatCurrency(value: number | undefined): string {
+    if (!value) return '-';
+    return `₹${value.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`;
   }
 }

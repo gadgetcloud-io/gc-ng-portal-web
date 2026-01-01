@@ -1,0 +1,64 @@
+<div class="documents-tab">
+  <!-- Upload Zone -->
+  <app-document-upload-zone
+    [deviceId]="deviceId"
+    (filesSelected)="onFilesSelected($event)">
+  </app-document-upload-zone>
+
+  <!-- Type Filters -->
+  <div class="filter-pills" *ngIf="hasDocuments">
+    <button
+      *ngFor="let filter of documentTypes"
+      class="filter-pill"
+      [class.active]="selectedFilter === filter.value"
+      (click)="selectFilter(filter.value)">
+      {{ filter.label }}
+      <span class="filter-count">{{ getFilterCount(filter.value) }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading documents...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <p class="error-title">Failed to Load Documents</p>
+    <p class="error-message">{{ error }}</p>
+    <button class="btn-retry" (click)="loadDocuments()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Document Grid -->
+  <div *ngIf="!isLoading && !error && hasFilteredDocuments" class="document-grid">
+    <app-document-card
+      *ngFor="let document of filteredDocuments"
+      [document]="document"
+      (preview)="onPreview($event)"
+      (download)="onDownload($event)"
+      (delete)="onDelete($event)">
+    </app-document-card>
+  </div>
+
+  <!-- Empty State - No Documents -->
+  <div *ngIf="!isLoading && !error && !hasDocuments" class="empty-state">
+    <div class="empty-icon">📁</div>
+    <p class="empty-title">No Documents Yet</p>
+    <p class="empty-description">
+      Upload documents like receipts, warranties, photos, and manuals to keep everything organized in one place.
+    </p>
+  </div>
+
+  <!-- Empty State - No Filtered Results -->
+  <div *ngIf="!isLoading && !error && hasDocuments && !hasFilteredDocuments" class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <p class="empty-title">No {{ selectedFilter }} Documents</p>
+    <p class="empty-description">
+      No documents found for this type. Try selecting a different filter or upload new documents.
+    </p>
+  </div>
+</div>

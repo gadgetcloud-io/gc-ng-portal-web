@@ -1,0 +1,242 @@
+// ===== NOTES TAB =====
+
+.notes-tab {
+  padding: 2rem 0;
+  max-width: 900px;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 0;
+  }
+}
+
+// ===== NOTES HEADER =====
+.notes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.notes-title {
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900, #111827);
+  margin: 0;
+}
+
+.notes-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.save-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--neutral-600, #6b7280);
+  font-weight: 500;
+
+  .save-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse 2s infinite;
+
+    &.saving {
+      background: var(--brand-teal, #00B4A6);
+      animation: pulse 1s infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.character-count {
+  font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 8px;
+
+  &.count-normal {
+    background: var(--neutral-100, #f3f4f6);
+    color: var(--neutral-600, #6b7280);
+  }
+
+  &.count-warning {
+    background: rgba(251, 191, 36, 0.1);
+    color: #d97706;
+  }
+
+  &.count-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+  }
+}
+
+// ===== NOTES CONTAINER =====
+.notes-container {
+  position: relative;
+  background: white;
+  border: 2px solid var(--neutral-200, #e5e7eb);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:focus-within {
+    border-color: var(--brand-teal, #00B4A6);
+    box-shadow: 0 0 0 3px rgba(0, 180, 166, 0.1);
+  }
+}
+
+.notes-textarea {
+  width: 100%;
+  padding: 1.5rem;
+  border: none;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--neutral-900, #111827);
+  resize: vertical;
+  min-height: 300px;
+  outline: none;
+
+  &::placeholder {
+    color: var(--neutral-400, #9ca3af);
+    font-style: italic;
+  }
+
+  &:disabled {
+    background: var(--neutral-50, #f9fafb);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 640px) {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+// ===== NOTES FOOTER =====
+.notes-footer {
+  padding: 0.75rem 1.5rem;
+  background: var(--neutral-50, #f9fafb);
+  border-top: 1px solid var(--neutral-200, #e5e7eb);
+
+  @media (max-width: 640px) {
+    padding: 0.75rem 1rem;
+  }
+}
+
+.notes-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--neutral-600, #6b7280);
+
+  .hint-icon {
+    font-size: 1rem;
+  }
+
+  .hint-text {
+    line-height: 1.5;
+  }
+}
+
+// ===== EMPTY STATE =====
+.empty-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--neutral-50, #f9fafb);
+  border: 2px dashed var(--neutral-200, #e5e7eb);
+  border-radius: 12px;
+  margin-top: 1rem;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutral-700, #374151);
+    margin: 0 0 0.5rem;
+  }
+
+  .empty-description {
+    font-size: 0.9375rem;
+    color: var(--neutral-600, #6b7280);
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    padding: 3rem 1.5rem;
+
+    .empty-icon {
+      font-size: 2.5rem;
+    }
+
+    .empty-title {
+      font-size: 1rem;
+    }
+
+    .empty-description {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// Show empty state only when there are no notes
+.notes-tab:has(.notes-textarea:placeholder-shown:not(:focus)) {
+  .empty-state {
+    display: flex;
+  }
+
+  .notes-container {
+    display: none;
+  }
+}
+
+// ===== ACCESSIBILITY =====
+@media (prefers-reduced-motion: reduce) {
+  .notes-container,
+  .save-indicator {
+    animation: none;
+    transition: none;
+  }
+}
+
+// ===== DARK MODE SUPPORT (Future) =====
+@media (prefers-color-scheme: dark) {
+  // Placeholder for dark mode styles
+  // Can be implemented later
+}

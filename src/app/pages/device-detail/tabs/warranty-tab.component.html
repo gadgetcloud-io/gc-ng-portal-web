@@ -1,0 +1,200 @@
+<div class="warranty-tab">
+  <div class="field-grid">
+    <!-- Purchase Date Field -->
+    <div class="field-item">
+      <label class="field-label">Purchase Date</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['purchaseDate']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('purchaseDate') }}</span>
+          <button
+            *ngIf="isFieldEditable('purchaseDate')"
+            class="edit-button"
+            (click)="enterEditMode('purchaseDate')"
+            [disabled]="isUpdating"
+            aria-label="Edit purchase date">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['purchaseDate']" class="field-edit-mode">
+          <input
+            type="date"
+            class="field-input"
+            [(ngModel)]="editValues['purchaseDate']"
+            (keyup.enter)="saveField('purchaseDate')"
+            (keyup.escape)="cancelEdit('purchaseDate')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('purchaseDate')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('purchaseDate')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purchase Price Field -->
+    <div class="field-item">
+      <label class="field-label">Purchase Price</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['purchasePrice']" class="field-value-display">
+          <span class="field-value field-value-currency">{{ formatFieldValue('purchasePrice') }}</span>
+          <button
+            *ngIf="isFieldEditable('purchasePrice')"
+            class="edit-button"
+            (click)="enterEditMode('purchasePrice')"
+            [disabled]="isUpdating"
+            aria-label="Edit purchase price">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['purchasePrice']" class="field-edit-mode">
+          <div class="currency-input-wrapper">
+            <span class="currency-symbol">₹</span>
+            <input
+              type="number"
+              class="field-input field-input-currency"
+              [(ngModel)]="editValues['purchasePrice']"
+              [attr.min]="fieldConfigs['purchasePrice']?.min"
+              [attr.max]="fieldConfigs['purchasePrice']?.max"
+              step="0.01"
+              (keyup.enter)="saveField('purchasePrice')"
+              (keyup.escape)="cancelEdit('purchasePrice')"
+              autofocus />
+          </div>
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('purchasePrice')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('purchasePrice')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warranty Expires Field -->
+    <div class="field-item">
+      <label class="field-label">Warranty Expires</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['warrantyExpires']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('warrantyExpires') }}</span>
+          <button
+            *ngIf="isFieldEditable('warrantyExpires')"
+            class="edit-button"
+            (click)="enterEditMode('warrantyExpires')"
+            [disabled]="isUpdating"
+            aria-label="Edit warranty expiry date">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['warrantyExpires']" class="field-edit-mode">
+          <input
+            type="date"
+            class="field-input"
+            [(ngModel)]="editValues['warrantyExpires']"
+            (keyup.enter)="saveField('warrantyExpires')"
+            (keyup.escape)="cancelEdit('warrantyExpires')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('warrantyExpires')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('warrantyExpires')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warranty Provider Field -->
+    <div class="field-item">
+      <label class="field-label">Warranty Provider</label>
+      <div class="field-value-container">
+        <div *ngIf="!editMode['warrantyProvider']" class="field-value-display">
+          <span class="field-value">{{ formatFieldValue('warrantyProvider') }}</span>
+          <button
+            *ngIf="isFieldEditable('warrantyProvider')"
+            class="edit-button"
+            (click)="enterEditMode('warrantyProvider')"
+            [disabled]="isUpdating"
+            aria-label="Edit warranty provider">
+            ✎
+          </button>
+        </div>
+
+        <div *ngIf="editMode['warrantyProvider']" class="field-edit-mode">
+          <input
+            type="text"
+            class="field-input"
+            [(ngModel)]="editValues['warrantyProvider']"
+            [attr.maxlength]="fieldConfigs['warrantyProvider']?.maxLength"
+            (keyup.enter)="saveField('warrantyProvider')"
+            (keyup.escape)="cancelEdit('warrantyProvider')"
+            autofocus />
+          <div class="edit-actions">
+            <button
+              class="save-button"
+              (click)="saveField('warrantyProvider')"
+              [disabled]="isUpdating">
+              ✓
+            </button>
+            <button
+              class="cancel-button"
+              (click)="cancelEdit('warrantyProvider')"
+              [disabled]="isUpdating">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warranty Timeline -->
+  <app-warranty-timeline
+    *ngIf="hasWarrantyDates"
+    [purchaseDate]="device?.purchaseDate || ''"
+    [warrantyExpires]="device?.warrantyExpires || ''">
+  </app-warranty-timeline>
+
+  <!-- Empty State for Timeline -->
+  <div *ngIf="!hasWarrantyDates" class="timeline-empty-state">
+    <div class="empty-icon">📅</div>
+    <p class="empty-title">No Warranty Timeline Available</p>
+    <p class="empty-description">
+      Add both purchase date and warranty expiry date to see the warranty timeline visualization.
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loadingFieldConfigs" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading field configurations...</p>
+  </div>
+</div>

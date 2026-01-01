@@ -30,26 +30,60 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.DashboardComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'Dashboard',
+        icon: '🏠'
+      }
+    }
   },
   {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'Profile',
+        icon: '👤'
+      }
+    }
   },
   {
     path: 'my-gadgets',
     loadComponent: () => import('./pages/devices/devices').then(m => m.DevicesComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'My Gadgets',
+        icon: '📱'
+      }
+    }
   },
   {
     path: 'my-gadgets/:id',
     loadComponent: () => import('./pages/device-detail/device-detail').then(m => m.DeviceDetailComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: (snapshot: any) => {
+          // Get device name from component state if available
+          // For now, just return a placeholder
+          return snapshot.data['deviceName'] || 'Device Details';
+        },
+        icon: '📋'
+      }
+    }
   },
   {
     path: 'service-requests',
     loadComponent: () => import('./pages/service-requests/service-requests').then(m => m.ServiceRequestsComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'Service Requests',
+        icon: '🔧'
+      }
+    }
   }
 ];

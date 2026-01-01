@@ -1,0 +1,35 @@
+<div class="tabs-container" [attr.data-variant]="variant">
+  <div class="tabs-wrapper">
+    <div
+      class="tabs-list"
+      role="tablist"
+      [attr.aria-label]="'Navigation tabs'">
+
+      <button
+        *ngFor="let tab of tabs; trackBy: trackByTabId"
+        class="tab-button"
+        [class.active]="isActive(tab.id)"
+        [class.disabled]="tab.disabled"
+        [attr.role]="'tab'"
+        [attr.aria-selected]="isActive(tab.id)"
+        [attr.aria-controls]="'tabpanel-' + tab.id"
+        [attr.aria-label]="getTabAriaLabel(tab)"
+        [attr.tabindex]="isActive(tab.id) ? 0 : -1"
+        [attr.aria-disabled]="tab.disabled"
+        [disabled]="tab.disabled"
+        (click)="selectTab(tab.id)">
+
+        <span class="tab-icon" *ngIf="tab.icon">{{ tab.icon }}</span>
+        <span class="tab-label">{{ tab.label }}</span>
+        <span class="tab-count" *ngIf="tab.count !== undefined && tab.count !== null">{{ tab.count }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Active tab indicator (for underline variant) -->
+  <div
+    *ngIf="variant === 'underline'"
+    class="tab-indicator"
+    [style.transform]="indicatorTransform">
+  </div>
+</div>
