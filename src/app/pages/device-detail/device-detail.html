@@ -48,6 +48,9 @@
       </div>
       <div class="gadget-info">
         <h1 class="gadget-name">{{ device.name }}</h1>
+        <div class="gadget-price" *ngIf="device.purchasePrice">
+          {{ formatCurrency(device.purchasePrice) }}
+        </div>
         <p class="gadget-metadata">
           <span *ngIf="device.manufacturer">{{ device.manufacturer }}</span>
           <span *ngIf="device.manufacturer && device.model" class="separator">•</span>

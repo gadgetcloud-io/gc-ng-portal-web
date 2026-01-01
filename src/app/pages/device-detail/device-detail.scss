@@ -185,6 +185,18 @@
           }
         }
 
+        .gadget-price {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #00B4A6;
+          margin: 0;
+          font-family: monospace;
+
+          @media (max-width: 768px) {
+            font-size: 1.75rem;
+          }
+        }
+
         .gadget-metadata {
           color: #6b7280;
           font-size: 1.125rem;
