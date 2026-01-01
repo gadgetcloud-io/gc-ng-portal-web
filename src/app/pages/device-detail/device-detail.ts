@@ -231,7 +231,18 @@ export class DeviceDetailComponent implements OnInit {
    * Check if a field is editable
    */
   isFieldEditable(field: string): boolean {
-    return this.editableFields.includes(field) && !this.loadingFieldConfigs;
+    // Check if field is in editable list and configs have loaded
+    if (!this.editableFields.includes(field) || this.loadingFieldConfigs) {
+      return false;
+    }
+
+    // For enum fields (category, status), ensure we have allowed values
+    if (field === 'category' || field === 'status') {
+      const config = this.fieldConfigs[field];
+      return !!(config && config.allowedValues && config.allowedValues.length > 0);
+    }
+
+    return true;
   }
 
   /**
@@ -241,7 +252,14 @@ export class DeviceDetailComponent implements OnInit {
     if (!this.device || this.isUpdating) return;
 
     // Store current value
-    this.editValues[field] = this.device[field as keyof Device];
+    let value = this.device[field as keyof Device];
+
+    // Format date fields for date input (YYYY-MM-DD)
+    if (field === 'purchaseDate' || field === 'warrantyExpires') {
+      value = this.formatDateForInput(value as string) as any;
+    }
+
+    this.editValues[field] = value;
     this.editMode[field] = true;
     this.updateError = null;
     this.updateSuccess = null;
