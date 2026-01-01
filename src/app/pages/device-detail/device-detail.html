@@ -14,6 +14,17 @@
 
   <!-- Device Details -->
   <div *ngIf="device && !loading" class="device-content">
+    <!-- Success/Error Messages -->
+    <div *ngIf="updateSuccess" class="alert alert-success">
+      <div class="alert-icon">✓</div>
+      <div class="alert-message">{{ updateSuccess }}</div>
+    </div>
+
+    <div *ngIf="updateError" class="alert alert-error">
+      <div class="alert-icon">✕</div>
+      <div class="alert-message">{{ updateError }}</div>
+    </div>
+
     <!-- Header -->
     <div class="header">
       <a routerLink="/my-gadgets" class="back-link">
@@ -21,10 +32,6 @@
         Back to My Gadgets
       </a>
       <div class="actions">
-        <button class="btn btn-secondary" (click)="editDevice()">
-          <span class="btn-icon">✏️</span>
-          Edit
-        </button>
         <button class="btn btn-danger" (click)="deleteDevice()">
           <span class="btn-icon">🗑️</span>
           Delete
@@ -61,21 +68,226 @@
     <div class="info-section">
       <h2 class="section-title">Specifications</h2>
       <div class="field-grid">
+        <!-- Name Field -->
+        <div class="field">
+          <div class="field-label">Name</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['name']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('name') }}</div>
+              <button
+                *ngIf="isFieldEditable('name')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('name')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit name"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['name']" class="field-edit-group">
+              <input
+                type="text"
+                [(ngModel)]="editValues['name']"
+                [maxlength]="fieldConfigs['name']?.maxLength ?? null"
+                class="field-input"
+                placeholder="Enter gadget name"
+              />
+              <button class="btn-save" (click)="saveField('name')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('name')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Field -->
         <div class="field">
           <div class="field-label">Category</div>
-          <div class="field-value">{{ device.category || 'N/A' }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['category']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('category') }}</div>
+              <button
+                *ngIf="isFieldEditable('category')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('category')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit category"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['category']" class="field-edit-group">
+              <select
+                [(ngModel)]="editValues['category']"
+                class="field-select"
+              >
+                <option *ngFor="let val of getAllowedValues('category')" [value]="val">
+                  {{ formatFieldName(val) }}
+                </option>
+              </select>
+              <button class="btn-save" (click)="saveField('category')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('category')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Manufacturer Field -->
         <div class="field">
           <div class="field-label">Manufacturer</div>
-          <div class="field-value">{{ device.manufacturer || 'N/A' }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['manufacturer']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('manufacturer') }}</div>
+              <button
+                *ngIf="isFieldEditable('manufacturer')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('manufacturer')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit manufacturer"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['manufacturer']" class="field-edit-group">
+              <input
+                type="text"
+                [(ngModel)]="editValues['manufacturer']"
+                [maxlength]="fieldConfigs['manufacturer']?.maxLength ?? null"
+                class="field-input"
+                placeholder="Enter manufacturer"
+              />
+              <button class="btn-save" (click)="saveField('manufacturer')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('manufacturer')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Model Field -->
         <div class="field">
           <div class="field-label">Model</div>
-          <div class="field-value">{{ device.model || 'N/A' }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['model']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('model') }}</div>
+              <button
+                *ngIf="isFieldEditable('model')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('model')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit model"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['model']" class="field-edit-group">
+              <input
+                type="text"
+                [(ngModel)]="editValues['model']"
+                [maxlength]="fieldConfigs['model']?.maxLength ?? null"
+                class="field-input"
+                placeholder="Enter model"
+              />
+              <button class="btn-save" (click)="saveField('model')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('model')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Serial Number Field -->
         <div class="field">
           <div class="field-label">Serial Number</div>
-          <div class="field-value">{{ device.serialNumber || 'N/A' }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['serialNumber']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('serialNumber') }}</div>
+              <button
+                *ngIf="isFieldEditable('serialNumber')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('serialNumber')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit serial number"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['serialNumber']" class="field-edit-group">
+              <input
+                type="text"
+                [(ngModel)]="editValues['serialNumber']"
+                [maxlength]="fieldConfigs['serialNumber']?.maxLength ?? null"
+                class="field-input"
+                placeholder="Enter serial number"
+              />
+              <button class="btn-save" (click)="saveField('serialNumber')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('serialNumber')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Field -->
+        <div class="field">
+          <div class="field-label">Status</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['status']" class="field-display-group">
+              <div class="field-value">
+                <span class="status-badge" [ngClass]="getStatusClass()">
+                  {{ getStatusText() }}
+                </span>
+              </div>
+              <button
+                *ngIf="isFieldEditable('status')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('status')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit status"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['status']" class="field-edit-group">
+              <select
+                [(ngModel)]="editValues['status']"
+                class="field-select"
+              >
+                <option *ngFor="let val of getAllowedValues('status')" [value]="val">
+                  {{ formatFieldName(val) }}
+                </option>
+              </select>
+              <button class="btn-save" (click)="saveField('status')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('status')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -84,30 +296,187 @@
     <div class="info-section">
       <h2 class="section-title">Purchase & Warranty Information</h2>
       <div class="field-grid">
+        <!-- Purchase Date Field -->
         <div class="field">
           <div class="field-label">Purchase Date</div>
-          <div class="field-value">{{ formatDate(device.purchaseDate) }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['purchaseDate']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('purchaseDate') }}</div>
+              <button
+                *ngIf="isFieldEditable('purchaseDate')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('purchaseDate')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit purchase date"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['purchaseDate']" class="field-edit-group">
+              <input
+                type="date"
+                [(ngModel)]="editValues['purchaseDate']"
+                class="field-input"
+              />
+              <button class="btn-save" (click)="saveField('purchaseDate')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('purchaseDate')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Purchase Price Field -->
         <div class="field">
           <div class="field-label">Purchase Price</div>
-          <div class="field-value">{{ formatCurrency(device.purchasePrice) }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['purchasePrice']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('purchasePrice') }}</div>
+              <button
+                *ngIf="isFieldEditable('purchasePrice')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('purchasePrice')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit purchase price"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['purchasePrice']" class="field-edit-group">
+              <input
+                type="number"
+                [(ngModel)]="editValues['purchasePrice']"
+                [min]="fieldConfigs['purchasePrice']?.min ?? null"
+                [max]="fieldConfigs['purchasePrice']?.max ?? null"
+                class="field-input"
+                placeholder="Enter price"
+                step="0.01"
+              />
+              <button class="btn-save" (click)="saveField('purchasePrice')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('purchasePrice')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Warranty Expires Field -->
         <div class="field">
           <div class="field-label">Warranty Expires</div>
-          <div class="field-value">{{ formatDate(device.warrantyExpires) }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['warrantyExpires']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('warrantyExpires') }}</div>
+              <button
+                *ngIf="isFieldEditable('warrantyExpires')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('warrantyExpires')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit warranty expiry"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['warrantyExpires']" class="field-edit-group">
+              <input
+                type="date"
+                [(ngModel)]="editValues['warrantyExpires']"
+                class="field-input"
+              />
+              <button class="btn-save" (click)="saveField('warrantyExpires')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('warrantyExpires')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Warranty Provider Field -->
         <div class="field">
           <div class="field-label">Warranty Provider</div>
-          <div class="field-value">{{ device.warrantyProvider || 'N/A' }}</div>
+          <div class="field-value-wrapper">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode['warrantyProvider']" class="field-display-group">
+              <div class="field-value">{{ getFieldDisplayValue('warrantyProvider') }}</div>
+              <button
+                *ngIf="isFieldEditable('warrantyProvider')"
+                class="edit-icon-btn"
+                (click)="enterEditMode('warrantyProvider')"
+                [disabled]="isAnyFieldInEditMode()"
+                title="Edit warranty provider"
+              >
+                ✏️
+              </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode['warrantyProvider']" class="field-edit-group">
+              <input
+                type="text"
+                [(ngModel)]="editValues['warrantyProvider']"
+                [maxlength]="fieldConfigs['warrantyProvider']?.maxLength ?? null"
+                class="field-input"
+                placeholder="Enter warranty provider"
+              />
+              <button class="btn-save" (click)="saveField('warrantyProvider')" [disabled]="isUpdating">
+                <span *ngIf="!isUpdating">✓</span>
+                <span *ngIf="isUpdating" class="spinner-small"></span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit('warrantyProvider')" [disabled]="isUpdating">✕</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Notes Section -->
-    <div class="info-section" *ngIf="device.notes">
-      <h2 class="section-title">Notes</h2>
-      <div class="notes-content">
-        {{ device.notes }}
+    <div class="info-section">
+      <h2 class="section-title">
+        Notes
+        <button
+          *ngIf="isFieldEditable('notes') && !editMode['notes'] && !isAnyFieldInEditMode()"
+          class="edit-icon-btn"
+          (click)="enterEditMode('notes')"
+          title="Edit notes"
+        >
+          ✏️
+        </button>
+      </h2>
+
+      <!-- Display Mode -->
+      <div *ngIf="!editMode['notes']" class="notes-content">
+        {{ device.notes || 'No notes added yet. Click the edit button to add notes.' }}
+      </div>
+
+      <!-- Edit Mode -->
+      <div *ngIf="editMode['notes']" class="notes-edit-group">
+        <textarea
+          [(ngModel)]="editValues['notes']"
+          [maxlength]="fieldConfigs['notes']?.maxLength ?? null"
+          class="notes-textarea"
+          placeholder="Add notes about this gadget..."
+          rows="6"
+        ></textarea>
+        <div class="notes-actions">
+          <button class="btn-save-large" (click)="saveField('notes')" [disabled]="isUpdating">
+            <span *ngIf="!isUpdating">✓ Save Notes</span>
+            <span *ngIf="isUpdating">
+              <span class="spinner-small"></span> Saving...
+            </span>
+          </button>
+          <button class="btn-cancel-large" (click)="cancelEdit('notes')" [disabled]="isUpdating">✕ Cancel</button>
+        </div>
       </div>
     </div>
 
