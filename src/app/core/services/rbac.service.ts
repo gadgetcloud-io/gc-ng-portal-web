@@ -26,7 +26,7 @@ export interface FieldUpdateRequest {
   documentId: string;      // e.g., "ITM_00001"
   field: string;           // e.g., "status", "name", "purchasePrice"
   value: any;             // New value for the field
-  reason?: string;        // Optional reason for audit log (max 1000 chars)
+  reason: string;         // Reason for audit log (min 10 chars, max 1000 chars)
 }
 
 /**

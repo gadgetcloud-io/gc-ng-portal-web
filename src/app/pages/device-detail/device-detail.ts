@@ -302,13 +302,14 @@ export class DeviceDetailComponent implements OnInit {
       }
     }
 
-    // Prepare update request
+    // Prepare update request with default reason if not provided
+    const updateReason = reason || `Updated ${this.formatFieldName(field)} via web interface`;
     const updateRequest: FieldUpdateRequest = {
       collection: 'gc-items',
       documentId: this.deviceId,
       field: field,
       value: newValue,
-      reason: reason
+      reason: updateReason
     };
 
     // Update field via RBAC API
