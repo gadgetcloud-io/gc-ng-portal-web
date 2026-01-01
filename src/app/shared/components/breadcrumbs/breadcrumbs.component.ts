@@ -16,36 +16,42 @@ export interface Breadcrumb {
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <nav class="breadcrumbs" *ngIf="breadcrumbs.length > 0" aria-label="Breadcrumb">
+    <nav class="breadcrumbs" *ngIf="breadcrumbs.length > 0" aria-label="Breadcrumb" role="navigation">
       <ol class="breadcrumb-list">
-        <li *ngFor="let breadcrumb of breadcrumbs; let last = last" class="breadcrumb-item">
+        <li
+          *ngFor="let breadcrumb of breadcrumbs; let last = last"
+          class="breadcrumb-item">
+
           <a
             *ngIf="!last"
             [routerLink]="breadcrumb.url"
             class="breadcrumb-link"
-            [attr.aria-current]="last ? 'page' : null">
-            <span *ngIf="breadcrumb.icon" class="breadcrumb-icon">{{ breadcrumb.icon }}</span>
-            <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+            [attr.aria-label]="'Navigate to ' + breadcrumb.label">
+            {{ breadcrumb.label }}
           </a>
-          <span *ngIf="last" class="breadcrumb-current">
-            <span *ngIf="breadcrumb.icon" class="breadcrumb-icon">{{ breadcrumb.icon }}</span>
-            <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+
+          <span *ngIf="last" class="breadcrumb-current" aria-current="page">
+            {{ breadcrumb.label }}
           </span>
+
           <span *ngIf="!last" class="breadcrumb-separator" aria-hidden="true">/</span>
         </li>
       </ol>
     </nav>
   `,
   styles: [`
+    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+
+    /* ===== LEMONADE-STYLE BREADCRUMBS ===== */
     .breadcrumbs {
-      padding: 1rem 0;
-      background: transparent;
+      margin-bottom: 17px;
+      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     .breadcrumb-list {
       display: flex;
-      align-items: center;
       flex-wrap: wrap;
+      align-items: center;
       gap: 0.5rem;
       list-style: none;
       margin: 0;
@@ -56,65 +62,53 @@ export interface Breadcrumb {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.875rem;
+      font-size: 14px;
+      font-weight: 400;
     }
 
     .breadcrumb-link {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      color: var(--neutral-600);
+      color: #797979;
       text-decoration: none;
-      transition: color 0.2s ease;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
+      transition: all 0.3s ease;
 
       &:hover {
-        color: var(--brand-teal, #00B4A6);
-        background: var(--neutral-100);
+        text-decoration: underline;
+        color: #4a4a4a;
       }
 
       &:focus-visible {
-        outline: 2px solid var(--brand-teal, #00B4A6);
+        outline: 2px solid #00B4A6;
         outline-offset: 2px;
+        border-radius: 2px;
       }
     }
 
     .breadcrumb-current {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      color: var(--neutral-900);
-      font-weight: 600;
-      padding: 0.25rem 0.5rem;
-    }
-
-    .breadcrumb-icon {
-      font-size: 1rem;
-      line-height: 1;
-    }
-
-    .breadcrumb-label {
-      line-height: 1.5;
+      color: #4a4a4a;
+      font-weight: 400;
     }
 
     .breadcrumb-separator {
-      color: var(--neutral-400);
-      font-weight: 300;
+      color: #9b9b9b;
       user-select: none;
+      pointer-events: none;
     }
 
-    @media (max-width: 640px) {
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 768px) {
       .breadcrumbs {
-        padding: 0.75rem 0;
+        margin-bottom: 12px;
       }
 
       .breadcrumb-item {
-        font-size: 0.8125rem;
+        font-size: 13px;
       }
+    }
 
-      .breadcrumb-icon {
-        font-size: 0.875rem;
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      .breadcrumb-link {
+        transition: none;
       }
     }
   `]
