@@ -312,40 +312,58 @@ export class DeviceDetailComponent implements OnInit {
       reason: updateReason
     };
 
-    // Update field via RBAC API
-    this.isUpdating = true;
+    // Optimistic update: Update UI immediately for better UX
+    const previousValue = this.device[field as keyof Device];
+    if (this.device) {
+      (this.device as any)[field] = newValue;
+    }
+
+    // Exit edit mode immediately
+    delete this.editMode[field];
+    delete this.editValues[field];
+
+    // Clear any existing errors
     this.updateError = null;
     this.updateSuccess = null;
+    this.cdr.detectChanges();
 
+    // Update field via RBAC API in background
     this.rbacService.updateField(updateRequest).subscribe({
       next: (response) => {
         console.log('Field updated successfully:', response);
 
-        // Update local device data
+        // Update with server response value (in case of transformations)
         if (this.device) {
           (this.device as any)[field] = response.newValue;
         }
 
-        // Exit edit mode
-        delete this.editMode[field];
-        delete this.editValues[field];
+        // Show brief success message
+        this.updateSuccess = `${this.formatFieldName(field)} updated`;
 
-        // Show success message
-        this.updateSuccess = `${this.formatFieldName(field)} updated successfully`;
-        this.isUpdating = false;
-
-        // Auto-hide success message after 3 seconds
+        // Auto-hide success message after 1.5 seconds
         setTimeout(() => {
           this.updateSuccess = null;
           this.cdr.detectChanges();
-        }, 3000);
+        }, 1500);
 
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error updating field:', err);
+
+        // Revert optimistic update on error
+        if (this.device) {
+          (this.device as any)[field] = previousValue;
+        }
+
         this.updateError = err.message || 'Failed to update field';
-        this.isUpdating = false;
+
+        // Auto-hide error message after 5 seconds
+        setTimeout(() => {
+          this.updateError = null;
+          this.cdr.detectChanges();
+        }, 5000);
+
         this.cdr.detectChanges();
       }
     });
