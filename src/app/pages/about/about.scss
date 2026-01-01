@@ -73,7 +73,11 @@
 
 // ===== MISSION SECTION =====
 .mission-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: white;
 
   .mission-content {
@@ -143,7 +147,11 @@
 
 // ===== VALUES SECTION =====
 .values-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: var(--neutral-50);
 
   .section-header {
@@ -179,13 +187,13 @@
   .value-card {
     background: white;
     border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-xl);
+    border-radius: 24px; // Lemonade-style corners
     padding: var(--space-8);
     transition: all var(--transition-base);
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-8px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
       border-color: rgba(14, 165, 233, 0.3);
     }
 
@@ -213,7 +221,11 @@
 
 // ===== TEAM SECTION =====
 .team-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: white;
 
   .section-header {
@@ -263,7 +275,7 @@
       font-size: var(--text-3xl);
       font-weight: var(--font-bold);
       margin: 0 auto var(--space-5);
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
     }
 
     .member-name {
@@ -292,7 +304,11 @@
 
 // ===== JOURNEY SECTION =====
 .journey-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: var(--neutral-50);
 
   .section-header {
@@ -378,7 +394,11 @@
 
 // ===== CTA SECTION =====
 .cta-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: linear-gradient(135deg, var(--brand-blue-900), var(--brand-blue-800));
 
   .cta-content {

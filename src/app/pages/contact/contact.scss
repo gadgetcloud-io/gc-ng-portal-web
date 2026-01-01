@@ -53,12 +53,12 @@
     padding: var(--space-8);
     background: var(--neutral-50);
     border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-xl);
+    border-radius: 24px; // Lemonade-style corners
     transition: all var(--transition-base);
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-8px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
       border-color: rgba(14, 165, 233, 0.3);
     }
 
@@ -97,7 +97,11 @@
 
 // ===== CONTACT FORM SECTION =====
 .contact-form-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: var(--neutral-50);
 
   .contact-grid {
@@ -115,7 +119,7 @@
 .form-container {
   background: white;
   border: 1px solid var(--neutral-200);
-  border-radius: var(--radius-xl);
+  border-radius: 24px; // Lemonade-style corners
   padding: var(--space-10);
 
   .form-title {
@@ -130,6 +134,116 @@
     font-size: var(--text-base);
     color: var(--neutral-700);
     margin-bottom: var(--space-8);
+  }
+}
+
+// ===== ALERT MESSAGES =====
+.alert {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: 16px;
+  margin-bottom: var(--space-6);
+  animation: slideInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .alert-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: var(--font-bold);
+    flex-shrink: 0;
+  }
+
+  .alert-content {
+    flex: 1;
+
+    .alert-title {
+      font-size: var(--text-lg);
+      font-weight: var(--font-semibold);
+      margin-bottom: var(--space-2);
+    }
+
+    .alert-message {
+      font-size: var(--text-base);
+      margin: 0;
+      line-height: var(--leading-relaxed);
+
+      strong {
+        font-weight: var(--font-semibold);
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  &.alert-success {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+    border: 2px solid rgba(34, 197, 94, 0.3);
+
+    .alert-icon {
+      background: #22C55E;
+      color: white;
+    }
+
+    .alert-title {
+      color: #16A34A;
+    }
+
+    .alert-message {
+      color: #15803D;
+    }
+  }
+
+  &.alert-error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border: 2px solid rgba(239, 68, 68, 0.3);
+
+    .alert-icon {
+      background: #EF4444;
+      color: white;
+    }
+
+    .alert-title {
+      color: #DC2626;
+    }
+
+    .alert-message {
+      color: #B91C1C;
+    }
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ===== SPINNER =====
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -150,7 +264,7 @@
       width: 100%;
       padding: var(--space-3) var(--space-4);
       border: 2px solid var(--neutral-200);
-      border-radius: var(--radius-lg);
+      border-radius: 16px; // Lemonade-style corners
       font-size: var(--text-base);
       font-family: var(--font-body);
       color: var(--neutral-900);
@@ -210,7 +324,7 @@
     align-items: center;
     justify-content: center;
     background: var(--neutral-100);
-    border-radius: var(--radius-lg);
+    border-radius: 16px; // Lemonade-style corners
     font-size: 1.5rem;
     flex-shrink: 0;
   }
@@ -243,7 +357,7 @@
 .social-connect {
   padding: var(--space-6);
   background: var(--neutral-50);
-  border-radius: var(--radius-lg);
+  border-radius: 16px; // Lemonade-style corners
 
   .social-title {
     font-family: var(--font-display);
@@ -287,7 +401,11 @@
 
 // ===== FAQ SECTION =====
 .faq-section {
-  padding: var(--space-20) 0;
+  padding: 120px 0; // Lemonade-style spacing
+
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
   background: white;
 
   .section-header {
@@ -321,7 +439,7 @@
   .faq-item {
     background: var(--neutral-50);
     border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-lg);
+    border-radius: 16px; // Lemonade-style corners
     padding: var(--space-6);
     transition: all var(--transition-base);
 

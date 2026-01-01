@@ -1,20 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { SeoService } from '../../core/services/seo.service';
 import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
+import { ContactFormService } from '../../core/services/contact-form.service';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent],
+  imports: [CommonModule, FormsModule, ButtonComponent, ScrollRevealDirective],
   templateUrl: './contact.html',
   styleUrl: './contact.scss'
 })
 export class ContactComponent implements OnInit {
+  isSubmitting = false;
+  submitSuccess = false;
+  submitError = false;
+  errorMessage = '';
+  ticketId = '';
 
-  constructor(private seoService: SeoService) {}
+  constructor(
+    private seoService: SeoService,
+    private contactFormService: ContactFormService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.updateSEO();
@@ -99,9 +110,58 @@ export class ContactComponent implements OnInit {
   };
 
   submitForm(): void {
-    console.log('Form submitted:', this.formData);
-    // Handle form submission
-    alert('Thank you for contacting us! We\'ll get back to you within 24 hours.');
-    this.formData = { name: '', email: '', subject: '', message: '' };
+    // Reset states
+    this.submitSuccess = false;
+    this.submitError = false;
+    this.errorMessage = '';
+    this.isSubmitting = true;
+
+    // Submit form via API
+    this.contactFormService.submitContactForm(this.formData).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        this.submitSuccess = true;
+        this.ticketId = response.id;
+
+        // Reset form after successful submission
+        this.formData = { name: '', email: '', subject: '', message: '' };
+
+        // Manually trigger change detection
+        this.cdr.detectChanges();
+
+        // Auto-hide success message after 10 seconds
+        setTimeout(() => {
+          this.submitSuccess = false;
+          this.cdr.detectChanges();
+        }, 10000);
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        this.submitError = true;
+
+        // Extract error message
+        if (error.error?.detail) {
+          // Handle FastAPI validation errors
+          if (Array.isArray(error.error.detail)) {
+            this.errorMessage = error.error.detail.map((e: any) => e.msg).join(', ');
+          } else {
+            this.errorMessage = error.error.detail;
+          }
+        } else if (error.message) {
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = 'Failed to submit your message. Please try again or email us directly at hello@gadgetcloud.io';
+        }
+
+        // Manually trigger change detection
+        this.cdr.detectChanges();
+
+        // Auto-hide error message after 10 seconds
+        setTimeout(() => {
+          this.submitError = false;
+          this.cdr.detectChanges();
+        }, 10000);
+      }
+    });
   }
 }

@@ -35,7 +35,28 @@
         <h2 class="form-title">Send Us a Message</h2>
         <p class="form-description">Fill out the form below and we'll get back to you within 24 hours.</p>
 
-        <form (ngSubmit)="submitForm()" class="contact-form">
+        <!-- Success Message -->
+        <div *ngIf="submitSuccess" class="alert alert-success">
+          <div class="alert-icon">✓</div>
+          <div class="alert-content">
+            <h3 class="alert-title">Message Sent Successfully!</h3>
+            <p class="alert-message">
+              Thank you for contacting us! Your ticket ID is <strong>{{ ticketId }}</strong>.
+              We'll get back to you within 24 hours.
+            </p>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="submitError" class="alert alert-error">
+          <div class="alert-icon">✕</div>
+          <div class="alert-content">
+            <h3 class="alert-title">Submission Failed</h3>
+            <p class="alert-message">{{ errorMessage }}</p>
+          </div>
+        </div>
+
+        <form (ngSubmit)="submitForm()" class="contact-form" #contactFormElement="ngForm">
           <div class="form-group">
             <label for="name" class="form-label">Name</label>
             <input
@@ -88,8 +109,18 @@
             ></textarea>
           </div>
 
-          <gc-button variant="primary" size="lg" type="submit" [fullWidth]="true">
-            Send Message
+          <gc-button
+            variant="primary"
+            size="lg"
+            type="submit"
+            [fullWidth]="true"
+            [disabled]="isSubmitting || !contactFormElement.form.valid"
+          >
+            <span *ngIf="!isSubmitting">Send Message</span>
+            <span *ngIf="isSubmitting">
+              <span class="spinner"></span>
+              Sending...
+            </span>
           </gc-button>
         </form>
       </div>
@@ -175,7 +206,7 @@
     </div>
 
     <div class="faq-grid">
-      <div *ngFor="let faq of faqs" class="faq-item">
+      <div *ngFor="let faq of faqs; let i = index" class="faq-item" appScrollReveal [revealDelay]="i * 100">
         <h3 class="faq-question">{{ faq.question }}</h3>
         <p class="faq-answer">{{ faq.answer }}</p>
       </div>

@@ -17,7 +17,7 @@
 <section class="stats-section">
   <div class="container">
     <div class="stats-grid">
-      <div *ngFor="let stat of stats" class="stat-item">
+      <div *ngFor="let stat of stats; let i = index" class="stat-item" appScrollReveal [revealDelay]="i * 100">
         <div class="stat-value">{{ stat.value }}</div>
         <div class="stat-label">{{ stat.label }}</div>
       </div>
@@ -73,7 +73,7 @@
     </div>
 
     <div class="values-grid">
-      <div *ngFor="let value of values" class="value-card">
+      <div *ngFor="let value of values; let i = index" class="value-card" appScrollReveal [revealDelay]="i * 100">
         <div class="value-icon">{{ value.icon }}</div>
         <h3 class="value-title">{{ value.title }}</h3>
         <p class="value-description">{{ value.description }}</p>

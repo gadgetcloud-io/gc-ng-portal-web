@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { SeoService } from '../../core/services/seo.service';
 import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonComponent],
+  imports: [CommonModule, RouterLink, ButtonComponent, ScrollRevealDirective],
   templateUrl: './about.html',
   styleUrl: './about.scss'
 })

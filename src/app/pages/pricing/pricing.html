@@ -16,7 +16,7 @@
 <section class="pricing-plans-section">
   <div class="container">
     <div class="pricing-grid">
-      <div *ngFor="let plan of pricingPlans" class="pricing-card" [class.popular]="plan.popular">
+      <div *ngFor="let plan of pricingPlans; let i = index" class="pricing-card" [class.popular]="plan.popular" appScrollReveal [revealDelay]="i * 150">
         <div *ngIf="plan.popular" class="popular-badge">Most Popular</div>
 
         <div class="plan-header">
@@ -55,7 +55,7 @@
 <!-- Feature Comparison Section -->
 <section class="comparison-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header" appScrollReveal>
       <h2>Compare plans</h2>
       <p class="section-description">
         See exactly what's included in each plan
@@ -105,7 +105,7 @@
 <!-- FAQ Section -->
 <section class="faq-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header" appScrollReveal>
       <h2>Frequently Asked Questions</h2>
       <p class="section-description">
         Everything you need to know about pricing
@@ -113,7 +113,7 @@
     </div>
 
     <div class="faq-grid">
-      <div *ngFor="let faq of faqs" class="faq-item">
+      <div *ngFor="let faq of faqs; let i = index" class="faq-item" appScrollReveal [revealDelay]="i * 100">
         <h3 class="faq-question">{{ faq.question }}</h3>
         <p class="faq-answer">{{ faq.answer }}</p>
       </div>
@@ -124,7 +124,7 @@
 <!-- CTA Section -->
 <section class="cta-section">
   <div class="container">
-    <div class="cta-content">
+    <div class="cta-content" appScrollReveal>
       <h2 class="cta-title">Still have questions?</h2>
       <p class="cta-description">
         Our team is here to help you choose the right plan for your needs

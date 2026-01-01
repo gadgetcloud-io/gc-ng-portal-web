@@ -11,6 +11,13 @@
           "gadgetcloud-web-prd"
         ]
       }
+    },
+    "gadgetcloud-stg": {
+      "hosting": {
+        "web": [
+          "gadgetcloud-stg"
+        ]
+      }
     }
   },
   "etags": {}

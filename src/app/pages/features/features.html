@@ -16,7 +16,7 @@
 <section class="main-features-section">
   <div class="container">
     <div class="features-grid">
-      <div *ngFor="let feature of mainFeatures" class="feature-card">
+      <div *ngFor="let feature of mainFeatures; let i = index" class="feature-card" appScrollReveal [revealDelay]="i * 100">
         <div class="feature-icon">{{ feature.icon }}</div>
         <div class="feature-content">
           <h3 class="feature-title">{{ feature.title }}</h3>
@@ -36,7 +36,7 @@
 <!-- Integrations Section -->
 <section class="integrations-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header" appScrollReveal>
       <h2>Works with your favorite tools</h2>
       <p class="section-description">
         Seamless integrations with the apps and services you already use
@@ -44,7 +44,7 @@
     </div>
 
     <div class="integrations-grid">
-      <div *ngFor="let integration of integrations" class="integration-card">
+      <div *ngFor="let integration of integrations; let i = index" class="integration-card" appScrollReveal [revealDelay]="i * 100">
         <div class="integration-icon">{{ integration.icon }}</div>
         <h3 class="integration-name">{{ integration.name }}</h3>
         <p class="integration-description">{{ integration.description }}</p>
@@ -56,7 +56,7 @@
 <!-- Platforms Section -->
 <section class="platforms-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header" appScrollReveal>
       <h2>Available everywhere</h2>
       <p class="section-description">
         Access your gadgets and documents from any platform
@@ -64,7 +64,7 @@
     </div>
 
     <div class="platforms-grid">
-      <div *ngFor="let platform of platforms" class="platform-card">
+      <div *ngFor="let platform of platforms; let i = index" class="platform-card" appScrollReveal [revealDelay]="i * 100">
         <div class="platform-icon">{{ platform.icon }}</div>
         <h3 class="platform-name">{{ platform.name }}</h3>
         <p class="platform-description">{{ platform.description }}</p>
@@ -76,7 +76,7 @@
 <!-- CTA Section -->
 <section class="cta-section">
   <div class="container">
-    <div class="cta-content">
+    <div class="cta-content" appScrollReveal>
       <h2 class="cta-title">Ready to get started?</h2>
       <p class="cta-description">
         Join thousands of users who trust GadgetCloud to manage their gadgets
