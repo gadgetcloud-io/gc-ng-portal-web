@@ -64,7 +64,7 @@ export interface CollectionInfo {
   providedIn: 'root'
 })
 export class RbacService {
-  private apiUrl = `${environment.apiUrl}/api/rbac`;
+  private apiUrl = `${environment.apiUrl}/rbac`;
 
   constructor(private http: HttpClient) {}
 
