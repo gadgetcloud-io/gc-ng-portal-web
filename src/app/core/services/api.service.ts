@@ -108,20 +108,20 @@ export class ApiService {
    * Get stored token
    */
   private getToken(): string | null {
-    return localStorage.getItem('gc_token');
+    return localStorage.getItem('auth_token');
   }
 
   /**
    * Store token
    */
   setToken(token: string): void {
-    localStorage.setItem('gc_token', token);
+    localStorage.setItem('auth_token', token);
   }
 
   /**
    * Remove token
    */
   removeToken(): void {
-    localStorage.removeItem('gc_token');
+    localStorage.removeItem('auth_token');
   }
 }

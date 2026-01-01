@@ -1,54 +1,55 @@
 /**
- * Design Tokens - GadgetCloud Lemonade-Inspired Brand
+ * Design Tokens - GadgetCloud Marketing Website
  *
- * Vibrant, playful palette: Hot Pink, Teal, Blue
+ * Vibrant, playful palette: Hot Pink, Soft Blue, Accents
  */
 
 :root {
-  // ===== BRAND COLORS - LEMONADE INSPIRED =====
+  // ===== BRAND COLORS - STATIC SITE THEME =====
 
-  // Primary: Ocean Blue - Bold, Vibrant, Trustworthy
-  --brand-primary-900: #005580;  // Darker ocean blue
-  --brand-primary-800: #006BA6;  // Dark ocean blue
-  --brand-primary-700: #0080C0;  // Main brand ocean blue
-  --brand-primary-600: #1A95D1;  // Bright ocean blue
-  --brand-primary-500: #33AAE0;  // Light ocean blue
-  --brand-primary-400: #5CC0E8;  // Lighter ocean blue
-  --brand-primary-300: #85D5F0;  // Very light ocean blue
-  --brand-primary-200: #ADEAF8;  // Pastel ocean blue
-  --brand-primary-100: #D6F5FC;  // Ultra light ocean blue
+  // Primary: Vibrant Pink - Bold, Energetic, Memorable
+  --brand-primary-900: #CC0066;  // Darker pink
+  --brand-primary-800: #E00070;  // Dark pink (hover state)
+  --brand-primary-700: #FF0080;  // Main brand pink
+  --brand-primary-600: #FF1A8F;  // Bright pink
+  --brand-primary-500: #FF33A3;  // Light pink
+  --brand-primary-400: #FF5CB8;  // Lighter pink
+  --brand-primary-300: #FF85CC;  // Very light pink
+  --brand-primary-200: #FFADE0;  // Pastel pink
+  --brand-primary-100: #FFD6F5;  // Ultra light pink
 
-  // Secondary: Teal - Fresh, Positive, Trustworthy
-  --brand-secondary-900: #1a9580;
-  --brand-secondary-800: #20a894;
-  --brand-secondary-700: #27c7b0;  // Main teal
-  --brand-secondary-600: #2ad5bd;  // Bright teal
-  --brand-secondary-500: #4dddc9;
-  --brand-secondary-400: #70e5d5;
-  --brand-secondary-300: #94ede1;
-  --brand-secondary-200: #b7f5ed;
-  --brand-secondary-100: #dbfcf9;
+  // Secondary: Soft Blue - Fresh, Approachable, Trust
+  --brand-secondary-900: #3DB8E8;  // Darker blue
+  --brand-secondary-800: #52C6F0;  // Dark blue
+  --brand-secondary-700: #67D4F6;  // Main brand blue
+  --brand-secondary-600: #7CDCF8;  // Bright blue
+  --brand-secondary-500: #8FDEFA;  // Light blue
+  --brand-secondary-400: #A3E5FB;  // Lighter blue
+  --brand-secondary-300: #B3E8FC;  // Very light blue
+  --brand-secondary-200: #C9EFFD;  // Pastel blue
+  --brand-secondary-100: #E0F7FE;  // Ultra light blue
 
-  // Accent: Blue - Professional, Trust, Technology
-  --brand-accent-900: #1b4a8a;
-  --brand-accent-800: #225aaf;
-  --brand-accent-700: #2a76e4;  // Main blue
-  --brand-accent-600: #4d8de8;
-  --brand-accent-500: #70a4ec;
-  --brand-accent-400: #94bbf0;
-  --brand-accent-300: #b7d2f4;
-  --brand-accent-200: #dae9f9;
-  --brand-accent-100: #f0f6fc;
+  // Accent: Purple - Creative, Premium
+  --brand-accent-900: #7C5FD3;
+  --brand-accent-800: #8C73DB;
+  --brand-accent-700: #A78BFA;  // Main purple
+  --brand-accent-600: #B49DFB;
+  --brand-accent-500: #C2AFFB;
+  --brand-accent-400: #CFC1FC;
+  --brand-accent-300: #DDD3FD;
+  --brand-accent-200: #EBE5FE;
+  --brand-accent-100: #F5F3FE;
 
   // Legacy color mappings (for backward compatibility)
-  --brand-blue-600: var(--brand-accent-700);
-  --brand-blue-700: var(--brand-accent-700);
-  --brand-blue-900: var(--brand-accent-900);
-  --brand-cyan-700: var(--brand-secondary-700);
-  --brand-cyan-600: var(--brand-secondary-600);
-  --brand-accent-green: var(--brand-secondary-600);
-  --brand-accent-purple: var(--brand-primary-700);
-  --brand-accent-orange: #ff6b35;
+  --brand-blue-600: var(--brand-secondary-700);      // Now maps to soft blue
+  --brand-blue-700: var(--brand-secondary-700);      // Now maps to soft blue
+  --brand-blue-900: var(--brand-secondary-900);      // Now maps to soft blue
+  --brand-cyan-700: var(--brand-secondary-700);      // Now maps to soft blue
+  --brand-cyan-600: var(--brand-secondary-600);      // Now maps to soft blue
+  --brand-accent-green: #6EE7B7;                     // Keep green accent
+  --brand-accent-purple: var(--brand-accent-700);    // Purple accent
+  --brand-accent-orange: #FCD34D;                    // Yellow/orange accent
+  --brand-accent-red: #FF6B6B;                       // Red accent
 
   // ===== NEUTRAL PALETTE =====
 
@@ -65,16 +66,16 @@
 
   // ===== SEMANTIC COLORS =====
 
-  --color-success: #27c7b0;    // Teal
-  --color-warning: #ff9500;    // Orange
-  --color-error: #DC143C;      // Crimson Red
-  --color-info: #0080C0;       // Ocean Blue
+  --color-success: #10B981;    // Green
+  --color-warning: #F59E0B;    // Orange
+  --color-error: #EF4444;      // Red
+  --color-info: #67D4F6;       // Soft Blue
 
   // ===== TYPOGRAPHY =====
 
-  // Font Families (matching Lemonade)
-  --font-display: 'Merriweather', Georgia, serif;
-  --font-body: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+  // Font Families (matching static site)
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --font-mono: 'Monaco', 'Courier New', monospace;
 
   // Font Weights

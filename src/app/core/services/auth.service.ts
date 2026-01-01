@@ -6,8 +6,13 @@ import { ApiService, ApiResponse } from './api.service';
 
 export interface User {
   id: string;
-  name: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  name?: string;  // Optional for backward compatibility
+  role: string;
+  mobile?: string;
+  status?: string;
 }
 
 export interface AuthState {
@@ -50,8 +55,8 @@ export class AuthService {
   }
 
   private loadStoredAuth(): void {
-    const storedUser = localStorage.getItem('gc_user');
-    const token = localStorage.getItem('gc_token');
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('auth_token');
 
     if (storedUser && (this.useApi ? token : true)) {
       try {
@@ -62,8 +67,8 @@ export class AuthService {
         });
       } catch (e) {
         console.error('Error parsing stored user:', e);
-        localStorage.removeItem('gc_user');
-        localStorage.removeItem('gc_token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('auth_token');
       }
     }
   }
@@ -81,7 +86,7 @@ export class AuthService {
           if (response && response.access_token && response.user) {
             // Store token and user
             this.apiService.setToken(response.access_token);
-            localStorage.setItem('gc_user', JSON.stringify(response.user));
+            localStorage.setItem('user', JSON.stringify(response.user));
 
             this.authState.next({
               isAuthenticated: true,
@@ -112,12 +117,15 @@ export class AuthService {
           const newUser: User = {
             id: Date.now().toString(),
             name,
-            email
+            email,
+            firstName: name.split(' ')[0] || name,
+            lastName: name.split(' ').slice(1).join(' ') || '',
+            role: 'customer'
           };
 
           const users = [...existingUsers, { ...newUser, password }];
           localStorage.setItem('gc_users', JSON.stringify(users));
-          localStorage.setItem('gc_user', JSON.stringify(newUser));
+          localStorage.setItem('user', JSON.stringify(newUser));
 
           this.authState.next({
             isAuthenticated: true,
@@ -144,7 +152,7 @@ export class AuthService {
           if (response && response.access_token && response.user) {
             // Store token and user
             this.apiService.setToken(response.access_token);
-            localStorage.setItem('gc_user', JSON.stringify(response.user));
+            localStorage.setItem('user', JSON.stringify(response.user));
 
             this.authState.next({
               isAuthenticated: true,
@@ -175,7 +183,7 @@ export class AuthService {
           }
 
           const { password: _, ...userWithoutPassword } = user;
-          localStorage.setItem('gc_user', JSON.stringify(userWithoutPassword));
+          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
           this.authState.next({
             isAuthenticated: true,
@@ -191,7 +199,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('gc_user');
+    localStorage.removeItem('user');
     this.apiService.removeToken(); // Clear auth token
     this.authState.next({
       isAuthenticated: false,

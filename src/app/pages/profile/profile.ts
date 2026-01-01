@@ -73,12 +73,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Parse name into first and last name
-    const nameParts = this.user.name.split(' ');
-    this.userInfo.firstName = nameParts[0] || '';
-    this.userInfo.lastName = nameParts.slice(1).join(' ') || '';
+    // Use user data
+    this.userInfo.firstName = this.user.firstName;
+    this.userInfo.lastName = this.user.lastName;
     this.userInfo.email = this.user.email;
-    this.userInfo.avatar = this.user.name.charAt(0).toUpperCase();
+    this.userInfo.avatar = this.user.firstName.charAt(0).toUpperCase();
 
     // Load devices
     this.loadDevicesData();

@@ -97,9 +97,9 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      background: rgba(0, 128, 192, 0.1);
-      border-color: #0080C0;
-      color: #0080C0;
+      background: rgba(255, 0, 128, 0.1);
+      border-color: var(--brand-primary-700);
+      color: var(--brand-primary-700);
       transform: translateY(-3px) scale(1.05);
 
       .social-icon {
@@ -169,7 +169,7 @@
       left: 0;
       width: 0;
       height: 1px;
-      background: #0080C0;
+      background: var(--brand-primary-700);
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
