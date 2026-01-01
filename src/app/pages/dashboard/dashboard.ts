@@ -14,15 +14,7 @@ import { DeleteDocumentDialogComponent } from '../../shared/components/document-
 import { DocumentService, Document } from '../../core/services/document.service';
 import { DeviceStatsComponent, DeviceStat } from '../../shared/components/device-stats/device-stats';
 import { DeviceListComponent } from '../../shared/components/device-list/device-list';
-
-interface Activity {
-  id: string;
-  type: 'device-added' | 'document-uploaded' | 'warranty-renewed' | 'service-scheduled';
-  title: string;
-  description: string;
-  timestamp: string;
-  icon: string;
-}
+import { ActivityService, Activity } from '../../core/services/activity.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,6 +38,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   user: User | null = null;
   devices: Device[] = [];
   isLoading = true;
+  isLoadingActivity = true;
 
   // Dialog states
   isAddDialogOpen = false;
@@ -66,6 +59,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private deviceService: DeviceService,
     private documentService: DocumentService,
+    private activityService: ActivityService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -79,8 +73,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Load devices first
+    // Load devices and activity in parallel
     this.loadDevicesData();
+    this.loadRecentActivity();
   }
 
   private loadDevicesData(): void {
@@ -192,8 +187,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Update recent activity and reminders based on real devices
-    this.updateRecentActivity();
+    // Update reminders based on real devices
     this.updateUpcomingReminders();
   }
 
@@ -206,69 +200,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
     expired: { count: 0, percentage: 0 }
   };
 
-  private updateRecentActivity(): void {
-    this.recentActivity = [];
+  /**
+   * Load recent activity from audit logs (live data)
+   */
+  private loadRecentActivity(): void {
+    this.isLoadingActivity = true;
 
-    // Generate activity from devices (sorted by creation date, most recent first)
-    const sortedDevices = [...this.devices].sort((a, b) => {
-      const dateA = new Date(a.purchaseDate || 0).getTime();
-      const dateB = new Date(b.purchaseDate || 0).getTime();
-      return dateB - dateA;
-    });
-
-    // Add device additions to activity (limit to 5 most recent)
-    sortedDevices.slice(0, 5).forEach((device, index) => {
-      const purchaseDate = new Date(device.purchaseDate);
-      const now = new Date();
-      const diffTime = Math.abs(now.getTime() - purchaseDate.getTime());
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-      let timestamp = '';
-      if (diffDays === 0) {
-        timestamp = 'Today';
-      } else if (diffDays === 1) {
-        timestamp = 'Yesterday';
-      } else if (diffDays < 7) {
-        timestamp = `${diffDays} days ago`;
-      } else if (diffDays < 30) {
-        const weeks = Math.floor(diffDays / 7);
-        timestamp = `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-      } else {
-        const months = Math.floor(diffDays / 30);
-        timestamp = `${months} month${months > 1 ? 's' : ''} ago`;
+    const activitySub = this.activityService.getRecentActivity(10).subscribe({
+      next: (activities) => {
+        this.recentActivity = activities;
+        this.isLoadingActivity = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading recent activity:', error);
+        this.isLoadingActivity = false;
+        // Keep empty array as fallback
+        this.recentActivity = [];
+        this.cdr.detectChanges();
       }
-
-      this.recentActivity.push({
-        id: `device-${device.id}`,
-        type: 'device-added',
-        title: 'Device registered',
-        description: `${device.name} added to inventory`,
-        timestamp,
-        icon: '📱'
-      });
     });
 
-    // Add warranty expiration warnings for devices expiring soon
-    const expiringDevices = this.devices.filter(d => d.status === 'expiring-soon');
-    expiringDevices.slice(0, 3).forEach(device => {
-      const expiryDate = new Date(device.warrantyExpires);
-      const now = new Date();
-      const diffTime = expiryDate.getTime() - now.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      this.recentActivity.push({
-        id: `warranty-${device.id}`,
-        type: 'warranty-renewed',
-        title: 'Warranty expiring soon',
-        description: `${device.name} warranty expires in ${diffDays} days`,
-        timestamp: `${diffDays} days remaining`,
-        icon: '⚠️'
-      });
-    });
-
-    // Sort all activities by most recent (based on timestamp text for now)
-    // In a real implementation, you'd store actual timestamps
-    this.recentActivity = this.recentActivity.slice(0, 8);
+    this.subscriptions.add(activitySub);
   }
 
   quickActions = [
@@ -375,10 +328,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onViewDevice(deviceId: string): void {
-    const device = this.devices.find(d => d.id === deviceId);
-    if (device) {
-      this.openEditDialog(device);
-    }
+    // Navigate to device detail page instead of opening edit dialog
+    this.router.navigate(['/my-gadgets', deviceId]);
   }
 
   // Dialog methods

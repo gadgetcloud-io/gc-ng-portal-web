@@ -145,7 +145,9 @@
         <div class="device-icon">{{ getCategoryIcon(device.category) }}</div>
 
         <div class="device-header">
-          <h3 class="device-name">{{ device.name }}</h3>
+          <h3 class="device-name clickable" (click)="viewDevice(device)" title="Click to view details">
+            {{ device.name }}
+          </h3>
           <span class="device-status" [class]="getStatusColor(device.status)">
             {{ getStatusLabel(device.status) }}
           </span>
@@ -183,10 +185,6 @@
             <span class="btn-icon">👁️</span>
             <span class="btn-text">View</span>
           </button>
-          <button class="action-btn action-btn-secondary" (click)="openEditDialog(device)" title="Edit gadget">
-            <span class="btn-icon">✏️</span>
-            <span class="btn-text">Edit</span>
-          </button>
           <button class="action-btn action-btn-secondary" (click)="openDocumentsDialog(device)" title="Manage documents">
             <span class="btn-icon">📁</span>
             <span class="btn-text">Documents</span>
@@ -207,13 +205,6 @@
   (close)="closeAddDialog()"
   (deviceAdded)="onDeviceAdded()"
 ></gc-add-device-dialog>
-
-<gc-edit-device-dialog
-  [isOpen]="isEditDialogOpen"
-  [device]="selectedDevice"
-  (close)="closeEditDialog()"
-  (deviceUpdated)="onDeviceUpdated()"
-></gc-edit-device-dialog>
 
 <gc-delete-device-dialog
   [isOpen]="isDeleteDialogOpen"

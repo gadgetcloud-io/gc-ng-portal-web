@@ -30,6 +30,7 @@
           [devices]="devices"
           [isLoading]="isLoading"
           [maxDevices]="4"
+          [showActions]="false"
           (addDevice)="openAddDialog()"
           (viewDevice)="onViewDevice($event)"
           (editDevice)="openEditDialog($event)"
@@ -43,20 +44,35 @@
         <div class="card-header">
           <h2 class="card-title">Recent Activity</h2>
         </div>
-        <div class="activity-list" *ngIf="recentActivity.length > 0">
-          <div *ngFor="let activity of recentActivity" class="activity-item">
-            <div class="activity-icon">{{ activity.icon }}</div>
-            <div class="activity-content">
-              <h3 class="activity-title">{{ activity.title }}</h3>
-              <p class="activity-description">{{ activity.description }}</p>
-              <span class="activity-timestamp">{{ activity.timestamp }}</span>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoadingActivity">
+          <div class="loading-skeleton" *ngFor="let i of [1,2,3,4,5]">
+            <div class="skeleton-icon"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line skeleton-line-title"></div>
+              <div class="skeleton-line skeleton-line-description"></div>
+              <div class="skeleton-line skeleton-line-timestamp"></div>
             </div>
           </div>
         </div>
-        <div class="empty-state" *ngIf="recentActivity.length === 0">
+
+        <!-- Activity List -->
+        <div class="activity-list" *ngIf="!isLoadingActivity && recentActivity.length > 0">
+          <div *ngFor="let activity of recentActivity" class="activity-item">
+            <div class="activity-icon">{{ activity.icon }}</div>
+            <div class="activity-content">
+              <p class="activity-description">{{ activity.description }}</p>
+              <span class="activity-timestamp">{{ activity.relativeTime || activity.timestamp }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoadingActivity && recentActivity.length === 0">
           <div class="empty-icon">📋</div>
           <p class="empty-text">No recent activity</p>
-          <p class="empty-subtext">Activity will appear here when you add gadgets</p>
+          <p class="empty-subtext">Your activity will appear here once you start using the platform</p>
         </div>
       </div>
     </div>

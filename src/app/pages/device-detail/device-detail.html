@@ -9,14 +9,14 @@
   <div *ngIf="error && !loading" class="error-state">
     <div class="error-icon">⚠️</div>
     <h2>{{ error }}</h2>
-    <a routerLink="/devices" class="back-link">← Back to My Gadgets</a>
+    <a routerLink="/my-gadgets" class="back-link">← Back to My Gadgets</a>
   </div>
 
   <!-- Device Details -->
   <div *ngIf="device && !loading" class="device-content">
     <!-- Header -->
     <div class="header">
-      <a routerLink="/devices" class="back-link">
+      <a routerLink="/my-gadgets" class="back-link">
         <span class="back-icon">←</span>
         Back to My Gadgets
       </a>

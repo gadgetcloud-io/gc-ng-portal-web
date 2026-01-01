@@ -16,6 +16,7 @@ export class DeviceListComponent {
   @Input() isLoading = false;
   @Input() showHeader = true;
   @Input() showAddButton = true;
+  @Input() showActions = true; // Control action buttons on cards
   @Input() maxDevices?: number;
 
   @Output() addDevice = new EventEmitter<void>();

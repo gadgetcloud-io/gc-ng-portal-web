@@ -366,6 +366,18 @@
         color: #111827;
         margin: 0;
         flex: 1;
+
+        &.clickable {
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+          &:hover {
+            color: #00B4A6;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+          }
+        }
       }
 
       .device-status {

@@ -26,6 +26,7 @@
     <gc-device-card
       *ngFor="let device of displayedDevices"
       [device]="device"
+      [showActions]="showActions"
       (view)="onViewDevice($event)"
       (edit)="onEditDevice($event)"
       (delete)="onDeleteDevice($event)"

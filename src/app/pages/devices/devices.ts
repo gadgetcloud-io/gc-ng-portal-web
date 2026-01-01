@@ -6,7 +6,6 @@ import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { AddDeviceDialogComponent } from '../../shared/components/device-dialogs/add-device-dialog';
-import { EditDeviceDialogComponent } from '../../shared/components/device-dialogs/edit-device-dialog';
 import { DeleteDeviceDialogComponent } from '../../shared/components/device-dialogs/delete-device-dialog';
 import { UploadDocumentDialogComponent } from '../../shared/components/document-dialogs/upload-document-dialog';
 import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
@@ -21,7 +20,6 @@ import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/
     CommonModule,
     ButtonComponent,
     AddDeviceDialogComponent,
-    EditDeviceDialogComponent,
     DeleteDeviceDialogComponent,
     UploadDocumentDialogComponent,
     ViewDocumentsDialogComponent,
@@ -42,7 +40,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   // Dialog states
   isAddDialogOpen = false;
-  isEditDialogOpen = false;
   isDeleteDialogOpen = false;
   selectedDevice: Device | null = null;
 
@@ -230,17 +227,12 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   // Navigation methods
   viewDevice(device: Device): void {
-    this.router.navigate(['/devices', device.id]);
+    this.router.navigate(['/my-gadgets', device.id]);
   }
 
   // Dialog methods
   openAddDialog(): void {
     this.isAddDialogOpen = true;
-  }
-
-  openEditDialog(device: Device): void {
-    this.selectedDevice = device;
-    this.isEditDialogOpen = true;
   }
 
   openDeleteDialog(device: Device): void {
@@ -252,11 +244,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.isAddDialogOpen = false;
   }
 
-  closeEditDialog(): void {
-    this.isEditDialogOpen = false;
-    this.selectedDevice = null;
-  }
-
   closeDeleteDialog(): void {
     this.isDeleteDialogOpen = false;
     this.selectedDevice = null;
@@ -264,11 +251,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   onDeviceAdded(): void {
     console.log('Device added successfully');
-    this.cdr.detectChanges();
-  }
-
-  onDeviceUpdated(): void {
-    console.log('Device updated successfully');
     this.cdr.detectChanges();
   }
 

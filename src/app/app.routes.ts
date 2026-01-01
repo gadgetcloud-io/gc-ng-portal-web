@@ -38,12 +38,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'devices',
+    path: 'my-gadgets',
     loadComponent: () => import('./pages/devices/devices').then(m => m.DevicesComponent),
     canActivate: [authGuard]
   },
   {
-    path: 'devices/:id',
+    path: 'my-gadgets/:id',
     loadComponent: () => import('./pages/device-detail/device-detail').then(m => m.DeviceDetailComponent),
     canActivate: [authGuard]
   },
