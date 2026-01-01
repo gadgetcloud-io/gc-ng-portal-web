@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
 
   // Get token from localStorage
-  const token = localStorage.getItem('gc_token');
+  const token = localStorage.getItem('auth_token');
 
   // Clone request and add authorization header if token exists
   let authReq = req;
@@ -28,8 +28,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       // If 401 Unauthorized, clear token and redirect to home
       if (error.status === 401) {
-        localStorage.removeItem('gc_token');
-        localStorage.removeItem('gc_user');
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user');
         router.navigate(['/']);
       }
 

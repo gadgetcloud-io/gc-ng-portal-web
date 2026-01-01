@@ -32,6 +32,16 @@ interface SignupResponse {
   user: User;
 }
 
+interface ProfileUpdateResponse {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  mobile?: string;
+  role: string;
+  status: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -73,11 +83,12 @@ export class AuthService {
     }
   }
 
-  signup(name: string, email: string, password: string): Observable<{ success: boolean; error?: string }> {
+  signup(firstName: string, lastName: string, email: string, password: string): Observable<{ success: boolean; error?: string }> {
     if (this.useApi) {
       // API mode: Call backend
       return this.apiService.post<SignupResponse>('/auth/signup', {
-        name,
+        firstName,
+        lastName,
         email,
         password
       }).pipe(
@@ -100,7 +111,9 @@ export class AuthService {
         }),
         catchError(error => {
           console.error('Signup error:', error);
-          return of({ success: false, error: error.message || 'Signup failed' });
+          // Extract error message from FastAPI response (error.error.detail) or fallback
+          const errorMessage = error.error?.detail || error.message || 'Signup failed';
+          return of({ success: false, error: errorMessage });
         })
       );
     } else {
@@ -116,10 +129,10 @@ export class AuthService {
 
           const newUser: User = {
             id: Date.now().toString(),
-            name,
+            firstName,
+            lastName,
+            name: `${firstName} ${lastName}`.trim(),
             email,
-            firstName: name.split(' ')[0] || name,
-            lastName: name.split(' ').slice(1).join(' ') || '',
             role: 'customer'
           };
 
@@ -166,7 +179,9 @@ export class AuthService {
         }),
         catchError(error => {
           console.error('Login error:', error);
-          return of({ success: false, error: error.message || 'Invalid email or password' });
+          // Extract error message from FastAPI response (error.error.detail) or fallback
+          const errorMessage = error.error?.detail || error.message || 'Invalid email or password';
+          return of({ success: false, error: errorMessage });
         })
       );
     } else {
@@ -206,6 +221,100 @@ export class AuthService {
       user: null
     });
     this.router.navigate(['/']);
+  }
+
+  /**
+   * Update a single user profile field using RBAC endpoint
+   */
+  updateProfileField(field: string, value: string, reason: string): Observable<{ success: boolean; user?: User; error?: string }> {
+    if (this.useApi) {
+      const currentUser = this.getCurrentUser();
+      if (!currentUser) {
+        return of({ success: false, error: 'No user logged in' });
+      }
+
+      // API mode: Call RBAC update-field endpoint
+      return this.apiService.post<any>('/rbac/update-field', {
+        collection: 'gc-users',
+        documentId: currentUser.id,
+        field: field,
+        value: value,
+        reason: reason
+      }).pipe(
+        map(response => {
+          console.log('Profile field update response:', response);
+          if (response && response.success) {
+            // Update the field in stored user
+            const updatedUser = { ...currentUser, [field]: value };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            this.authState.next({
+              isAuthenticated: true,
+              user: updatedUser
+            });
+            return { success: true, user: updatedUser };
+          }
+          return { success: false, error: 'Profile update failed' };
+        }),
+        catchError(error => {
+          console.error('Profile field update error:', error);
+          // Extract error message from FastAPI response (error.error.detail) or fallback
+          const errorMessage = error.error?.detail || error.message || 'Failed to update profile';
+          return of({ success: false, error: errorMessage });
+        })
+      );
+    } else {
+      // localStorage mode: Mock API
+      return new Observable(observer => {
+        setTimeout(() => {
+          const currentUser = this.getCurrentUser();
+          if (currentUser) {
+            const updatedUser = { ...currentUser, [field]: value };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            this.authState.next({
+              isAuthenticated: true,
+              user: updatedUser
+            });
+            observer.next({ success: true, user: updatedUser });
+          } else {
+            observer.next({ success: false, error: 'No user logged in' });
+          }
+          observer.complete();
+        }, 1000);
+      });
+    }
+  }
+
+  /**
+   * Change user password
+   */
+  changePassword(currentPassword: string, newPassword: string): Observable<{ success: boolean; error?: string }> {
+    if (this.useApi) {
+      // API mode: Call backend
+      return this.apiService.post<{ message: string }>('/auth/change-password', {
+        old_password: currentPassword,
+        new_password: newPassword
+      }).pipe(
+        map(() => {
+          console.log('Password changed successfully');
+          return { success: true };
+        }),
+        catchError(error => {
+          console.error('Password change error:', error);
+          // Extract error message from FastAPI response (error.error.detail) or fallback
+          const errorMessage = error.error?.detail || error.message || 'Failed to change password';
+          return of({ success: false, error: errorMessage });
+        })
+      );
+    } else {
+      // localStorage mode: Mock API
+      return new Observable(observer => {
+        setTimeout(() => {
+          // In mock mode, just return success (no actual password validation)
+          observer.next({ success: true });
+          observer.complete();
+        }, 1000);
+      });
+    }
   }
 
   /**

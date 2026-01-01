@@ -79,13 +79,15 @@ export class ApiService {
       errorMessage = `Error: ${error.error.message}`;
     } else {
       // Server-side error
-      errorMessage = error.error?.message || error.error?.error || `Server error: ${error.status}`;
+      // Check for FastAPI error format (detail) first, then fallback to other formats
+      errorMessage = error.error?.detail || error.error?.message || error.error?.error || `Server error: ${error.status}`;
 
       if (environment.enableLogging) {
         console.error('API Error:', {
           status: error.status,
           message: errorMessage,
-          url: error.url
+          url: error.url,
+          errorBody: error.error
         });
       }
     }

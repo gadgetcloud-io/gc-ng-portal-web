@@ -5,18 +5,33 @@
       {{ errorMessage }}
     </div>
 
-    <!-- Name Field -->
+    <!-- First Name Field -->
     <div class="form-group">
-      <label for="signup-name" class="form-label">Full name</label>
+      <label for="signup-firstName" class="form-label">First name</label>
       <input
         type="text"
-        id="signup-name"
-        name="name"
-        [(ngModel)]="formData.name"
+        id="signup-firstName"
+        name="firstName"
+        [(ngModel)]="formData.firstName"
         class="form-input"
-        placeholder="John Doe"
+        placeholder="John"
         required
-        autocomplete="name"
+        autocomplete="given-name"
+      />
+    </div>
+
+    <!-- Last Name Field -->
+    <div class="form-group">
+      <label for="signup-lastName" class="form-label">Last name</label>
+      <input
+        type="text"
+        id="signup-lastName"
+        name="lastName"
+        [(ngModel)]="formData.lastName"
+        class="form-input"
+        placeholder="Doe"
+        required
+        autocomplete="family-name"
       />
     </div>
 

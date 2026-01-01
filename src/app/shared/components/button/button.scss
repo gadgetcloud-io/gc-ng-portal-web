@@ -47,18 +47,18 @@
 
 // ===== PRIMARY BUTTON =====
 .btn-primary {
-  background: linear-gradient(135deg, #FF0080, #E00070); // Vibrant pink gradient
+  background: linear-gradient(135deg, var(--brand-primary-700), var(--brand-primary-800)); // Ocean blue gradient
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 0, 128, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 128, 192, 0.3);
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 0, 128, 0.4);
+    box-shadow: 0 8px 20px rgba(0, 128, 192, 0.4);
   }
 
   &:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(255, 0, 128, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 128, 192, 0.3);
   }
 
   &:disabled {

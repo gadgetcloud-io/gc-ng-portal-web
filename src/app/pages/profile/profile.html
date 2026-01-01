@@ -10,13 +10,7 @@
           <p class="user-email">{{ userInfo.email }}</p>
           <div class="user-badges">
             <span class="badge badge-primary">{{ userInfo.role }}</span>
-            <span class="badge badge-secondary">{{ userInfo.devicesCount }} Gadgets</span>
           </div>
-        </div>
-        <div class="header-actions">
-          <gc-button variant="secondary" size="md">
-            Edit Profile
-          </gc-button>
         </div>
       </div>
     </div>
@@ -24,6 +18,17 @@
 
   <!-- Profile Content -->
   <div class="container">
+    <!-- Alert Messages -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <span class="alert-icon">✓</span>
+      <span class="alert-message">{{ successMessage }}</span>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <span class="alert-icon">✗</span>
+      <span class="alert-message">{{ errorMessage }}</span>
+    </div>
+
     <div class="profile-grid">
       <!-- Personal Information -->
       <div class="profile-section">
@@ -34,53 +39,151 @@
           </div>
 
           <div class="section-content">
+            <!-- First Name Field -->
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input
-                type="text"
-                class="form-input"
-                [value]="userInfo.firstName"
-                placeholder="Enter first name"
-              />
+
+              <!-- View Mode -->
+              <div *ngIf="!editMode['firstName']" class="field-value-display">
+                <span class="field-value">{{ userInfo.firstName }}</span>
+                <button class="edit-button" (click)="enterEditMode('firstName')" title="Edit first name">
+                  <span class="edit-icon">✎</span>
+                </button>
+              </div>
+
+              <!-- Edit Mode -->
+              <div *ngIf="editMode['firstName']" class="field-edit-mode">
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="editValues['firstName']"
+                  (ngModelChange)="onFieldChange()"
+                  (keyup.enter)="saveField('firstName')"
+                  (keyup.escape)="cancelEdit('firstName')"
+                  [disabled]="isUpdating['firstName']"
+                  placeholder="Enter first name"
+                  autofocus
+                />
+                <button
+                  class="save-button"
+                  (click)="saveField('firstName')"
+                  [disabled]="isUpdating['firstName']"
+                  title="Save"
+                >
+                  <span class="button-icon">✓</span>
+                </button>
+                <button
+                  class="cancel-button"
+                  (click)="cancelEdit('firstName')"
+                  [disabled]="isUpdating['firstName']"
+                  title="Cancel"
+                >
+                  <span class="button-icon">✕</span>
+                </button>
+              </div>
+
+              <span *ngIf="fieldErrors['firstName']" class="field-error">{{ fieldErrors['firstName'] }}</span>
             </div>
 
+            <!-- Last Name Field -->
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input
-                type="text"
-                class="form-input"
-                [value]="userInfo.lastName"
-                placeholder="Enter last name"
-              />
+
+              <!-- View Mode -->
+              <div *ngIf="!editMode['lastName']" class="field-value-display">
+                <span class="field-value">{{ userInfo.lastName }}</span>
+                <button class="edit-button" (click)="enterEditMode('lastName')" title="Edit last name">
+                  <span class="edit-icon">✎</span>
+                </button>
+              </div>
+
+              <!-- Edit Mode -->
+              <div *ngIf="editMode['lastName']" class="field-edit-mode">
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="editValues['lastName']"
+                  (ngModelChange)="onFieldChange()"
+                  (keyup.enter)="saveField('lastName')"
+                  (keyup.escape)="cancelEdit('lastName')"
+                  [disabled]="isUpdating['lastName']"
+                  placeholder="Enter last name"
+                  autofocus
+                />
+                <button
+                  class="save-button"
+                  (click)="saveField('lastName')"
+                  [disabled]="isUpdating['lastName']"
+                  title="Save"
+                >
+                  <span class="button-icon">✓</span>
+                </button>
+                <button
+                  class="cancel-button"
+                  (click)="cancelEdit('lastName')"
+                  [disabled]="isUpdating['lastName']"
+                  title="Cancel"
+                >
+                  <span class="button-icon">✕</span>
+                </button>
+              </div>
+
+              <span *ngIf="fieldErrors['lastName']" class="field-error">{{ fieldErrors['lastName'] }}</span>
             </div>
 
+            <!-- Email Address Field (Read-Only) -->
             <div class="form-group">
               <label class="form-label">Email Address</label>
-              <input
-                type="email"
-                class="form-input"
-                [value]="userInfo.email"
-                placeholder="Enter email address"
-              />
+              <div class="field-value-display field-readonly">
+                <span class="field-value">{{ userInfo.email }}</span>
+                <span class="field-readonly-badge">Cannot be changed</span>
+              </div>
             </div>
 
+            <!-- Mobile Number Field -->
             <div class="form-group">
               <label class="form-label">Mobile Number</label>
-              <input
-                type="tel"
-                class="form-input"
-                [value]="userInfo.mobile"
-                placeholder="Enter mobile number"
-              />
-            </div>
 
-            <div class="section-actions">
-              <gc-button variant="primary" size="md" (onClick)="updateProfile()">
-                Save Changes
-              </gc-button>
-              <gc-button variant="ghost" size="md">
-                Cancel
-              </gc-button>
+              <!-- View Mode -->
+              <div *ngIf="!editMode['mobile']" class="field-value-display">
+                <span class="field-value">{{ userInfo.mobile || 'Not set' }}</span>
+                <button class="edit-button" (click)="enterEditMode('mobile')" title="Edit mobile number">
+                  <span class="edit-icon">✎</span>
+                </button>
+              </div>
+
+              <!-- Edit Mode -->
+              <div *ngIf="editMode['mobile']" class="field-edit-mode">
+                <input
+                  type="tel"
+                  class="form-input"
+                  [(ngModel)]="editValues['mobile']"
+                  (ngModelChange)="onFieldChange()"
+                  (keyup.enter)="saveField('mobile')"
+                  (keyup.escape)="cancelEdit('mobile')"
+                  [disabled]="isUpdating['mobile']"
+                  placeholder="Enter mobile number"
+                  autofocus
+                />
+                <button
+                  class="save-button"
+                  (click)="saveField('mobile')"
+                  [disabled]="isUpdating['mobile']"
+                  title="Save"
+                >
+                  <span class="button-icon">✓</span>
+                </button>
+                <button
+                  class="cancel-button"
+                  (click)="cancelEdit('mobile')"
+                  [disabled]="isUpdating['mobile']"
+                  title="Cancel"
+                >
+                  <span class="button-icon">✕</span>
+                </button>
+              </div>
+
+              <span *ngIf="fieldErrors['mobile']" class="field-error">{{ fieldErrors['mobile'] }}</span>
             </div>
           </div>
         </div>
@@ -140,15 +243,80 @@
           </div>
 
           <div class="section-content">
-            <div class="security-item">
-              <div class="security-info">
-                <h3 class="security-title">Password</h3>
-                <p class="security-status">Last changed 3 months ago</p>
+            <!-- Password Change -->
+            <div class="form-group">
+              <label class="form-label">Password</label>
+
+              <!-- View Mode -->
+              <div *ngIf="!passwordEditMode" class="password-view">
+                <span class="password-dots">••••••••</span>
+                <button class="edit-button" (click)="enterPasswordEditMode()" title="Change password">
+                  Change Password
+                </button>
               </div>
-              <gc-button variant="secondary" size="sm" (onClick)="changePassword()">
-                Change Password
-              </gc-button>
+
+              <!-- Password Edit Mode -->
+              <div *ngIf="passwordEditMode" class="password-edit-mode">
+                <div class="password-fields">
+                  <div class="password-field-group">
+                    <label class="password-field-label">Current Password</label>
+                    <input
+                      type="password"
+                      class="form-input"
+                      [(ngModel)]="passwordValues.current"
+                      (ngModelChange)="onFieldChange()"
+                      placeholder="Enter current password"
+                      [disabled]="isUpdating['password']"
+                    />
+                  </div>
+
+                  <div class="password-field-group">
+                    <label class="password-field-label">New Password</label>
+                    <input
+                      type="password"
+                      class="form-input"
+                      [(ngModel)]="passwordValues.new"
+                      (ngModelChange)="onFieldChange()"
+                      placeholder="Enter new password (min 8 characters)"
+                      [disabled]="isUpdating['password']"
+                    />
+                  </div>
+
+                  <div class="password-field-group">
+                    <label class="password-field-label">Confirm New Password</label>
+                    <input
+                      type="password"
+                      class="form-input"
+                      [(ngModel)]="passwordValues.confirm"
+                      (ngModelChange)="onFieldChange()"
+                      placeholder="Re-enter new password"
+                      [disabled]="isUpdating['password']"
+                    />
+                  </div>
+                </div>
+
+                <div class="password-actions">
+                  <button
+                    class="password-save-button"
+                    (click)="savePassword()"
+                    [disabled]="isUpdating['password']"
+                  >
+                    {{ isUpdating['password'] ? 'Updating...' : 'Update Password' }}
+                  </button>
+                  <button
+                    class="password-cancel-button"
+                    (click)="cancelPasswordEdit()"
+                    [disabled]="isUpdating['password']"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <span *ngIf="fieldErrors['password']" class="field-error">{{ fieldErrors['password'] }}</span>
+              </div>
             </div>
+
+            <div class="security-divider"></div>
 
             <div class="security-item">
               <div class="security-info">
@@ -192,11 +360,6 @@
               <span class="info-value">{{ userInfo.role }}</span>
             </div>
 
-            <div class="info-item">
-              <span class="info-label">Total Gadgets</span>
-              <span class="info-value">{{ userInfo.devicesCount }} gadgets</span>
-            </div>
-
             <div class="danger-zone">
               <h3 class="danger-title">Danger Zone</h3>
               <p class="danger-description">Permanently delete your account and all associated data</p>
@@ -208,38 +371,6 @@
         </div>
       </div>
     </div>
-
-    <!-- My Gadgets Section -->
-    <section class="gadgets-section">
-      <div class="section-header-with-action">
-        <div>
-          <h2 class="section-title-large">My Gadgets</h2>
-          <p class="section-description">Manage your registered gadgets and warranties</p>
-        </div>
-        <gc-button variant="primary" size="md" (click)="openAddDialog()">
-          ➕ Add Gadget
-        </gc-button>
-      </div>
-
-      <!-- Gadget Stats -->
-      <div class="stats-container">
-        <gc-device-stats [stats]="stats"></gc-device-stats>
-      </div>
-
-      <!-- Gadget List -->
-      <div class="gadgets-container">
-        <gc-device-list
-          [devices]="devices"
-          [isLoading]="isLoadingDevices"
-          [showHeader]="false"
-          (addDevice)="openAddDialog()"
-          (viewDevice)="onViewDevice($event)"
-          (editDevice)="openEditDialog($event)"
-          (deleteDevice)="onDeleteDevice($event)"
-          (viewDocuments)="openViewDocumentsDialog($event)"
-        ></gc-device-list>
-      </div>
-    </section>
   </div>
 
   <!-- Back to Home -->
@@ -249,31 +380,3 @@
     </gc-button>
   </div>
 </div>
-
-<!-- Dialogs -->
-<gc-add-device-dialog
-  [isOpen]="isAddDialogOpen"
-  (close)="closeAddDialog()"
-  (deviceAdded)="onDeviceAdded()"
-></gc-add-device-dialog>
-
-<gc-edit-device-dialog
-  [isOpen]="isEditDialogOpen"
-  [device]="selectedDevice"
-  (close)="closeEditDialog()"
-  (deviceUpdated)="onDeviceUpdated()"
-></gc-edit-device-dialog>
-
-<gc-delete-device-dialog
-  [isOpen]="isDeleteDialogOpen"
-  [device]="selectedDevice"
-  (close)="closeDeleteDialog()"
-  (deviceDeleted)="onDeviceDeleted()"
-></gc-delete-device-dialog>
-
-<gc-view-documents-dialog
-  [isOpen]="isViewDocumentsDialogOpen"
-  [deviceId]="selectedDeviceForDocs?.id"
-  [deviceName]="selectedDeviceForDocs?.name"
-  (close)="closeViewDocumentsDialog()"
-></gc-view-documents-dialog>

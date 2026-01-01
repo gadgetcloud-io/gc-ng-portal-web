@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../modal/modal';
@@ -10,7 +10,8 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ModalComponent, ButtonComponent],
   templateUrl: './login-dialog.html',
-  styleUrl: './login-dialog.scss'
+  styleUrl: './login-dialog.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginDialogComponent {
   @Input() isOpen = false;
@@ -27,7 +28,10 @@ export class LoginDialogComponent {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   onClose(): void {
     this.close.emit();
@@ -42,6 +46,7 @@ export class LoginDialogComponent {
   onSubmit(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.markForCheck();
 
     this.authService.login(this.formData.email, this.formData.password).subscribe({
       next: (result) => {
@@ -52,11 +57,13 @@ export class LoginDialogComponent {
         } else {
           this.errorMessage = result.error || 'Login failed. Please try again.';
         }
+        this.cdr.markForCheck();
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = 'An error occurred. Please try again.';
         console.error('Login error:', error);
+        this.cdr.markForCheck();
       }
     });
   }
