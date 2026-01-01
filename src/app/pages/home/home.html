@@ -1,127 +1,173 @@
-<div class="home-container">
+<!-- Hero Section -->
+<section class="hero">
   <div class="container">
-    <div class="split-layout">
-      <!-- LEFT SIDE: Quick Actions -->
-      <div class="actions-section">
-        <div class="actions-header">
-          <h2 class="actions-title">Quick Actions</h2>
-          <p class="actions-subtitle">Manage your gadgets and warranties</p>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Gadget care,
+          <span class="title-highlight">delightfully simple</span>
+        </h1>
+        <p class="hero-subtitle">
+          Track warranties. Store receipts. Never lose a gadget manual again.
+          All your tech, beautifully organized in one happy place.
+        </p>
+        <div class="hero-cta">
+          <button class="cta-button cta-primary" (click)="openSignupDialog()">
+            Get Started Free
+          </button>
+          <button class="cta-button cta-secondary" (click)="scrollToFeatures()">
+            See How It Works
+          </button>
         </div>
-
-        <div class="action-cards">
-          <div class="action-card" (click)="openAddDeviceDialog()">
-            <div class="action-icon">➕</div>
-            <h3 class="action-title">Add New Gadget</h3>
-            <p class="action-description">Track your gadget warranties in 3 simple steps</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Happy Users</div>
           </div>
-
-          <div class="action-card" routerLink="/dashboard">
-            <div class="action-icon">📱</div>
-            <h3 class="action-title">View All Gadgets</h3>
-            <p class="action-description">See all your gadgets and their warranty status</p>
+          <div class="stat">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Gadgets Tracked</div>
           </div>
-
-          <div class="action-card" *ngIf="!authService.isAuthenticated()" (click)="isLoginDialogOpen = true">
-            <div class="action-icon">🔐</div>
-            <h3 class="action-title">Sign In</h3>
-            <p class="action-description">Access your account and manage gadgets</p>
+          <div class="stat">
+            <div class="stat-number">99%</div>
+            <div class="stat-label">Warranty Saved</div>
           </div>
         </div>
       </div>
+      <div class="hero-illustration">
+        <!-- Lemonade-style outline illustration with varied hover animations -->
+        <svg viewBox="0 0 400 400" class="illustration">
+          <!-- Phone device -->
+          <g class="device-phone hover-bounce">
+            <rect x="150" y="80" width="100" height="180" rx="12" fill="none" stroke="#0080C0" stroke-width="3"/>
+            <rect x="160" y="90" width="80" height="140" rx="4" fill="none" stroke="#2AD5BD" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="200" cy="245" r="8" fill="none" stroke="#0080C0" stroke-width="2"/>
+            <!-- Screen elements -->
+            <line x1="170" y1="100" x2="230" y2="100" stroke="#2A76E4" stroke-width="2" stroke-linecap="round"/>
+            <line x1="170" y1="115" x2="220" y2="115" stroke="#2A76E4" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="175" cy="140" r="4" fill="#27C7B0"/>
+            <circle cx="195" cy="140" r="4" fill="#0080C0"/>
+            <circle cx="215" cy="140" r="4" fill="#2A76E4"/>
+          </g>
+          <!-- Laptop device -->
+          <g class="device-laptop hover-pulse">
+            <rect x="60" y="180" width="120" height="80" rx="6" fill="none" stroke="#2A76E4" stroke-width="3"/>
+            <rect x="70" y="190" width="100" height="60" rx="3" fill="none" stroke="#27C7B0" stroke-width="2"/>
+            <rect x="50" y="260" width="140" height="8" rx="2" fill="none" stroke="#2A76E4" stroke-width="3"/>
+            <!-- Checkmark -->
+            <polyline points="95,215 105,225 125,205" fill="none" stroke="#0080C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <!-- Watch device -->
+          <g class="device-watch hover-rotate">
+            <rect x="260" y="220" width="60" height="70" rx="8" fill="none" stroke="#27C7B0" stroke-width="3"/>
+            <rect x="268" y="228" width="44" height="40" rx="4" fill="none" stroke="#0080C0" stroke-width="2"/>
+            <line x1="275" y1="235" x2="295" y2="235" stroke="#2A76E4" stroke-width="2" stroke-linecap="round"/>
+            <line x1="275" y1="245" x2="305" y2="245" stroke="#2A76E4" stroke-width="2" stroke-linecap="round"/>
+            <rect x="270" y="210" width="40" height="10" rx="2" fill="none" stroke="#27C7B0" stroke-width="2"/>
+            <rect x="270" y="290" width="40" height="10" rx="2" fill="none" stroke="#27C7B0" stroke-width="2"/>
+          </g>
+          <!-- Floating icons -->
+          <g class="floating-icons">
+            <g class="hover-shake">
+              <circle cx="320" cy="100" r="20" fill="none" stroke="#0080C0" stroke-width="2"/>
+              <polyline points="315,100 320,105 330,95" fill="none" stroke="#0080C0" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g class="hover-float">
+              <circle cx="80" cy="120" r="15" fill="none" stroke="#2A76E4" stroke-width="2"/>
+              <text x="80" y="127" text-anchor="middle" fill="#2A76E4" font-size="20">⚡</text>
+            </g>
+            <g class="hover-slide">
+              <circle cx="340" cy="280" r="18" fill="none" stroke="#27C7B0" stroke-width="2"/>
+              <text x="340" y="288" text-anchor="middle" fill="#27C7B0" font-size="20">🎯</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- RIGHT SIDE: Gadget List -->
-      <div class="list-section">
-        <div class="list-header">
-          <h2 class="list-title">Recent Gadgets</h2>
-          <span class="device-count">{{ devices.length }} device{{ devices.length !== 1 ? 's' : '' }}</span>
+<!-- Features Section -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header" appScrollReveal>
+      <h2 class="section-title">Everything you need, nothing you don't</h2>
+      <p class="section-subtitle">Gadget management shouldn't be complicated. We made it simple, smart, and dare we say... fun?</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card" *ngFor="let feature of features; let i = index" appScrollReveal [revealDelay]="i * 100">
+        <div class="feature-icon" [innerHTML]="feature.icon"></div>
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-description">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header" appScrollReveal>
+      <h2 class="section-title">Three steps to gadget zen</h2>
+      <p class="section-subtitle">Getting started is ridiculously easy</p>
+    </div>
+
+    <div class="steps">
+      <div class="step" *ngFor="let step of steps; let i = index" appScrollReveal [revealDelay]="i * 150">
+        <div class="step-number">{{ i + 1 }}</div>
+        <div class="step-content">
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-description">{{ step.description }}</p>
         </div>
+        <div class="step-illustration" [innerHTML]="step.illustration"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Loading gadgets...</p>
+<!-- Social Proof Section -->
+<section class="social-proof">
+  <div class="container">
+    <div class="proof-content">
+      <div class="proof-stats">
+        <div class="big-stat" appScrollReveal>
+          <div class="big-stat-number">4.9</div>
+          <div class="big-stat-stars">★★★★★</div>
+          <div class="big-stat-label">Average rating from 2,500+ reviews</div>
         </div>
-
-        <!-- Empty State -->
-        <div *ngIf="!isLoading && devices.length === 0" class="empty-state">
-          <div class="empty-icon">📦</div>
-          <h3>No gadgets yet</h3>
-          <p>Click "Add New Gadget" to get started</p>
-        </div>
-
-        <!-- Gadget List -->
-        <div *ngIf="!isLoading && devices.length > 0" class="device-list">
-          <div *ngFor="let device of devices" class="device-card">
-            <div class="device-info">
-              <div class="device-icon">{{ device.image || '📦' }}</div>
-              <div class="device-details">
-                <h3 class="device-name">{{ device.name }}</h3>
-                <p class="device-meta">
-                  {{ device.manufacturer }} {{ device.model }}
-                </p>
-                <div class="device-status">
-                  <span class="status-badge" [ngClass]="getStatusClass(device.status)">
-                    {{ getStatusLabel(device.status) }}
-                  </span>
-                  <span class="warranty-date">
-                    Expires {{ formatDate(device.warrantyExpires) }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="device-actions">
-              <button
-                class="action-btn view-btn"
-                (click)="viewDevice(device)"
-                title="View Details"
-              >
-                👁️
-              </button>
-              <button
-                class="action-btn edit-btn"
-                (click)="editDevice(device)"
-                title="Edit"
-              >
-                ✏️
-              </button>
-              <button
-                class="action-btn docs-btn"
-                (click)="viewDocuments(device)"
-                title="Documents"
-              >
-                📄
-              </button>
-              <button
-                class="action-btn delete-btn"
-                (click)="deleteDevice(device)"
-                title="Delete"
-              >
-                🗑️
-              </button>
+      </div>
+      <div class="testimonials">
+        <div class="testimonial" *ngFor="let testimonial of testimonials; let i = index" appScrollReveal [revealDelay]="i * 150">
+          <div class="testimonial-content">"{{ testimonial.text }}"</div>
+          <div class="testimonial-author">
+            <div class="author-avatar">{{ testimonial.initials }}</div>
+            <div class="author-info">
+              <div class="author-name">{{ testimonial.name }}</div>
+              <div class="author-title">{{ testimonial.title }}</div>
             </div>
           </div>
-        </div>
-
-        <!-- View All Link -->
-        <div *ngIf="!isLoading && devices.length > 0" class="view-all">
-          <a routerLink="/dashboard" class="view-all-link">
-            View all gadgets →
-          </a>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- Add Gadget Dialog -->
-<gc-add-device-dialog
-  [isOpen]="isAddDeviceDialogOpen"
-  (close)="closeAddDeviceDialog()"
-  (deviceAdded)="onDeviceAdded()"
-></gc-add-device-dialog>
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content" appScrollReveal>
+      <h2 class="cta-title">Ready to simplify your gadget life?</h2>
+      <p class="cta-subtitle">Join 10,000+ happy users who never lose track of their tech.</p>
+      <button class="cta-button cta-primary-large" (click)="openSignupDialog()">
+        Get Started Free →
+      </button>
+      <p class="cta-note">Free forever for up to 5 gadgets. No credit card required.</p>
+    </div>
+  </div>
+</section>
 
-<!-- Auth Dialogs -->
+<!-- Dialogs -->
 <gc-login-dialog
   [isOpen]="isLoginDialogOpen"
   (close)="closeLoginDialog()"

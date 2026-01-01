@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { SeoService } from '../../core/services/seo.service';
+import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
 
 @Component({
   selector: 'app-about',
@@ -10,7 +12,27 @@ import { ButtonComponent } from '../../shared/components/button/button';
   templateUrl: './about.html',
   styleUrl: './about.scss'
 })
-export class AboutComponent {
+export class AboutComponent implements OnInit {
+
+  constructor(private seoService: SeoService) {}
+
+  ngOnInit(): void {
+    this.updateSEO();
+  }
+
+  private updateSEO(): void {
+    const organizationSchema = this.seoService.createOrganizationSchema();
+    const breadcrumbSchema = this.seoService.createBreadcrumbSchema([
+      { name: 'Home', url: 'https://www.gadgetcloud.io' },
+      { name: 'About' }
+    ]);
+
+    this.seoService.updateMetadata({
+      ...SEO_CONFIG['about'],
+      structuredData: [organizationSchema, breadcrumbSchema]
+    });
+  }
+
   stats = [
     { value: '2024', label: 'Founded' },
     { value: '10K+', label: 'Active Users' },

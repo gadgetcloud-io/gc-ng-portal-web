@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Lemonade-inspired gradient background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF0083;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2AD5BD;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2A76E4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2AD5BD;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="64" height="64" rx="16" fill="url(#bgGradient)"/>
+
+  <!-- Stylized "G" for GadgetCloud -->
+  <path d="M 38 20 Q 45 20 45 27 Q 45 32 41 34 L 41 30 Q 43 29 43 27 Q 43 22 38 22 L 26 22 Q 21 22 21 27 L 21 37 Q 21 42 26 42 L 32 42 L 32 34 L 28 34 L 28 32 L 34 32 L 34 44 L 26 44 Q 19 44 19 37 L 19 27 Q 19 20 26 20 Z"
+        fill="#FFFFFF"
+        opacity="0.98"/>
+
+  <!-- Checkmark accent -->
+  <path d="M 44 35 L 46 37 L 51 30 L 53 32 L 46 41 L 42 37 Z"
+        fill="url(#iconGradient)"
+        opacity="0.95"/>
+</svg>

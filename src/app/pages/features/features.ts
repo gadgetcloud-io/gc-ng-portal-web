@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { SeoService } from '../../core/services/seo.service';
+import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
 
 @Component({
   selector: 'app-features',
@@ -10,7 +12,33 @@ import { ButtonComponent } from '../../shared/components/button/button';
   templateUrl: './features.html',
   styleUrl: './features.scss'
 })
-export class FeaturesComponent {
+export class FeaturesComponent implements OnInit {
+
+  constructor(private seoService: SeoService) {}
+
+  ngOnInit(): void {
+    this.updateSEO();
+  }
+
+  private updateSEO(): void {
+    const breadcrumbSchema = this.seoService.createBreadcrumbSchema([
+      { name: 'Home', url: 'https://www.gadgetcloud.io' },
+      { name: 'Features' }
+    ]);
+
+    const featureListSchema = this.seoService.createItemListSchema(
+      this.mainFeatures.slice(0, 6).map(feature => ({
+        title: feature.title,
+        description: feature.description
+      }))
+    );
+
+    this.seoService.updateMetadata({
+      ...SEO_CONFIG['features'],
+      structuredData: [breadcrumbSchema, featureListSchema]
+    });
+  }
+
   mainFeatures = [
     {
       icon: '📱',

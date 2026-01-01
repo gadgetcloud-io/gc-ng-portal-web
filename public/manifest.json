@@ -1,0 +1,24 @@
+{
+  "name": "GadgetCloud - Smart Device & Warranty Management",
+  "short_name": "GadgetCloud",
+  "description": "Track warranties, store documents, and manage all your gadgets in one secure place",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#FF0083",
+  "background_color": "#FF0083",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "orientation": "any"
+}

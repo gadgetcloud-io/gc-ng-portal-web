@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { SeoService } from '../../core/services/seo.service';
+import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
 
 @Component({
   selector: 'app-pricing',
@@ -10,7 +12,42 @@ import { ButtonComponent } from '../../shared/components/button/button';
   templateUrl: './pricing.html',
   styleUrl: './pricing.scss'
 })
-export class PricingComponent {
+export class PricingComponent implements OnInit {
+
+  constructor(private seoService: SeoService) {}
+
+  ngOnInit(): void {
+    this.updateSEO();
+  }
+
+  private updateSEO(): void {
+    const breadcrumbSchema = this.seoService.createBreadcrumbSchema([
+      { name: 'Home', url: 'https://www.gadgetcloud.io' },
+      { name: 'Pricing' }
+    ]);
+
+    const productSchemas = this.pricingPlans.map(plan =>
+      this.seoService.createProductSchema({
+        name: plan.name,
+        description: plan.description,
+        price: plan.price,
+        features: plan.features
+      })
+    );
+
+    const faqSchema = this.seoService.createFAQSchema(
+      this.faqs.map(faq => ({
+        question: faq.question,
+        answer: faq.answer
+      }))
+    );
+
+    this.seoService.updateMetadata({
+      ...SEO_CONFIG['pricing'],
+      structuredData: [breadcrumbSchema, ...productSchemas, faqSchema]
+    });
+  }
+
   pricingPlans = [
     {
       name: 'Free',

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -19,6 +19,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoginDialogOpen = false;
   isSignupDialogOpen = false;
   isUserMenuOpen = false;
+  isScrolled = false;
   authState: AuthState = { isAuthenticated: false, user: null };
   private authSubscription?: Subscription;
 
@@ -43,6 +44,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.authSubscription?.unsubscribe();
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    this.isScrolled = window.scrollY > 10;
   }
 
   toggleMenu(): void {

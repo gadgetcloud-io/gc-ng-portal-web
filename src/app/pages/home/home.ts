@@ -1,163 +1,130 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LoginDialogComponent } from '../../shared/components/login-dialog/login-dialog';
 import { SignupDialogComponent } from '../../shared/components/signup-dialog/signup-dialog';
-import { AddDeviceDialogComponent } from '../../shared/components/device-dialogs/add-device-dialog';
-import { DeviceService, Device } from '../../core/services/device.service';
-import { DocumentService } from '../../core/services/document.service';
-import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
+import { SeoService } from '../../core/services/seo.service';
+import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoginDialogComponent, SignupDialogComponent, AddDeviceDialogComponent],
+  imports: [CommonModule, RouterModule, LoginDialogComponent, SignupDialogComponent, ScrollRevealDirective],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
 export class HomeComponent implements OnInit {
-  // Data
-  devices: Device[] = [];
-  isLoading = false;
-
   // Dialogs
   isLoginDialogOpen = false;
   isSignupDialogOpen = false;
-  isAddDeviceDialogOpen = false;
+
+  // Marketing content
+  features = [
+    {
+      icon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="25" fill="none" stroke="#0080C0" stroke-width="2"/><path d="M20 30 L27 37 L40 24" fill="none" stroke="#2AD5BD" stroke-width="3" stroke-linecap="round"/></svg>',
+      title: 'Warranty Tracking',
+      description: 'Never lose track of warranty expiration dates. Get smart reminders before they expire.'
+    },
+    {
+      icon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="20" width="30" height="25" rx="3" fill="none" stroke="#2A76E4" stroke-width="2"/><rect x="18" y="23" width="24" height="17" fill="none" stroke="#27C7B0" stroke-width="2" stroke-dasharray="2 2"/><line x1="25" y1="33" x2="35" y2="33" stroke="#0080C0" stroke-width="2"/></svg>',
+      title: 'Document Storage',
+      description: 'Store all your receipts, manuals, and documents in one secure cloud-based location.'
+    },
+    {
+      icon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="15" width="24" height="35" rx="3" fill="none" stroke="#27C7B0" stroke-width="2"/><circle cx="30" cy="43" r="2" fill="#0080C0"/><line x1="23" y1="20" x2="37" y2="20" stroke="#2A76E4" stroke-width="2"/><line x1="23" y1="25" x2="37" y2="25" stroke="#2A76E4" stroke-width="2"/></svg>',
+      title: 'Device Inventory',
+      description: 'Organize all your gadgets with photos, specs, and purchase details in beautiful cards.'
+    },
+    {
+      icon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="20" fill="none" stroke="#0080C0" stroke-width="2"/><path d="M30 15 L30 30 L40 35" fill="none" stroke="#27C7B0" stroke-width="2" stroke-linecap="round"/></svg>',
+      title: 'Smart Reminders',
+      description: 'Automated notifications for warranty renewals, service schedules, and important dates.'
+    },
+    {
+      icon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="25" r="8" fill="none" stroke="#2A76E4" stroke-width="2"/><circle cx="40" cy="35" r="6" fill="none" stroke="#27C7B0" stroke-width="2"/><line x1="32" y1="28" x2="36" y2="32" stroke="#0080C0" stroke-width="2"/></svg>',
+      title: 'Family Sharing',
+      description: 'Manage devices for your whole family. Perfect for parents tracking kids\' gadgets.'
+    },
+    {
+      icon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M30 15 L45 25 L45 45 L15 45 L15 25 Z" fill="none" stroke="#27C7B0" stroke-width="2"/><line x1="30" y1="30" x2="30" y2="45" stroke="#0080C0" stroke-width="2"/><line x1="25" y1="35" x2="35" y2="35" stroke="#2A76E4" stroke-width="2"/></svg>',
+      title: 'Secure & Private',
+      description: 'Bank-level encryption keeps your data safe. Your gadgets, your data, your control.'
+    }
+  ];
+
+  steps = [
+    {
+      title: 'Add Your Gadgets',
+      description: 'Snap a photo or enter details manually. Takes less than 30 seconds per device.',
+      illustration: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="20" width="50" height="60" rx="5" fill="none" stroke="#0080C0" stroke-width="2"/><circle cx="50" cy="70" r="3" fill="#2AD5BD"/><text x="50" y="55" text-anchor="middle" font-size="30">+</text></svg>'
+    },
+    {
+      title: 'Upload Documents',
+      description: 'Store receipts, warranties, and manuals. Scan or upload from your device.',
+      illustration: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="30" width="40" height="50" rx="3" fill="none" stroke="#2A76E4" stroke-width="2"/><path d="M40 45 L45 50 L55 40" fill="none" stroke="#27C7B0" stroke-width="2"/></svg>'
+    },
+    {
+      title: 'Relax & Get Notified',
+      description: 'We\'ll remind you before warranties expire. Sit back and let GadgetCloud do the work.',
+      illustration: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="30" fill="none" stroke="#27C7B0" stroke-width="2"/><path d="M50 50 L50 30 M50 50 L65 60" fill="none" stroke="#0080C0" stroke-width="2"/></svg>'
+    }
+  ];
+
+  testimonials = [
+    {
+      text: 'GadgetCloud saved me $500 on a laptop repair that was still under warranty. I had completely forgotten about it!',
+      name: 'Sarah Chen',
+      title: 'Small Business Owner',
+      initials: 'SC'
+    },
+    {
+      text: 'Managing gadgets for my family of 5 was chaos. Now everything is organized and I get reminders for all devices.',
+      name: 'Michael Rodriguez',
+      title: 'Dad & Tech Enthusiast',
+      initials: 'MR'
+    },
+    {
+      text: 'The interface is so clean and playful. Finally, a productivity app that doesn\'t feel like work!',
+      name: 'Emma Thompson',
+      title: 'Product Designer',
+      initials: 'ET'
+    }
+  ];
 
   constructor(
-    private deviceService: DeviceService,
-    public documentService: DocumentService,
-    public authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
-    this.loadDevices();
+    this.updateSEO();
   }
 
-  loadDevices(): void {
-    this.isLoading = true;
-    this.deviceService.devices$.subscribe({
-      next: (devices) => {
-        this.devices = devices.slice(0, 5); // Show only 5 recent devices
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading devices:', error);
-        this.isLoading = false;
-      }
+  private updateSEO(): void {
+    const organizationSchema = this.seoService.createOrganizationSchema();
+    const breadcrumbSchema = this.seoService.createBreadcrumbSchema([
+      { name: 'Home', url: 'https://www.gadgetcloud.io' }
+    ]);
+
+    this.seoService.updateMetadata({
+      ...SEO_CONFIG['home'],
+      structuredData: [organizationSchema, breadcrumbSchema]
     });
   }
 
-  // Add device dialog
-  openAddDeviceDialog(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.isLoginDialogOpen = true;
-      return;
-    }
-    this.isAddDeviceDialogOpen = true;
-  }
-
-  closeAddDeviceDialog(): void {
-    this.isAddDeviceDialogOpen = false;
-  }
-
-  onDeviceAdded(): void {
-    this.closeAddDeviceDialog();
-    this.loadDevices();
-  }
-
-  // Device actions
-  viewDevice(device: Device): void {
-    this.router.navigate(['/dashboard'], {
-      queryParams: { deviceId: device.id }
-    });
-  }
-
-  editDevice(device: Device): void {
-    this.router.navigate(['/dashboard'], {
-      queryParams: { deviceId: device.id, mode: 'edit' }
-    });
-  }
-
-  deleteDevice(device: Device): void {
-    if (confirm(`Are you sure you want to delete "${device.name}"?`)) {
-      this.deviceService.deleteDevice(device.id).subscribe({
-        next: (result) => {
-          if (result.success) {
-            this.loadDevices();
-          } else {
-            alert('Failed to delete device: ' + (result.error || 'Unknown error'));
-          }
-        },
-        error: (error) => {
-          console.error('Error deleting device:', error);
-          alert('Failed to delete device');
-        }
-      });
+  scrollToFeatures(): void {
+    const element = document.getElementById('features');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
-  viewDocuments(device: Device): void {
-    this.router.navigate(['/dashboard'], {
-      queryParams: { deviceId: device.id, view: 'documents' }
-    });
+  openSignupDialog(): void {
+    this.isSignupDialogOpen = true;
   }
 
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'status-active';
-      case 'expiring-soon':
-        return 'status-warning';
-      case 'expired':
-        return 'status-expired';
-      default:
-        return '';
-    }
-  }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'Active';
-      case 'expiring-soon':
-        return 'Expiring Soon';
-      case 'expired':
-        return 'Expired';
-      default:
-        return status;
-    }
-  }
-
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
-
-  // Auth dialog handlers
-  onLoginSuccess(): void {
-    this.ngZone.run(() => {
-      this.isLoginDialogOpen = false;
-      // Open add device dialog after successful login
-      this.isAddDeviceDialogOpen = true;
-    });
-  }
-
-  onSignupSuccess(): void {
-    this.ngZone.run(() => {
-      this.isSignupDialogOpen = false;
-      // Open add device dialog after successful signup
-      this.isAddDeviceDialogOpen = true;
-    });
+  openLoginDialog(): void {
+    this.isLoginDialogOpen = true;
   }
 
   closeLoginDialog(): void {
@@ -176,5 +143,13 @@ export class HomeComponent implements OnInit {
   switchToLogin(): void {
     this.isSignupDialogOpen = false;
     this.isLoginDialogOpen = true;
+  }
+
+  onLoginSuccess(): void {
+    this.isLoginDialogOpen = false;
+  }
+
+  onSignupSuccess(): void {
+    this.isSignupDialogOpen = false;
   }
 }

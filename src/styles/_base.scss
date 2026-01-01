@@ -24,7 +24,7 @@ body {
   font-size: var(--text-base);
   font-weight: var(--font-regular);
   line-height: var(--leading-normal);
-  color: var(--neutral-800);
+  color: var(--neutral-600);  // Lemonade's primary text color
   background: var(--neutral-50);
   overflow-x: hidden;
 }
@@ -32,54 +32,87 @@ body {
 // ===== TYPOGRAPHY =====
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: var(--font-bold);
   line-height: var(--leading-tight);
-  color: var(--brand-blue-900);
+  color: var(--neutral-900);
 }
 
 h1 {
-  font-size: var(--text-5xl);
+  font-family: var(--font-display);  // Merriweather
+  font-size: var(--text-5xl);        // 55px
+  font-weight: var(--font-regular);  // 400 (Lemonade style)
   margin-bottom: var(--space-6);
 }
 
 h2 {
-  font-size: var(--text-4xl);
+  font-family: var(--font-body);     // Lato
+  font-size: var(--text-4xl);        // 44px
+  font-weight: var(--font-bold);     // 700 (Lemonade style)
   margin-bottom: var(--space-5);
 }
 
 h3 {
-  font-size: var(--text-3xl);
+  font-family: var(--font-body);     // Lato
+  font-size: var(--text-3xl);        // 30px
+  font-weight: var(--font-bold);
   margin-bottom: var(--space-4);
 }
 
 h4 {
+  font-family: var(--font-body);
   font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
   margin-bottom: var(--space-4);
 }
 
 h5 {
+  font-family: var(--font-body);
   font-size: var(--text-xl);
+  font-weight: var(--font-bold);
   margin-bottom: var(--space-3);
 }
 
 h6 {
+  font-family: var(--font-body);
   font-size: var(--text-lg);
+  font-weight: var(--font-bold);
   margin-bottom: var(--space-3);
 }
 
 p {
+  font-size: var(--text-lg);  // 18px (Lemonade paragraph size)
   margin-bottom: var(--space-4);
-  line-height: var(--leading-relaxed);
+  line-height: var(--leading-relaxed);  // 1.56
 }
 
 a {
   color: var(--brand-cyan-700);
   text-decoration: none;
+  position: relative;
   transition: color var(--transition-fast);
+
+  // Animated underline on hover
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transition: width var(--transition-base) cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
   &:hover {
     color: var(--brand-blue-600);
+
+    &::after {
+      width: 100%;
+    }
+  }
+
+  // Active state
+  &:active {
+    transform: translateY(1px);
   }
 }
 
@@ -93,6 +126,77 @@ code {
   background: var(--neutral-100);
   padding: 2px 6px;
   border-radius: var(--radius-sm);
+}
+
+// ===== FORM ELEMENTS =====
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--neutral-900);
+  background: white;
+  border: 2px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    border-color: var(--neutral-400);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #0080C0;
+    box-shadow: 0 0 0 3px rgba(0, 128, 192, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &::placeholder {
+    color: var(--neutral-500);
+    transition: color var(--transition-fast);
+  }
+
+  &:focus::placeholder {
+    color: var(--neutral-400);
+  }
+
+  &:disabled {
+    background: var(--neutral-100);
+    border-color: var(--neutral-300);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+// Checkbox and Radio custom styles
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #0080C0;
+  transition: transform var(--transition-fast);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // ===== UTILITY CLASSES =====

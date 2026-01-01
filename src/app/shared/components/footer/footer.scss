@@ -1,10 +1,11 @@
 /**
- * Footer Component - Logo Colors Design
+ * Footer Component - Lemonade-Inspired Design
+ * Dark theme with clean, organized layout
  */
 
 .footer {
-  background: linear-gradient(180deg, var(--neutral-50) 0%, white 100%);
-  border-top: 1px solid var(--neutral-200);
+  background: #161616;
+  border-top: 1px solid rgba(121, 121, 121, 0.5);
   padding: var(--space-16) 0 var(--space-8);
   margin-top: var(--space-20);
 }
@@ -15,7 +16,7 @@
   grid-template-columns: 1.5fr 2fr;
   gap: var(--space-12);
   padding-bottom: var(--space-12);
-  border-bottom: 1px solid var(--neutral-200);
+  border-bottom: 1px solid rgba(121, 121, 121, 0.5);
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -28,40 +29,50 @@
   .footer-logo {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
     text-decoration: none;
-    margin-bottom: var(--space-4);
-    transition: opacity var(--transition-fast);
+    margin-bottom: var(--space-5);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      opacity: 0.8;
-    }
-
-    .logo-icon {
-      width: 40px;
-      height: 45px;
-      flex-shrink: 0;
+      transform: scale(1.05);
     }
 
     .footer-logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .footer-logo-brand {
       font-family: var(--font-display);
-      font-size: var(--text-xl);
-      font-weight: var(--font-bold);
+      font-size: var(--text-2xl);
+      font-weight: 900;
+      white-space: nowrap;
+      display: flex;
     }
 
     .logo-text-primary {
-      color: var(--brand-blue-600);
+      color: var(--brand-primary-700);  // Ocean Blue
     }
 
     .logo-text-secondary {
-      color: var(--brand-cyan-700);
+      color: #b7b7b7;  // Light gray for dark background
+    }
+
+    .footer-logo-tagline {
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: var(--font-semibold);
+      color: #b7b7b7;
+      letter-spacing: 0.025em;
+      margin-top: -2px;
     }
   }
 
   .footer-tagline {
     font-size: var(--text-base);
-    line-height: var(--leading-relaxed);
-    color: var(--neutral-600);
+    line-height: 1.6;
+    color: #b7b7b7;
     margin-bottom: var(--space-6);
     max-width: 360px;
   }
@@ -71,28 +82,39 @@
 .social-links {
   display: flex;
   gap: var(--space-3);
+  flex-wrap: wrap;
 
   .social-link {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--neutral-100);
+    background: transparent;
+    border: 1px solid rgba(183, 183, 183, 0.3);
     border-radius: var(--radius-md);
-    color: var(--neutral-600);
-    transition: all var(--transition-fast);
+    color: #b7b7b7;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      background: linear-gradient(135deg, var(--brand-cyan-700), var(--brand-blue-600));
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      background: rgba(0, 128, 192, 0.1);
+      border-color: #0080C0;
+      color: #0080C0;
+      transform: translateY(-3px) scale(1.05);
+
+      .social-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px) scale(1.02);
     }
 
     .social-icon {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
   }
 }
@@ -115,11 +137,9 @@
 .footer-column {
   .column-title {
     font-family: var(--font-display);
-    font-size: var(--text-sm);
-    font-weight: var(--font-semibold);
-    color: var(--brand-blue-900);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: #b7b7b7;
     margin-bottom: var(--space-4);
   }
 
@@ -134,24 +154,50 @@
 
   .footer-link {
     font-size: var(--text-base);
-    color: var(--neutral-700);
+    font-weight: var(--font-medium);
+    color: #b7b7b7;
     text-decoration: none;
-    transition: all var(--transition-fast);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-block;
+    position: relative;
+
+    // Animated underline
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: #0080C0;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
     &:hover {
-      color: var(--brand-cyan-700);
+      color: white;
       transform: translateX(4px);
+
+      &::after {
+        width: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateX(2px);
     }
 
     &.footer-link-disabled {
-      color: var(--neutral-400);
+      color: rgba(183, 183, 183, 0.5);
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: 0.5;
 
       &:hover {
-        color: var(--neutral-400);
+        color: rgba(183, 183, 183, 0.5);
         transform: none;
+
+        &::after {
+          width: 0;
+        }
       }
     }
   }
@@ -171,17 +217,18 @@
   }
 
   .copyright {
-    font-size: var(--text-sm);
-    color: var(--neutral-600);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    color: rgba(183, 183, 183, 0.5);
     margin: 0;
   }
 
   .footer-meta {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    font-size: var(--text-sm);
-    color: var(--neutral-600);
+    gap: var(--space-4);
+    font-size: var(--text-base);
+    color: rgba(183, 183, 183, 0.5);
 
     @media (max-width: 480px) {
       flex-direction: column;
@@ -189,18 +236,22 @@
     }
 
     .meta-separator {
+      color: rgba(183, 183, 183, 0.3);
+      font-weight: var(--font-medium);
+
       @media (max-width: 480px) {
         display: none;
       }
     }
 
     .meta-link {
-      color: var(--brand-cyan-700);
+      color: rgba(183, 183, 183, 0.5);
       text-decoration: none;
-      transition: color var(--transition-fast);
+      font-weight: var(--font-medium);
+      transition: all 0.2s ease;
 
       &:hover {
-        color: var(--brand-blue-600);
+        color: #b7b7b7;
         text-decoration: underline;
       }
     }

@@ -1,0 +1,30 @@
+# GadgetCloud robots.txt
+# Updated: 2024-12-31
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /devices
+Disallow: /service-requests
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://www.gadgetcloud.io/sitemap.xml
+
+# Crawl-delay (optional, prevents overload)
+Crawl-delay: 1
+
+# Specific bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Block bad bots (optional)
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /

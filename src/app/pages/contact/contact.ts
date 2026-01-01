@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { SeoService } from '../../core/services/seo.service';
+import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
 
 @Component({
   selector: 'app-contact',
@@ -10,7 +12,35 @@ import { ButtonComponent } from '../../shared/components/button/button';
   templateUrl: './contact.html',
   styleUrl: './contact.scss'
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
+
+  constructor(private seoService: SeoService) {}
+
+  ngOnInit(): void {
+    this.updateSEO();
+  }
+
+  private updateSEO(): void {
+    const breadcrumbSchema = this.seoService.createBreadcrumbSchema([
+      { name: 'Home', url: 'https://www.gadgetcloud.io' },
+      { name: 'Contact' }
+    ]);
+
+    const faqSchema = this.seoService.createFAQSchema(
+      this.faqs.map(faq => ({
+        question: faq.question,
+        answer: faq.answer
+      }))
+    );
+
+    const organizationSchema = this.seoService.createOrganizationSchema();
+
+    this.seoService.updateMetadata({
+      ...SEO_CONFIG['contact'],
+      structuredData: [breadcrumbSchema, faqSchema, organizationSchema]
+    });
+  }
+
   contactInfo = {
     email: 'hello@gadgetcloud.io',
     phone: '+91 (555) 123-4567',
