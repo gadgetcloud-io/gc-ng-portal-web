@@ -12,19 +12,21 @@
     <a routerLink="/my-gadgets" class="back-link">← Back to My Gadgets</a>
   </div>
 
+  <!-- Success/Error Popovers -->
+  <div class="popover-container">
+    <div *ngIf="updateSuccess" class="popover popover-success">
+      <div class="popover-icon">✓</div>
+      <div class="popover-message">{{ updateSuccess }}</div>
+    </div>
+
+    <div *ngIf="updateError" class="popover popover-error">
+      <div class="popover-icon">✕</div>
+      <div class="popover-message">{{ updateError }}</div>
+    </div>
+  </div>
+
   <!-- Device Details -->
   <div *ngIf="device && !loading" class="device-content">
-    <!-- Success/Error Messages -->
-    <div *ngIf="updateSuccess" class="alert alert-success">
-      <div class="alert-icon">✓</div>
-      <div class="alert-message">{{ updateSuccess }}</div>
-    </div>
-
-    <div *ngIf="updateError" class="alert alert-error">
-      <div class="alert-icon">✕</div>
-      <div class="alert-message">{{ updateError }}</div>
-    </div>
-
     <!-- Header -->
     <div class="header">
       <a routerLink="/my-gadgets" class="back-link">

@@ -566,48 +566,6 @@
       animation: spin 0.6s linear infinite;
     }
 
-    // Alert Messages
-    .alert {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 1.25rem;
-      border-radius: 16px;
-      margin-bottom: 1.5rem;
-      animation: slideIn 0.3s ease;
-      font-size: 0.9375rem;
-      font-weight: 500;
-
-      .alert-icon {
-        font-size: 1.25rem;
-        flex-shrink: 0;
-      }
-
-      .alert-message {
-        flex: 1;
-      }
-
-      &.alert-success {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-        border: 2px solid rgba(34, 197, 94, 0.3);
-        color: #15803D;
-
-        .alert-icon {
-          color: #16A34A;
-        }
-      }
-
-      &.alert-error {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-        border: 2px solid rgba(239, 68, 68, 0.3);
-        color: #B91C1C;
-
-        .alert-icon {
-          color: #DC2626;
-        }
-      }
-    }
-
     // Animations
     @keyframes slideIn {
       from {
@@ -624,6 +582,97 @@
       to {
         transform: rotate(360deg);
       }
+    }
+  }
+
+  // Popover Container (fixed position, top-right)
+  .popover-container {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    pointer-events: none;
+
+    @media (max-width: 768px) {
+      top: 1rem;
+      right: 1rem;
+      left: 1rem;
+    }
+  }
+
+  // Popover Messages
+  .popover {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+
+    @media (max-width: 768px) {
+      min-width: auto;
+      max-width: none;
+    }
+
+    .popover-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .popover-message {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    &.popover-success {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+      border: 2px solid #22C55E;
+      color: #15803D;
+
+      .popover-icon {
+        background: #22C55E;
+        color: white;
+      }
+    }
+
+    &.popover-error {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+      border: 2px solid #EF4444;
+      color: #B91C1C;
+
+      .popover-icon {
+        background: #EF4444;
+        color: white;
+      }
+    }
+  }
+
+  // Slide in from right animation
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }
