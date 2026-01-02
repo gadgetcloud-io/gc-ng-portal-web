@@ -208,6 +208,18 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
         url += `/${routeURL}`;
       }
 
+      // Special handling for device detail pages (/my-gadgets/:id)
+      // Inject "My Gadgets" parent breadcrumb before the device name
+      if (url.startsWith('/my-gadgets/') && url !== '/my-gadgets') {
+        const hasMyGadgetsBreadcrumb = breadcrumbs.some(b => b.url === '/my-gadgets');
+        if (!hasMyGadgetsBreadcrumb) {
+          breadcrumbs.push({
+            label: 'My Gadgets',
+            url: '/my-gadgets'
+          });
+        }
+      }
+
       // Get breadcrumb data from route
       const breadcrumbData = child.snapshot.data['breadcrumb'];
 
