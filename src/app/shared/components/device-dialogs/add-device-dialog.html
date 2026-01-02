@@ -4,8 +4,76 @@
     {{ error }}
   </div>
 
-  <!-- Stepper -->
-  <div class="stepper">
+  <!-- Step 0: Choose Creation Method -->
+  <div *ngIf="currentStep === 0 && creationMode === 'manual'" class="method-choice">
+    <h3>How would you like to add your gadget?</h3>
+
+    <div class="method-options">
+      <button type="button" class="method-card" (click)="onMethodSelect('photo')">
+        <div class="method-icon">📸</div>
+        <h4>Take a Photo</h4>
+        <p>Snap a picture and let AI fill in the details</p>
+        <span class="badge">Recommended</span>
+      </button>
+
+      <button type="button" class="method-card" (click)="onMethodSelect('manual')">
+        <div class="method-icon">✏️</div>
+        <h4>Enter Manually</h4>
+        <p>Fill in the information yourself</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Photo Capture/Analysis -->
+  <div *ngIf="currentStep === 0 && creationMode === 'photo'" class="photo-capture">
+    <div class="photo-input-zone">
+      <input
+        type="file"
+        #photoInput
+        accept="image/jpeg,image/png,image/jpg"
+        capture="environment"
+        (change)="onPhotoCapture($event)"
+        hidden
+      />
+
+      <button
+        type="button"
+        class="photo-capture-btn"
+        (click)="photoInput.click()"
+        [disabled]="isAnalyzing"
+      >
+        <span class="camera-icon">📷</span>
+        <span>{{ capturedPhoto ? 'Retake Photo' : 'Take Photo' }}</span>
+      </button>
+
+      <!-- Photo Preview -->
+      <div *ngIf="photoPreviewUrl" class="photo-preview">
+        <img [src]="photoPreviewUrl" alt="Captured device photo" />
+      </div>
+
+      <!-- Analysis Progress -->
+      <div *ngIf="isAnalyzing" class="analysis-progress">
+        <div class="spinner"></div>
+        <p>Analyzing photo...</p>
+        <p class="analysis-hint">Extracting device information using AI</p>
+      </div>
+
+      <!-- Analysis Error -->
+      <div *ngIf="analysisError" class="analysis-error">
+        <span class="error-icon">⚠️</span>
+        <p>{{ analysisError }}</p>
+        <gc-button variant="secondary" size="sm" (onClick)="retakePhoto()">
+          Try Again
+        </gc-button>
+        <gc-button variant="ghost" size="sm" (onClick)="switchToManual()">
+          Enter Manually
+        </gc-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stepper (hidden on Step 0) -->
+  <div *ngIf="currentStep > 0" class="stepper">
     <div
       *ngFor="let step of [1, 2, 3]"
       class="step"
@@ -29,6 +97,24 @@
   <form [formGroup]="deviceForm" class="device-form">
     <!-- Step 1: Basic Info -->
     <div *ngIf="currentStep === 1" class="form-step">
+      <!-- Analysis Success Banner -->
+      <div *ngIf="analysisResult && analysisResult.status === 'success'" class="analysis-banner success">
+        <span class="banner-icon">✓</span>
+        <div class="banner-content">
+          <strong>Photo analyzed successfully!</strong>
+          <p>We've pre-filled the information below. Please review and edit as needed.</p>
+        </div>
+      </div>
+
+      <!-- Analysis Partial Banner -->
+      <div *ngIf="analysisResult && analysisResult.status === 'partial'" class="analysis-banner warning">
+        <span class="banner-icon">⚠️</span>
+        <div class="banner-content">
+          <strong>Partial information extracted</strong>
+          <p>Please review the pre-filled fields and complete any missing information.</p>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Gadget Name *</label>
         <input
@@ -58,6 +144,13 @@
         <span *ngIf="isFieldInvalid('category')" class="error-text">
           Category is required
         </span>
+        <div
+          *ngIf="analysisResult?.extractedData?.suggestedCategory"
+          class="field-hint ai-suggested"
+        >
+          <span class="hint-icon">🤖</span>
+          AI suggested category
+        </div>
       </div>
 
       <div class="form-row">
@@ -69,6 +162,15 @@
             class="form-input"
             placeholder="e.g., Apple"
           />
+          <div
+            *ngIf="analysisResult?.extractedData?.brand"
+            class="field-hint"
+            [class.confidence-high]="analysisResult && hasHighConfidence(analysisResult.extractedData.confidence.brand)"
+            [class.confidence-medium]="analysisResult && getConfidenceLabel(analysisResult.extractedData.confidence.brand) === 'medium'"
+          >
+            <span class="hint-icon">🤖</span>
+            AI extracted ({{ analysisResult ? getConfidenceLabel(analysisResult.extractedData.confidence.brand) : '' }} confidence)
+          </div>
         </div>
 
         <div class="form-group">
@@ -79,8 +181,23 @@
             class="form-input"
             placeholder="e.g., M3 Max"
           />
+          <div
+            *ngIf="analysisResult?.extractedData?.model"
+            class="field-hint"
+            [class.confidence-high]="analysisResult && hasHighConfidence(analysisResult.extractedData.confidence.model)"
+            [class.confidence-medium]="analysisResult && getConfidenceLabel(analysisResult.extractedData.confidence.model) === 'medium'"
+          >
+            <span class="hint-icon">🤖</span>
+            AI extracted ({{ analysisResult ? getConfidenceLabel(analysisResult.extractedData.confidence.model) : '' }} confidence)
+          </div>
         </div>
       </div>
+
+      <!-- Show Raw Extracted Text (collapsible) -->
+      <details *ngIf="analysisResult?.extractedData?.rawText" class="raw-text-details">
+        <summary>View extracted text from photo</summary>
+        <pre class="raw-text">{{ analysisResult?.extractedData?.rawText }}</pre>
+      </details>
     </div>
 
     <!-- Step 2: Purchase & Warranty -->
@@ -151,6 +268,15 @@
           class="form-input"
           placeholder="e.g., C02YX3ABMD6T"
         />
+        <div
+          *ngIf="analysisResult?.extractedData?.serialNumber"
+          class="field-hint"
+          [class.confidence-high]="analysisResult && hasHighConfidence(analysisResult.extractedData.confidence.serialNumber)"
+          [class.confidence-medium]="analysisResult && getConfidenceLabel(analysisResult.extractedData.confidence.serialNumber) === 'medium'"
+        >
+          <span class="hint-icon">🤖</span>
+          AI extracted ({{ analysisResult ? getConfidenceLabel(analysisResult.extractedData.confidence.serialNumber) : '' }} confidence)
+        </div>
       </div>
 
       <div class="form-group">
@@ -167,7 +293,7 @@
     <!-- Form Actions -->
     <div class="form-actions">
       <gc-button
-        *ngIf="currentStep > 1"
+        *ngIf="currentStep > 0"
         variant="secondary"
         (onClick)="previousStep()"
         [disabled]="isSubmitting"
@@ -176,6 +302,7 @@
       </gc-button>
 
       <gc-button
+        *ngIf="currentStep > 0"
         variant="primary"
         (onClick)="nextStep()"
         [disabled]="isSubmitting"
