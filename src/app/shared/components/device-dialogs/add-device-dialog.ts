@@ -32,6 +32,7 @@ export class AddDeviceDialogComponent implements OnDestroy {
   analysisError: string | null = null;
   capturedPhoto: File | null = null;
   photoPreviewUrl: string | null = null;
+  isImageFile = true; // Track if uploaded file is image or PDF
 
   // Confidence thresholds
   readonly CONFIDENCE_THRESHOLD_HIGH = 0.8;
@@ -221,7 +222,15 @@ export class AddDeviceDialogComponent implements OnDestroy {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       this.capturedPhoto = file;
-      this.photoPreviewUrl = URL.createObjectURL(file);
+      this.isImageFile = file.type.startsWith('image/');
+
+      // Create preview URL (only for images, PDFs will show icon)
+      if (this.isImageFile) {
+        this.photoPreviewUrl = URL.createObjectURL(file);
+      } else {
+        this.photoPreviewUrl = null;
+      }
+
       this.analyzePhoto(file);
     }
   }
@@ -299,6 +308,7 @@ export class AddDeviceDialogComponent implements OnDestroy {
       URL.revokeObjectURL(this.photoPreviewUrl);
     }
     this.photoPreviewUrl = null;
+    this.isImageFile = true;
     this.analysisResult = null;
     this.analysisError = null;
     this.currentStep = 0;
@@ -326,6 +336,7 @@ export class AddDeviceDialogComponent implements OnDestroy {
     this.analysisResult = null;
     this.analysisError = null;
     this.capturedPhoto = null;
+    this.isImageFile = true;
     if (this.photoPreviewUrl) {
       URL.revokeObjectURL(this.photoPreviewUrl);
     }

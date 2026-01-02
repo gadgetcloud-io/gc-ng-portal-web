@@ -11,8 +11,8 @@
     <div class="method-options">
       <button type="button" class="method-card" (click)="onMethodSelect('photo')">
         <div class="method-icon">📸</div>
-        <h4>Take a Photo</h4>
-        <p>Snap a picture and let AI fill in the details</p>
+        <h4>Upload Document</h4>
+        <p>Take a photo or upload a PDF and let AI fill in the details</p>
         <span class="badge">Recommended</span>
       </button>
 
@@ -30,7 +30,7 @@
       <input
         type="file"
         #photoInput
-        accept="image/jpeg,image/png,image/jpg"
+        accept="image/jpeg,image/png,image/jpg,application/pdf"
         capture="environment"
         (change)="onPhotoCapture($event)"
         hidden
@@ -43,18 +43,27 @@
         [disabled]="isAnalyzing"
       >
         <span class="camera-icon">📷</span>
-        <span>{{ capturedPhoto ? 'Retake Photo' : 'Take Photo' }}</span>
+        <span>{{ capturedPhoto ? 'Choose Different File' : 'Take Photo / Upload PDF' }}</span>
       </button>
 
-      <!-- Photo Preview -->
-      <div *ngIf="photoPreviewUrl" class="photo-preview">
+      <!-- Photo Preview (for images) -->
+      <div *ngIf="photoPreviewUrl && isImageFile" class="photo-preview">
         <img [src]="photoPreviewUrl" alt="Captured device photo" />
+      </div>
+
+      <!-- PDF Preview -->
+      <div *ngIf="capturedPhoto && !isImageFile" class="pdf-preview">
+        <div class="pdf-icon">📄</div>
+        <div class="pdf-info">
+          <p class="pdf-name">{{ capturedPhoto.name }}</p>
+          <p class="pdf-size">{{ (capturedPhoto.size / 1024).toFixed(1) }} KB</p>
+        </div>
       </div>
 
       <!-- Analysis Progress -->
       <div *ngIf="isAnalyzing" class="analysis-progress">
         <div class="spinner"></div>
-        <p>Analyzing photo...</p>
+        <p>Analyzing document...</p>
         <p class="analysis-hint">Extracting device information using AI</p>
       </div>
 
@@ -101,7 +110,7 @@
       <div *ngIf="analysisResult && analysisResult.status === 'success'" class="analysis-banner success">
         <span class="banner-icon">✓</span>
         <div class="banner-content">
-          <strong>Photo analyzed successfully!</strong>
+          <strong>Document analyzed successfully!</strong>
           <p>We've pre-filled the information below. Please review and edit as needed.</p>
         </div>
       </div>
@@ -195,7 +204,7 @@
 
       <!-- Show Raw Extracted Text (collapsible) -->
       <details *ngIf="analysisResult?.extractedData?.rawText" class="raw-text-details">
-        <summary>View extracted text from photo</summary>
+        <summary>View extracted text from document</summary>
         <pre class="raw-text">{{ analysisResult?.extractedData?.rawText }}</pre>
       </details>
     </div>
