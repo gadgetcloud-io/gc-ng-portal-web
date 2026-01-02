@@ -27,7 +27,7 @@ export class HelpDialogComponent implements OnInit {
 
   // Tab configuration
   tabs: Tab[] = [
-    { id: 'support', label: 'Support Request', icon: '🆘' },
+    { id: 'support', label: 'Contact us', icon: '✉️' },
     { id: 'feedback', label: 'Feedback', icon: '💬' }
   ];
   activeTabId = 'support';

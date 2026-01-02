@@ -1,0 +1,33 @@
+<nav class="pagination" aria-label="Pagination">
+  <button
+    class="pagination-btn prev"
+    [disabled]="currentPage === 1"
+    (click)="previousPage()"
+    aria-label="Previous page"
+  >
+    ← Previous
+  </button>
+
+  <div class="pagination-numbers">
+    <button
+      *ngFor="let page of pages"
+      [class.active]="page === currentPage"
+      [class.ellipsis]="page === -1"
+      [disabled]="page === -1"
+      (click)="goToPage(page)"
+      [attr.aria-label]="page === -1 ? null : 'Page ' + page"
+      [attr.aria-current]="page === currentPage ? 'page' : null"
+    >
+      {{ page === -1 ? '...' : page }}
+    </button>
+  </div>
+
+  <button
+    class="pagination-btn next"
+    [disabled]="currentPage === totalPages"
+    (click)="nextPage()"
+    aria-label="Next page"
+  >
+    Next →
+  </button>
+</nav>

@@ -1,0 +1,126 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
+  flex-wrap: wrap;
+
+  .pagination-btn {
+    padding: var(--space-3) var(--space-4);
+    background: white;
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-md);
+    color: var(--color-gray-700);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-size: 0.875rem;
+
+    &:hover:not(:disabled) {
+      background: var(--color-gray-50);
+      border-color: var(--brand-cyan-700);
+      color: var(--brand-cyan-700);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--color-gray-50);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--brand-cyan-700);
+      outline-offset: 2px;
+    }
+  }
+
+  .pagination-numbers {
+    display: flex;
+    gap: var(--space-1);
+
+    button {
+      min-width: 40px;
+      height: 40px;
+      padding: var(--space-2);
+      background: white;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      color: var(--color-gray-700);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover:not(:disabled):not(.active) {
+        background: var(--color-gray-50);
+        border-color: var(--brand-cyan-700);
+        color: var(--brand-cyan-700);
+      }
+
+      &.active {
+        background: var(--brand-cyan-700);
+        border-color: var(--brand-cyan-700);
+        color: white;
+        cursor: default;
+      }
+
+      &.ellipsis {
+        border: none;
+        cursor: default;
+        background: transparent;
+        color: var(--color-gray-500);
+
+        &:hover {
+          background: transparent;
+          border: none;
+        }
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--brand-cyan-700);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    gap: var(--space-1);
+
+    .pagination-btn {
+      font-size: 0.75rem;
+      padding: var(--space-2) var(--space-3);
+
+      &.prev::before {
+        content: '←';
+        margin-right: var(--space-1);
+      }
+
+      &.next::after {
+        content: '→';
+        margin-left: var(--space-1);
+      }
+
+      // Hide text on mobile, show only arrows
+      &.prev,
+      &.next {
+        font-size: 0;
+
+        &::before,
+        &::after {
+          font-size: 0.875rem;
+          margin: 0;
+        }
+      }
+    }
+
+    .pagination-numbers button {
+      min-width: 36px;
+      height: 36px;
+      font-size: 0.75rem;
+    }
+  }
+}

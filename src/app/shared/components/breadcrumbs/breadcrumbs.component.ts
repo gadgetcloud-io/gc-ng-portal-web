@@ -4,6 +4,7 @@ import { Router, NavigationEnd, ActivatedRoute, RouterLink } from '@angular/rout
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { BreadcrumbService } from '../../../core/services/breadcrumb.service';
+import { pathToLabel, isDynamicSegment } from '../../../core/utils/breadcrumb-utils';
 
 export interface Breadcrumb {
   label: string;
@@ -19,19 +20,22 @@ export interface Breadcrumb {
     <nav class="breadcrumbs" *ngIf="breadcrumbs.length > 0" aria-label="Breadcrumb" role="navigation">
       <ol class="breadcrumb-list">
         <li
-          *ngFor="let breadcrumb of breadcrumbs; let last = last"
+          *ngFor="let breadcrumb of breadcrumbs; let last = last; let first = first"
           class="breadcrumb-item">
 
           <a
             *ngIf="!last"
             [routerLink]="breadcrumb.url"
-            class="breadcrumb-link"
-            [attr.aria-label]="'Navigate to ' + breadcrumb.label">
-            {{ breadcrumb.label }}
+            [class.breadcrumb-link]="true"
+            [class.breadcrumb-link--home]="first && breadcrumb.icon"
+            [attr.aria-label]="first && breadcrumb.icon ? 'Navigate to home' : 'Navigate to ' + breadcrumb.label">
+            <span *ngIf="first && breadcrumb.icon" class="breadcrumb-icon">{{ breadcrumb.icon }}</span>
+            <span *ngIf="!first || !breadcrumb.icon">{{ breadcrumb.label }}</span>
           </a>
 
           <span *ngIf="last" class="breadcrumb-current" aria-current="page">
-            {{ breadcrumb.label }}
+            <span *ngIf="first && breadcrumb.icon" class="breadcrumb-icon">{{ breadcrumb.icon }}</span>
+            <span *ngIf="!first || !breadcrumb.icon">{{ breadcrumb.label }}</span>
           </span>
 
           <span *ngIf="!last" class="breadcrumb-separator" aria-hidden="true">/</span>
@@ -94,6 +98,26 @@ export interface Breadcrumb {
       pointer-events: none;
     }
 
+    .breadcrumb-icon {
+      display: inline-flex;
+      align-items: center;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .breadcrumb-link--home {
+      display: inline-flex;
+      align-items: center;
+
+      .breadcrumb-icon {
+        transition: transform 0.3s ease;
+      }
+
+      &:hover .breadcrumb-icon {
+        transform: scale(1.1);
+      }
+    }
+
     /* ===== MOBILE RESPONSIVE ===== */
     @media (max-width: 768px) {
       .breadcrumbs {
@@ -102,6 +126,10 @@ export interface Breadcrumb {
 
       .breadcrumb-item {
         font-size: 13px;
+      }
+
+      .breadcrumb-icon {
+        font-size: 14px;
       }
     }
 
@@ -155,6 +183,11 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
     url: string = '',
     breadcrumbs: Breadcrumb[] = []
   ): Breadcrumb[] {
+    // Add home breadcrumb at the start (only once at root level)
+    if (url === '' && breadcrumbs.length === 0) {
+      breadcrumbs.push({ label: 'Home', url: '/', icon: '🏠' });
+    }
+
     // Get the child routes
     const children: ActivatedRoute[] = route.children;
 
@@ -178,27 +211,56 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
       // Get breadcrumb data from route
       const breadcrumbData = child.snapshot.data['breadcrumb'];
 
-      // Add breadcrumb if data exists
-      if (breadcrumbData) {
-        // Handle dynamic breadcrumb labels
-        let label: string;
+      // Determine if we should add a breadcrumb
+      let shouldAddBreadcrumb = false;
+      let label = '';
+      let icon: string | undefined = undefined;
 
+      if (breadcrumbData) {
+        // Route has breadcrumb configuration
+        shouldAddBreadcrumb = true;
+
+        // Handle dynamic breadcrumb labels
         if (typeof breadcrumbData.label === 'function') {
           label = breadcrumbData.label(child.snapshot);
         } else {
           label = breadcrumbData.label;
         }
 
-        // Check for dynamic label from service
+        // Store icon from breadcrumb data
+        icon = breadcrumbData.icon;
+
+        // Check for dynamic label from service (highest priority)
         const dynamicLabel = this.breadcrumbService.getLabel(url);
         if (dynamicLabel) {
           label = dynamicLabel;
         }
+      } else if (routeURL !== '') {
+        // Route has NO breadcrumb configuration - auto-generate
+        const segments = routeURL.split('/').filter(s => s.length > 0);
+        const lastSegment = segments[segments.length - 1];
 
+        // Only add breadcrumb if the last segment is NOT a dynamic ID
+        if (!isDynamicSegment(lastSegment)) {
+          shouldAddBreadcrumb = true;
+
+          // Check for dynamic label from service first
+          const dynamicLabel = this.breadcrumbService.getLabel(url);
+          if (dynamicLabel) {
+            label = dynamicLabel;
+          } else {
+            // Auto-generate label from path segment
+            label = pathToLabel(lastSegment);
+          }
+        }
+      }
+
+      // Add breadcrumb if we determined it should be added
+      if (shouldAddBreadcrumb && label) {
         const breadcrumb: Breadcrumb = {
           label: label,
           url: url,
-          icon: breadcrumbData.icon
+          icon: icon
         };
 
         breadcrumbs.push(breadcrumb);

@@ -1,0 +1,100 @@
+<div class="blog-detail-page">
+  <ng-container *ngIf="state$ | async as state">
+    <!-- Loading State -->
+    <div *ngIf="state.loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading article...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="state.error && !state.loading" class="error-state">
+      <div class="error-icon">📄</div>
+      <h2>Article Not Found</h2>
+      <p>The article you're looking for doesn't exist or has been removed.</p>
+      <gc-button variant="primary" (click)="goBack()">
+        Back to Blog
+      </gc-button>
+    </div>
+
+    <!-- Article Content -->
+    <article *ngIf="state.post && !state.loading" class="blog-article">
+      <!-- Header -->
+      <header class="article-header">
+        <div class="container-narrow">
+          <div class="category-badge">{{ state.post.category.name }}</div>
+          <h1 class="article-title">{{ state.post.title }}</h1>
+          <p class="article-summary">{{ state.post.summary }}</p>
+
+          <div class="article-meta">
+            <div class="author-info">
+              <div class="author-avatar" *ngIf="state.post.author.avatar">
+                <img [src]="state.post.author.avatar" [alt]="state.post.author.name" />
+              </div>
+              <div class="author-details">
+                <div class="author-name">{{ state.post.author.name }}</div>
+                <div class="author-role" *ngIf="state.post.author.role">{{ state.post.author.role }}</div>
+              </div>
+            </div>
+
+            <div class="article-stats">
+              <span class="publish-date">{{ state.post.publishedAt | date: 'MMM d, yyyy' }}</span>
+              <span class="separator">•</span>
+              <span class="read-time">{{ state.post.readTime }} min read</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Featured Image -->
+      <div class="featured-image" *ngIf="state.post.featuredImage">
+        <img [src]="state.post.featuredImage" [alt]="state.post.featuredImageAlt || state.post.title" />
+      </div>
+
+      <!-- Article Body -->
+      <div class="article-body">
+        <div class="container-narrow">
+          <div class="content" [innerHTML]="state.safeContent"></div>
+
+          <!-- Tags -->
+          <div class="article-tags" *ngIf="state.post.tags.length > 0">
+            <span class="tags-label">Tags:</span>
+            <span class="tag" *ngFor="let tag of state.post.tags">{{ tag }}</span>
+          </div>
+
+          <!-- Share Buttons -->
+          <div class="article-share">
+            <span class="share-label">Share this article:</span>
+            <div class="share-buttons">
+              <button class="share-btn twitter" (click)="shareArticle('twitter', state.post.title)" aria-label="Share on Twitter">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                </svg>
+                <span>Twitter</span>
+              </button>
+              <button class="share-btn linkedin" (click)="shareArticle('linkedin', state.post.title)" aria-label="Share on LinkedIn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+                  <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+                <span>LinkedIn</span>
+              </button>
+              <button class="share-btn facebook" (click)="shareArticle('facebook', state.post.title)" aria-label="Share on Facebook">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                </svg>
+                <span>Facebook</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Back Button -->
+          <div class="article-actions">
+            <gc-button variant="secondary" (click)="goBack()">
+              ← Back to Blog
+            </gc-button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </ng-container>
+</div>

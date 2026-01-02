@@ -11,19 +11,30 @@ export const routes: Routes = [
   },
   {
     path: 'features',
-    loadComponent: () => import('./pages/features/features').then(m => m.FeaturesComponent)
+    loadComponent: () => import('./pages/features/features').then(m => m.FeaturesComponent),
+    data: {
+      breadcrumb: {
+        label: 'Features'
+      }
+    }
   },
   {
     path: 'pricing',
-    loadComponent: () => import('./pages/pricing/pricing').then(m => m.PricingComponent)
+    loadComponent: () => import('./pages/pricing/pricing').then(m => m.PricingComponent),
+    data: {
+      breadcrumb: {
+        label: 'Pricing'
+      }
+    }
   },
   {
     path: 'about',
-    loadComponent: () => import('./pages/about/about').then(m => m.AboutComponent)
-  },
-  {
-    path: 'contact',
-    loadComponent: () => import('./pages/contact/contact').then(m => m.ContactComponent)
+    loadComponent: () => import('./pages/about/about').then(m => m.AboutComponent),
+    data: {
+      breadcrumb: {
+        label: 'About Us'
+      }
+    }
   },
 
   // Protected pages (require authentication)
@@ -33,8 +44,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: {
-        label: 'Dashboard',
-        icon: '🏠'
+        label: 'Dashboard'
       }
     }
   },
@@ -44,8 +54,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: {
-        label: 'Profile',
-        icon: '👤'
+        label: 'Profile'
       }
     }
   },
@@ -55,8 +64,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: {
-        label: 'My Gadgets',
-        icon: '📱'
+        label: 'My Gadgets'
       }
     }
   },
@@ -70,8 +78,7 @@ export const routes: Routes = [
           // Get device name from component state if available
           // For now, just return a placeholder
           return snapshot.data['deviceName'] || 'Device Details';
-        },
-        icon: '📋'
+        }
       }
     }
   },
@@ -81,9 +88,33 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: {
-        label: 'Service Requests',
-        icon: '🔧'
+        label: 'Service Requests'
       }
     }
+  },
+
+  // Blog routes (public)
+  {
+    path: 'blog',
+    data: {
+      breadcrumb: {
+        label: 'News & Updates'
+      }
+    },
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/blog/blog').then(m => m.BlogComponent)
+      },
+      {
+        path: ':slug',
+        loadComponent: () => import('./pages/blog-detail/blog-detail').then(m => m.BlogDetailComponent),
+        data: {
+          breadcrumb: {
+            label: (snapshot: any) => snapshot.data['postTitle'] || 'Article'
+          }
+        }
+      }
+    ]
   }
 ];

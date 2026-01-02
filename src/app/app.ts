@@ -16,18 +16,18 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
   showBreadcrumbs = false;
 
-  // Public routes that don't need breadcrumbs
-  private publicRoutes = ['/', '/features', '/pricing', '/about', '/contact'];
+  // Routes where breadcrumbs should be hidden
+  private hideBreadcrumbsOn = ['/', '/features', '/pricing', '/blog'];
 
   constructor(private router: Router) {
     // Listen to route changes to determine if breadcrumbs should be shown
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        this.showBreadcrumbs = !this.publicRoutes.includes(event.urlAfterRedirects);
+        this.showBreadcrumbs = !this.hideBreadcrumbsOn.includes(event.urlAfterRedirects);
       });
 
     // Set initial state
-    this.showBreadcrumbs = !this.publicRoutes.includes(this.router.url);
+    this.showBreadcrumbs = !this.hideBreadcrumbsOn.includes(this.router.url);
   }
 }

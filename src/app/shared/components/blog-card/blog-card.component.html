@@ -1,0 +1,33 @@
+<article
+  class="blog-card"
+  [class.featured]="featured"
+  (click)="onClick()"
+>
+  <div class="card-image" *ngIf="post.featuredImage">
+    <img [src]="post.featuredImage" [alt]="post.featuredImageAlt || post.title" />
+    <div class="featured-badge" *ngIf="post.featured">Featured</div>
+  </div>
+
+  <div class="card-content">
+    <div class="card-meta">
+      <span class="category">{{ post.category.name }}</span>
+      <span class="date">{{ post.publishedAt | date: 'MMM d, yyyy' }}</span>
+    </div>
+
+    <h3 class="card-title">{{ post.title }}</h3>
+    <p class="card-summary">{{ post.summary }}</p>
+
+    <div class="card-footer">
+      <div class="author">
+        <div class="author-avatar" *ngIf="post.author.avatar">
+          <img [src]="post.author.avatar" [alt]="post.author.name" />
+        </div>
+        <div class="author-info">
+          <span class="author-name">{{ post.author.name }}</span>
+          <span class="author-role" *ngIf="post.author.role">{{ post.author.role }}</span>
+        </div>
+      </div>
+      <span class="read-time">{{ post.readTime }} min read</span>
+    </div>
+  </div>
+</article>

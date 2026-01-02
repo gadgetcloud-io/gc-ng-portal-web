@@ -7,7 +7,7 @@
   "targets": {
     "gadgetcloud-prd": {
       "hosting": {
-        "www": [
+        "web": [
           "gadgetcloud-web-prd"
         ]
       }
