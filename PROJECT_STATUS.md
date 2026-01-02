@@ -39,6 +39,35 @@
 - ✅ **Features**: Full-width option, disabled state, click events
 - ✅ **Hover Effects**: translateY animation, box shadows
 
+#### Floating Help Button (`src/app/shared/components/floating-help-button/`)
+- ✅ **Position**: Fixed bottom-right corner (24px margins)
+- ✅ **Design**: Teal circular button with "?" icon and "Help" text
+- ✅ **Responsive**: Hides text on mobile (icon-only)
+- ✅ **Hover Effects**: Lift animation with enhanced shadow
+- ✅ **Z-Index**: 1000 (above page content, below modals)
+
+#### Help Dialog Component (`src/app/shared/components/help-dialog/`)
+- ✅ **Modal Design**: Uses existing ModalComponent wrapper
+- ✅ **Tabs**: Support Request 🆘 and Feedback 💬
+- ✅ **Form Style**: Simplified Lemonade.com-inspired design
+  - No visible labels (uppercase placeholders only)
+  - Compact spacing (12px gaps between fields)
+  - Simple "SEND" button text
+  - Inline validation with red borders
+- ✅ **Features**:
+  - Pre-fills name/email for logged-in users
+  - Form validation (required fields, email format, length limits)
+  - Success/error messages with auto-hide (10 seconds)
+  - OnPush change detection for performance
+- ✅ **API Integration**:
+  - POST `/service-tickets/support_request/submit`
+  - POST `/service-tickets/feedback/submit`
+
+#### Help Service (`src/app/core/services/help.service.ts`)
+- ✅ **Methods**: `submitSupportRequest()`, `submitFeedback()`
+- ✅ **Integration**: Uses ApiService for HTTP requests
+- ✅ **Request Formatting**: Proper payload structure for backend API
+
 ### 4. Homepage (`src/app/pages/home/`)
 
 #### Sections Implemented:
@@ -215,7 +244,8 @@ npm test
 
 ### Code Statistics
 - **SCSS Reduction**: N/A (new project)
-- **Components Created**: 2 (Button, Home)
+- **Components Created**: 5 (Button, FloatingHelpButton, HelpDialog, Modal, Tabs, Home)
+- **Services Created**: 2 (HelpService, ApiService)
 - **Pages Created**: 1 (Homepage)
 - **Design Tokens**: 100+ variables
 - **Utility Classes**: 30+
@@ -274,5 +304,5 @@ npm test
 
 ---
 
-**Last Updated**: December 30, 2025
-**Status**: Phase 1 Complete - Ready for Profile Page
+**Last Updated**: January 2, 2026
+**Status**: Phase 1 Complete + Help/Support Feature - Production Ready
