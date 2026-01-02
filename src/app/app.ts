@@ -4,11 +4,12 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header';
 import { FooterComponent } from './shared/components/footer/footer';
 import { BreadcrumbsComponent } from './shared/components/breadcrumbs/breadcrumbs.component';
+import { FloatingHelpButtonComponent } from './shared/components/floating-help-button/floating-help-button';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent, BreadcrumbsComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent, BreadcrumbsComponent, FloatingHelpButtonComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

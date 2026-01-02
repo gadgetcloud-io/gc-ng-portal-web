@@ -1,0 +1,79 @@
+.floating-help-button {
+  position: fixed;
+  bottom: var(--space-6);  // 24px
+  right: var(--space-6);   // 24px
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  padding: var(--space-3) var(--space-4);
+  background: var(--brand-cyan-700);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+
+  cursor: pointer;
+  transition: all var(--transition-base);
+
+  // Typography
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+    background: var(--brand-cyan-800);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand-cyan-700);
+    outline-offset: 2px;
+  }
+
+  .help-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  .help-text {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  // Mobile responsive
+  @media (max-width: 640px) {
+    bottom: var(--space-4);  // 16px
+    right: var(--space-4);   // 16px
+    padding: var(--space-3);
+    width: 56px;
+    height: 56px;
+
+    .help-text {
+      display: none;  // Show only icon on mobile
+    }
+
+    .help-icon {
+      width: auto;
+      height: auto;
+      font-size: 24px;
+    }
+  }
+}

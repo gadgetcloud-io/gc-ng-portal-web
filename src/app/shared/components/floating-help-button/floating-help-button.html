@@ -1,0 +1,16 @@
+<!-- Floating Help Button -->
+<button
+  class="floating-help-button"
+  (click)="openDialog()"
+  aria-label="Help & Support"
+  type="button"
+>
+  <span class="help-icon">?</span>
+  <span class="help-text">Help</span>
+</button>
+
+<!-- Help Dialog -->
+<gc-help-dialog
+  [isOpen]="isDialogOpen"
+  (close)="closeDialog()"
+></gc-help-dialog>

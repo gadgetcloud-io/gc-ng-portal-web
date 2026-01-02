@@ -1,0 +1,133 @@
+<gc-modal [isOpen]="isOpen" [title]="'Help & Support'" [maxWidth]="'md'" (close)="onClose()">
+  <!-- Tabs -->
+  <gc-tabs
+    [tabs]="tabs"
+    [activeTabId]="activeTabId"
+    [variant]="'underline'"
+    (tabChange)="onTabChange($event)"
+  ></gc-tabs>
+
+  <!-- Success Message -->
+  <div *ngIf="submitSuccess" class="success-message">
+    <span class="success-icon">✓</span>
+    <span>Submitted successfully! Ticket ID: <strong>{{ ticketId }}</strong></span>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="submitError" class="error-message">
+    <span class="error-icon">✗</span>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Support Request Tab -->
+  <div *ngIf="activeTabId === 'support'" class="tab-content">
+    <form (ngSubmit)="submitSupportRequest()" #supportFormRef="ngForm">
+      <input
+        type="text"
+        id="support-name"
+        [(ngModel)]="supportForm.name"
+        name="name"
+        placeholder="NAME"
+        required
+        [disabled]="isSubmitting"
+      />
+
+      <input
+        type="email"
+        id="support-email"
+        [(ngModel)]="supportForm.email"
+        name="email"
+        placeholder="EMAIL ADDRESS"
+        required
+        [disabled]="isSubmitting"
+      />
+
+      <input
+        type="text"
+        id="support-subject"
+        [(ngModel)]="supportForm.subject"
+        name="subject"
+        placeholder="SUBJECT"
+        required
+        [disabled]="isSubmitting"
+      />
+
+      <textarea
+        id="support-message"
+        [(ngModel)]="supportForm.message"
+        name="message"
+        placeholder="HOW CAN WE HELP?"
+        required
+        rows="4"
+        [disabled]="isSubmitting"
+      ></textarea>
+
+      <gc-button
+        type="submit"
+        variant="primary"
+        [fullWidth]="true"
+        [disabled]="isSubmitting || (supportFormRef.invalid ?? false)"
+      >
+        {{ isSubmitting ? 'SENDING...' : 'SEND' }}
+      </gc-button>
+    </form>
+  </div>
+
+  <!-- Feedback Tab -->
+  <div *ngIf="activeTabId === 'feedback'" class="tab-content">
+    <form (ngSubmit)="submitFeedback()" #feedbackFormRef="ngForm">
+      <input
+        type="text"
+        id="feedback-name"
+        [(ngModel)]="feedbackForm.name"
+        name="name"
+        placeholder="NAME"
+        required
+        [disabled]="isSubmitting"
+      />
+
+      <input
+        type="email"
+        id="feedback-email"
+        [(ngModel)]="feedbackForm.email"
+        name="email"
+        placeholder="EMAIL ADDRESS"
+        required
+        [disabled]="isSubmitting"
+      />
+
+      <select
+        id="feedback-category"
+        [(ngModel)]="feedbackForm.category"
+        name="category"
+        required
+        [disabled]="isSubmitting"
+      >
+        <option value="" disabled>SELECT CATEGORY</option>
+        <option value="general">General</option>
+        <option value="feature-request">Feature Request</option>
+        <option value="bug-report">Bug Report</option>
+        <option value="improvement">Improvement</option>
+      </select>
+
+      <textarea
+        id="feedback-message"
+        [(ngModel)]="feedbackForm.message"
+        name="message"
+        placeholder="TELL US WHAT YOU THINK"
+        required
+        rows="4"
+        [disabled]="isSubmitting"
+      ></textarea>
+
+      <gc-button
+        type="submit"
+        variant="primary"
+        [fullWidth]="true"
+        [disabled]="isSubmitting || (feedbackFormRef.invalid ?? false)"
+      >
+        {{ isSubmitting ? 'SENDING...' : 'SEND' }}
+      </gc-button>
+    </form>
+  </div>
+</gc-modal>
