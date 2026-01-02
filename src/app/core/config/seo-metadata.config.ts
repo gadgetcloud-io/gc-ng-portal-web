@@ -55,6 +55,25 @@ export const SEO_CONFIG: Record<string, Partial<SeoMetadata>> = {
     ogType: 'website',
     ogImage: 'https://www.gadgetcloud.io/assets/og-contact.png',
     ogUrl: 'https://www.gadgetcloud.io/contact'
+  },
+
+  blog: {
+    title: 'News & Updates | GadgetCloud',
+    description: 'Stay up to date with the latest news, features, product updates, and insights from GadgetCloud.',
+    keywords: ['gadgetcloud news', 'product updates', 'announcements', 'blog', 'device management tips'],
+    canonical: 'https://www.gadgetcloud.io/blog',
+    ogType: 'website',
+    ogImage: 'https://www.gadgetcloud.io/assets/og-blog.png',
+    ogUrl: 'https://www.gadgetcloud.io/blog'
+  },
+
+  'blog-detail': {
+    title: '', // Will be set dynamically by component
+    description: '',
+    keywords: [],
+    canonical: '',
+    ogType: 'article',
+    twitterCard: 'summary_large_image'
   }
 };
 

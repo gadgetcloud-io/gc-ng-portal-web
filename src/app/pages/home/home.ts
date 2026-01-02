@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { LoginDialogComponent } from '../../shared/components/login-dialog/login-dialog';
 import { SignupDialogComponent } from '../../shared/components/signup-dialog/signup-dialog';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 import { SeoService } from '../../core/services/seo.service';
 import { SEO_CONFIG } from '../../core/config/seo-metadata.config';
+import { BlogService } from '../../core/services/blog.service';
+import { BlogPost } from '../../core/models/blog.model';
+import { BlogCardComponent } from '../../shared/components/blog-card/blog-card.component';
+import { ButtonComponent } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoginDialogComponent, SignupDialogComponent, ScrollRevealDirective],
+  imports: [CommonModule, RouterModule, LoginDialogComponent, SignupDialogComponent, ScrollRevealDirective, BlogCardComponent, ButtonComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -18,6 +22,9 @@ export class HomeComponent implements OnInit {
   // Dialogs
   isLoginDialogOpen = false;
   isSignupDialogOpen = false;
+
+  // Featured blog posts
+  featuredPosts: BlogPost[] = [];
 
   // Marketing content
   features = [
@@ -93,11 +100,33 @@ export class HomeComponent implements OnInit {
   ];
 
   constructor(
-    private seoService: SeoService
+    private seoService: SeoService,
+    private blogService: BlogService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.updateSEO();
+    this.loadFeaturedPosts();
+  }
+
+  private loadFeaturedPosts(): void {
+    this.blogService.getFeaturedPosts(3).subscribe({
+      next: (posts) => {
+        this.featuredPosts = posts;
+      },
+      error: (error) => {
+        console.error('Failed to load featured posts:', error);
+      }
+    });
+  }
+
+  viewPost(post: BlogPost): void {
+    this.router.navigate(['/blog', post.slug]);
+  }
+
+  viewAllPosts(): void {
+    this.router.navigate(['/blog']);
   }
 
   private updateSEO(): void {

@@ -153,6 +153,33 @@
   </div>
 </section>
 
+<!-- Featured Posts Section -->
+<section class="featured-posts-section" *ngIf="featuredPosts.length > 0">
+  <div class="container">
+    <div class="section-header" appScrollReveal>
+      <h2>What's New?</h2>
+      <p>Latest updates and news from GadgetCloud</p>
+    </div>
+
+    <div class="posts-grid">
+      <gc-blog-card
+        *ngFor="let post of featuredPosts; let i = index"
+        [post]="post"
+        [featured]="true"
+        (cardClick)="viewPost($event)"
+        appScrollReveal
+        [revealDelay]="i * 150"
+      ></gc-blog-card>
+    </div>
+
+    <div class="section-cta" appScrollReveal [revealDelay]="300">
+      <gc-button variant="secondary" (click)="viewAllPosts()">
+        View All Updates →
+      </gc-button>
+    </div>
+  </div>
+</section>
+
 <!-- CTA Section -->
 <section class="cta-section">
   <div class="container">
