@@ -44,19 +44,22 @@ export interface Breadcrumb {
     </nav>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-    /* ===== LEMONADE-STYLE BREADCRUMBS ===== */
+    /* ===== GADGETCLOUD BREADCRUMBS ===== */
     .breadcrumbs {
-      margin-bottom: 17px;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin-bottom: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 8px 0;
+      background: linear-gradient(to right, rgba(0, 128, 192, 0.03), transparent 50%);
+      border-bottom: 1px solid rgba(0, 128, 192, 0.1);
     }
 
     .breadcrumb-list {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.5rem;
+      gap: 6px;
       list-style: none;
       margin: 0;
       padding: 0;
@@ -65,63 +68,108 @@ export interface Breadcrumb {
     .breadcrumb-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 14px;
-      font-weight: 400;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
     }
 
     .breadcrumb-link {
-      color: #797979;
+      color: #0080C0;
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      padding: 1px 0;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: linear-gradient(90deg, #0080C0, #67D4F6);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
 
       &:hover {
-        text-decoration: underline;
-        color: #4a4a4a;
+        color: #006699;
+        transform: translateX(2px);
+
+        &::after {
+          width: 100%;
+        }
       }
 
       &:focus-visible {
-        outline: 2px solid #00B4A6;
-        outline-offset: 2px;
-        border-radius: 2px;
+        outline: 2px solid #0080C0;
+        outline-offset: 3px;
+        border-radius: 3px;
       }
     }
 
     .breadcrumb-current {
-      color: #4a4a4a;
-      font-weight: 400;
+      color: #005580;
+      font-weight: 600;
+      padding: 1px 0;
+      background: linear-gradient(120deg, #005580 0%, #006699 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .breadcrumb-separator {
-      color: #9b9b9b;
+      color: rgba(0, 128, 192, 0.4);
       user-select: none;
       pointer-events: none;
+      font-size: 11px;
+      font-weight: 300;
+      margin: 0 1px;
     }
 
     .breadcrumb-icon {
       display: inline-flex;
       align-items: center;
-      font-size: 16px;
+      justify-content: center;
+      font-size: 15px;
       line-height: 1;
+      filter: drop-shadow(0 1px 2px rgba(0, 128, 192, 0.15));
     }
 
     .breadcrumb-link--home {
       display: inline-flex;
       align-items: center;
+      padding: 3px 6px 3px 3px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, rgba(0, 128, 192, 0.05), rgba(0, 128, 192, 0.1));
+      border: 1px solid rgba(0, 128, 192, 0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
       .breadcrumb-icon {
-        transition: transform 0.3s ease;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      &:hover .breadcrumb-icon {
-        transform: scale(1.1);
+      &:hover {
+        background: linear-gradient(135deg, rgba(0, 128, 192, 0.1), rgba(0, 128, 192, 0.15));
+        border-color: rgba(0, 128, 192, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 128, 192, 0.15);
+        transform: translateY(-1px);
+
+        .breadcrumb-icon {
+          transform: scale(1.15) rotate(-5deg);
+        }
+      }
+
+      &::after {
+        display: none;
       }
     }
 
     /* ===== MOBILE RESPONSIVE ===== */
     @media (max-width: 768px) {
       .breadcrumbs {
-        margin-bottom: 12px;
+        margin-bottom: 16px;
+        padding: 8px 0;
       }
 
       .breadcrumb-item {
@@ -129,13 +177,23 @@ export interface Breadcrumb {
       }
 
       .breadcrumb-icon {
-        font-size: 14px;
+        font-size: 16px;
+      }
+
+      .breadcrumb-link--home {
+        padding: 3px 6px 3px 3px;
       }
     }
 
     /* ===== REDUCED MOTION ===== */
     @media (prefers-reduced-motion: reduce) {
-      .breadcrumb-link {
+      .breadcrumb-link,
+      .breadcrumb-link--home,
+      .breadcrumb-icon {
+        transition: none;
+      }
+
+      .breadcrumb-link::after {
         transition: none;
       }
     }

@@ -49,7 +49,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         return this.blogService.getPostBySlug(slug).pipe(
           map(post => ({
             post,
-            safeContent: this.sanitizer.sanitize(1, post.content) || '',
+            safeContent: this.sanitizer.bypassSecurityTrustHtml(post.content),
             loading: false,
             error: false
           })),

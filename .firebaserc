@@ -9,6 +9,9 @@
       "hosting": {
         "web": [
           "gadgetcloud-web-prd"
+        ],
+        "www": [
+          "gadgetcloud-prd"
         ]
       }
     },
