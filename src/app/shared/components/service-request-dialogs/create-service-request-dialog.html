@@ -1,0 +1,115 @@
+<gc-modal
+  [isOpen]="isOpen"
+  [title]="'Create Service Request'"
+  (close)="onClose()"
+  [maxWidth]="'md'"
+>
+  <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" class="service-request-form">
+    <!-- Device Info -->
+    <div class="device-info" *ngIf="device">
+      <div class="device-icon">{{ device.category === 'phone' ? '📱' : device.category === 'laptop' ? '💻' : device.category === 'tablet' ? '📱' : device.category === 'watch' ? '⌚' : device.category === 'camera' ? '📷' : '📦' }}</div>
+      <div class="device-details">
+        <div class="device-name">{{ device.name }}</div>
+        <div class="device-meta">
+          <span *ngIf="device.manufacturer">{{ device.manufacturer }}</span>
+          <span *ngIf="device.model"> • {{ device.model }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Request Type -->
+    <div class="form-group">
+      <label class="form-label">Request Type <span class="required">*</span></label>
+      <div class="request-type-grid">
+        <div
+          *ngFor="let type of requestTypes"
+          class="request-type-card"
+          [class.selected]="requestForm.get('requestType')?.value === type.value"
+          (click)="requestForm.patchValue({ requestType: type.value })"
+        >
+          <div class="type-icon">{{ type.icon }}</div>
+          <div class="type-label">{{ type.label }}</div>
+          <div class="type-description">{{ type.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priority -->
+    <div class="form-group">
+      <label class="form-label">Priority <span class="required">*</span></label>
+      <div class="priority-buttons">
+        <button
+          *ngFor="let priority of priorities"
+          type="button"
+          class="priority-btn"
+          [class.selected]="requestForm.get('priority')?.value === priority.value"
+          [style.--priority-color]="priority.color"
+          (click)="requestForm.patchValue({ priority: priority.value })"
+        >
+          <span class="priority-label">{{ priority.label }}</span>
+          <span class="priority-description">{{ priority.description }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Subject -->
+    <div class="form-group">
+      <label for="subject" class="form-label">Subject <span class="required">*</span></label>
+      <input
+        id="subject"
+        type="text"
+        class="form-input"
+        formControlName="subject"
+        placeholder="Brief description of the issue"
+        [class.invalid]="requestForm.get('subject')?.invalid && requestForm.get('subject')?.touched"
+      />
+      <div class="form-error" *ngIf="requestForm.get('subject')?.invalid && requestForm.get('subject')?.touched">
+        <span *ngIf="requestForm.get('subject')?.hasError('required')">Subject is required</span>
+        <span *ngIf="requestForm.get('subject')?.hasError('minlength')">Subject must be at least 5 characters</span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description" class="form-label">Description <span class="required">*</span></label>
+      <textarea
+        id="description"
+        class="form-textarea"
+        formControlName="description"
+        placeholder="Provide detailed information about the issue or request"
+        rows="5"
+        [class.invalid]="requestForm.get('description')?.invalid && requestForm.get('description')?.touched"
+      ></textarea>
+      <div class="form-error" *ngIf="requestForm.get('description')?.invalid && requestForm.get('description')?.touched">
+        <span *ngIf="requestForm.get('description')?.hasError('required')">Description is required</span>
+        <span *ngIf="requestForm.get('description')?.hasError('minlength')">Description must be at least 10 characters</span>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div class="form-error-box" *ngIf="error">
+      <span class="error-icon">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <gc-button
+        variant="ghost"
+        type="button"
+        (click)="onClose()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        variant="primary"
+        type="submit"
+        [disabled]="isSubmitting || requestForm.invalid"
+      >
+        <span *ngIf="!isSubmitting">Create Request</span>
+        <span *ngIf="isSubmitting">Creating...</span>
+      </gc-button>
+    </div>
+  </form>
+</gc-modal>

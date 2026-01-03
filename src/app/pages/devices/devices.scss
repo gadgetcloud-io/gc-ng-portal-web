@@ -488,6 +488,18 @@
           }
         }
 
+        &.action-btn-repair {
+          background: #fef3c7;
+          color: #92400e;
+
+          &:hover {
+            background: #f59e0b;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+          }
+        }
+
         &.action-btn-danger {
           background: #fee2e2;
           color: #991b1b;

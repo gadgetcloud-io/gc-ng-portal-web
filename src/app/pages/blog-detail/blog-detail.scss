@@ -409,31 +409,35 @@
     }
 
     :deep(img) {
-      max-width: 45%;
+      max-width: 400px;
+      width: 100%;
       height: auto;
-      border-radius: var(--radius-md);
-      margin: var(--space-6) auto;
+      border-radius: var(--radius-lg);
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-8);
       display: block;
       box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.05),
-        0 4px 8px rgba(0, 128, 192, 0.06),
-        0 0 0 1px rgba(0, 128, 192, 0.08);
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 10px 20px rgba(0, 128, 192, 0.08),
+        0 0 0 1px rgba(0, 128, 192, 0.1);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
       &:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
         box-shadow:
-          0 4px 8px rgba(0, 0, 0, 0.08),
-          0 8px 16px rgba(0, 128, 192, 0.1),
-          0 0 0 1px rgba(0, 128, 192, 0.15);
+          0 8px 16px rgba(0, 0, 0, 0.08),
+          0 16px 32px rgba(0, 128, 192, 0.12),
+          0 0 0 1px rgba(0, 128, 192, 0.2);
       }
 
       @media (max-width: 768px) {
-        max-width: 70%;
+        max-width: 100%;
       }
 
       @media (max-width: 640px) {
-        max-width: 90%;
+        border-radius: var(--radius-md);
       }
     }
 

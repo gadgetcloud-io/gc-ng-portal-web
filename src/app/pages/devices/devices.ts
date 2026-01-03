@@ -12,6 +12,7 @@ import { ViewDocumentsDialogComponent } from '../../shared/components/document-d
 import { DeleteDocumentDialogComponent } from '../../shared/components/document-dialogs/delete-document-dialog';
 import { DocumentService, Document } from '../../core/services/document.service';
 import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/bulk-action-bar';
+import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../shared/components/service-request-dialogs/create-service-request-dialog';
 
 @Component({
   selector: 'app-devices',
@@ -24,7 +25,8 @@ import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/
     UploadDocumentDialogComponent,
     ViewDocumentsDialogComponent,
     DeleteDocumentDialogComponent,
-    BulkActionBarComponent
+    BulkActionBarComponent,
+    CreateServiceRequestDialogComponent
   ],
   templateUrl: './devices.html',
   styleUrl: './devices.scss'
@@ -49,6 +51,10 @@ export class DevicesComponent implements OnInit, OnDestroy {
   isDeleteDocumentDialogOpen = false;
   selectedDocument: Document | null = null;
   selectedDeviceForDocs: Device | null = null;
+
+  // Service request dialog state
+  isServiceRequestDialogOpen = false;
+  selectedDeviceForServiceRequest: Device | null = null;
 
   // Bulk selection state
   selectedDeviceIds: Set<string> = new Set();
@@ -228,6 +234,24 @@ export class DevicesComponent implements OnInit, OnDestroy {
   // Navigation methods
   viewDevice(device: Device): void {
     this.router.navigate(['/my-gadgets', device.id]);
+  }
+
+  raiseRepairRequest(device: Device): void {
+    this.selectedDeviceForServiceRequest = device;
+    this.isServiceRequestDialogOpen = true;
+  }
+
+  closeServiceRequestDialog(): void {
+    this.isServiceRequestDialogOpen = false;
+    this.selectedDeviceForServiceRequest = null;
+  }
+
+  onServiceRequestCreated(requestData: ServiceRequestData): void {
+    console.log('Service request created:', requestData);
+    // TODO: Implement actual API call to create service request
+    // For now, just show success message
+    alert(`Service request created successfully!\n\nDevice: ${requestData.deviceName}\nType: ${requestData.requestType}\nPriority: ${requestData.priority}\nSubject: ${requestData.subject}`);
+    this.cdr.detectChanges();
   }
 
   // Dialog methods
