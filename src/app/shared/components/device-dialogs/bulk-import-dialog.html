@@ -1,0 +1,283 @@
+<gc-modal
+  [isOpen]="isOpen"
+  [title]="getTitleForStep()"
+  (close)="onClose()"
+  [maxWidth]="'lg'"
+>
+  <!-- Upload Step -->
+  <div *ngIf="currentStep === 'upload'" class="bulk-import-content">
+    <!-- Template Download Section -->
+    <div class="template-section">
+      <h3 class="section-title">Step 1: Download Template (Optional)</h3>
+      <p class="section-description">
+        Download a template to see the expected format for your import file.
+      </p>
+      <div class="template-buttons">
+        <gc-button
+          variant="secondary"
+          size="md"
+          (click)="downloadTemplate('csv')"
+          [disabled]="isDownloadingTemplate"
+        >
+          📥 Download CSV Template
+        </gc-button>
+        <gc-button
+          variant="secondary"
+          size="md"
+          (click)="downloadTemplate('excel')"
+          [disabled]="isDownloadingTemplate"
+        >
+          📥 Download Excel Template
+        </gc-button>
+      </div>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="upload-section">
+      <h3 class="section-title">Step 2: Upload Your File</h3>
+
+      <!-- Drag and Drop Zone -->
+      <div
+        class="drop-zone"
+        [class.drag-over]="isDragOver"
+        [class.has-file]="selectedFile"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="fileInput.click()"
+      >
+        <input
+          #fileInput
+          type="file"
+          accept=".csv,.xlsx"
+          (change)="onFileSelect($event)"
+          style="display: none"
+        />
+
+        <div *ngIf="!selectedFile" class="drop-zone-empty">
+          <div class="upload-icon">📤</div>
+          <p class="upload-title">Drop CSV or Excel file here</p>
+          <p class="upload-subtitle">or click to browse</p>
+          <p class="upload-limits">Supports: .csv, .xlsx (Max 10MB, 1000 rows)</p>
+        </div>
+
+        <div *ngIf="selectedFile" class="drop-zone-file">
+          <div class="file-icon">{{ getFileIcon() }}</div>
+          <div class="file-info">
+            <div class="file-name">{{ selectedFile.name }}</div>
+            <div class="file-meta">
+              {{ formatFileSize(selectedFile.size) }}
+              <span *ngIf="filePreview && filePreview.rowCount > 0">
+                • {{ filePreview.rowCount }} rows
+              </span>
+            </div>
+          </div>
+          <button
+            class="file-remove"
+            type="button"
+            (click)="selectedFile = null; filePreview = null; $event.stopPropagation()"
+            title="Remove file"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- File Preview -->
+      <div *ngIf="filePreview && filePreview.preview.length > 0" class="file-preview">
+        <h4>Preview (First 5 rows)</h4>
+        <div class="preview-table-container">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th *ngFor="let column of filePreview.columns">{{ column }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of filePreview.preview">
+                <td *ngFor="let column of filePreview.columns">
+                  {{ row[column] || '-' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message">
+        <span class="error-icon">⚠️</span>
+        <span>{{ error }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <gc-button
+        variant="ghost"
+        type="button"
+        (click)="onClose()"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        variant="primary"
+        type="button"
+        (click)="uploadFile()"
+        [disabled]="!canUpload()"
+      >
+        <span *ngIf="selectedFile && filePreview && filePreview.rowCount > 0">
+          Upload {{ filePreview.rowCount }} Gadgets
+        </span>
+        <span *ngIf="!selectedFile || !filePreview || filePreview.rowCount === 0">
+          Upload File
+        </span>
+      </gc-button>
+    </div>
+  </div>
+
+  <!-- Processing Step -->
+  <div *ngIf="currentStep === 'processing'" class="processing-content">
+    <div class="processing-animation">
+      <div class="spinner"></div>
+      <p class="processing-text">Processing your import...</p>
+    </div>
+
+    <!-- Upload Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+      </div>
+      <div class="progress-text">{{ uploadProgress }}%</div>
+    </div>
+
+    <p class="processing-hint">
+      This may take a few moments. Please do not close this window.
+    </p>
+  </div>
+
+  <!-- Success Step -->
+  <div *ngIf="currentStep === 'success' && result" class="success-content">
+    <div class="success-icon">✓</div>
+    <h3 class="success-title">Successfully imported {{ result.summary.createdItems }} gadgets!</h3>
+
+    <div class="result-summary">
+      <div class="summary-row">
+        <span class="summary-label">Total Rows:</span>
+        <span class="summary-value">{{ result.summary.totalRows }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Created:</span>
+        <span class="summary-value success-text">{{ result.summary.createdItems }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Failed:</span>
+        <span class="summary-value">{{ result.summary.failedRows }}</span>
+      </div>
+      <div class="summary-row" *ngIf="result.processingTimeMs">
+        <span class="summary-label">Processing Time:</span>
+        <span class="summary-value">{{ (result.processingTimeMs / 1000).toFixed(2) }}s</span>
+      </div>
+    </div>
+
+    <p class="success-message">
+      Your gadgets have been added to your collection.
+    </p>
+
+    <div class="dialog-actions">
+      <gc-button
+        variant="primary"
+        type="button"
+        (click)="onClose()"
+      >
+        Close
+      </gc-button>
+    </div>
+  </div>
+
+  <!-- Error Step -->
+  <div *ngIf="currentStep === 'error'" class="error-content">
+    <div class="error-header">
+      <div class="error-icon-large">⚠️</div>
+      <h3 class="error-title">{{ error }}</h3>
+    </div>
+
+    <div *ngIf="result" class="result-summary">
+      <div class="summary-row">
+        <span class="summary-label">Total Rows:</span>
+        <span class="summary-value">{{ result.summary.totalRows }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Processed:</span>
+        <span class="summary-value">{{ result.summary.processedRows }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Failed:</span>
+        <span class="summary-value error-text">{{ result.summary.failedRows }}</span>
+      </div>
+    </div>
+
+    <!-- Validation Errors Table -->
+    <div *ngIf="validationErrors.length > 0" class="errors-section">
+      <p class="errors-intro">Please fix the following errors and try again:</p>
+
+      <div class="errors-table-container">
+        <table class="errors-table">
+          <thead>
+            <tr>
+              <th>Row</th>
+              <th>Column</th>
+              <th>Value</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let error of validationErrors | slice:0:10">
+              <td>{{ error.row }}</td>
+              <td>{{ error.column }}</td>
+              <td>{{ error.value || '-' }}</td>
+              <td>{{ error.error }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="validationErrors.length > 10" class="more-errors">
+          ... and {{ validationErrors.length - 10 }} more errors
+        </p>
+      </div>
+
+      <div class="error-actions">
+        <gc-button
+          variant="secondary"
+          size="md"
+          (click)="downloadErrorReport()"
+        >
+          📥 Download Error Report
+        </gc-button>
+        <gc-button
+          variant="ghost"
+          size="md"
+          (click)="copyErrors()"
+        >
+          📋 Copy Errors
+        </gc-button>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <gc-button
+        variant="ghost"
+        type="button"
+        (click)="onClose()"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        variant="primary"
+        type="button"
+        (click)="resetAndUploadAgain()"
+      >
+        Fix & Try Again
+      </gc-button>
+    </div>
+  </div>
+</gc-modal>

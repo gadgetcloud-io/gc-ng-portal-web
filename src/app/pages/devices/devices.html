@@ -6,9 +6,14 @@
         <h1 class="page-title">My Gadgets</h1>
         <p class="page-subtitle">Manage all your gadgets and warranties in one place</p>
       </div>
-      <gc-button variant="primary" size="md" (click)="openAddDialog()">
-        ➕ Add Gadget
-      </gc-button>
+      <div class="header-actions">
+        <gc-button variant="secondary" size="md" (click)="openBulkImportDialog()">
+          📤 Bulk Import
+        </gc-button>
+        <gc-button variant="primary" size="md" (click)="openAddDialog()">
+          ➕ Add Gadget
+        </gc-button>
+      </div>
     </div>
   </div>
 </section>
@@ -255,3 +260,10 @@
   (close)="closeServiceRequestDialog()"
   (requestCreated)="onServiceRequestCreated($event)"
 ></gc-create-service-request-dialog>
+
+<!-- Bulk Import Dialog -->
+<gc-bulk-import-dialog
+  [isOpen]="isBulkImportDialogOpen"
+  (close)="closeBulkImportDialog()"
+  (importComplete)="onBulkImportComplete($event)"
+></gc-bulk-import-dialog>

@@ -13,6 +13,8 @@ import { DeleteDocumentDialogComponent } from '../../shared/components/document-
 import { DocumentService, Document } from '../../core/services/document.service';
 import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/bulk-action-bar';
 import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../shared/components/service-request-dialogs/create-service-request-dialog';
+import { BulkImportDialogComponent } from '../../shared/components/device-dialogs/bulk-import-dialog';
+import { BulkImportResult } from '../../core/services/bulk-import.service';
 
 @Component({
   selector: 'app-devices',
@@ -26,7 +28,8 @@ import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../s
     ViewDocumentsDialogComponent,
     DeleteDocumentDialogComponent,
     BulkActionBarComponent,
-    CreateServiceRequestDialogComponent
+    CreateServiceRequestDialogComponent,
+    BulkImportDialogComponent
   ],
   templateUrl: './devices.html',
   styleUrl: './devices.scss'
@@ -55,6 +58,9 @@ export class DevicesComponent implements OnInit, OnDestroy {
   // Service request dialog state
   isServiceRequestDialogOpen = false;
   selectedDeviceForServiceRequest: Device | null = null;
+
+  // Bulk import dialog state
+  isBulkImportDialogOpen = false;
 
   // Bulk selection state
   selectedDeviceIds: Set<string> = new Set();
@@ -251,6 +257,31 @@ export class DevicesComponent implements OnInit, OnDestroy {
     // TODO: Implement actual API call to create service request
     // For now, just show success message
     alert(`Service request created successfully!\n\nDevice: ${requestData.deviceName}\nType: ${requestData.requestType}\nPriority: ${requestData.priority}\nSubject: ${requestData.subject}`);
+    this.cdr.detectChanges();
+  }
+
+  // Bulk import methods
+  openBulkImportDialog(): void {
+    this.isBulkImportDialogOpen = true;
+  }
+
+  closeBulkImportDialog(): void {
+    this.isBulkImportDialogOpen = false;
+  }
+
+  onBulkImportComplete(result: BulkImportResult): void {
+    console.log('Bulk import completed:', result);
+
+    // Show success message
+    if (result.success) {
+      alert(`Successfully imported ${result.summary.createdItems} gadgets!`);
+
+      // Refresh device list
+      this.deviceService.getDevices().subscribe();
+    }
+
+    // Close dialog
+    this.closeBulkImportDialog();
     this.cdr.detectChanges();
   }
 
