@@ -276,10 +276,13 @@ export class DevicesComponent implements OnInit, OnDestroy {
     if (result.success) {
       alert(`Successfully imported ${result.summary.createdItems} gadgets!`);
 
-      // Refresh device list - trigger fetch, devices$ observable will emit updated data
+      // Refresh device list - fetch fresh data and update component state
       this.deviceService.getDevices().subscribe({
-        next: () => {
-          console.log('Devices refreshed after bulk import');
+        next: (devices) => {
+          console.log(`Devices refreshed after bulk import: ${devices.length} devices`);
+          this.devices = devices;
+          this.applyFilters();
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error refreshing devices after bulk import:', error);
