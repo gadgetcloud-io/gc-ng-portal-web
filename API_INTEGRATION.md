@@ -268,6 +268,14 @@ Handles client-side PDF to image conversion using PDF.js:
 - Safety limits (max 10 pages per PDF)
 - Real-time progress tracking
 - Smart filename generation
+- Local worker bundling (avoids CORS issues)
+- Enhanced error handling with timeouts
+
+**Technical Implementation:**
+- PDF.js worker file bundled in `public/assets/pdfjs/pdf.worker.min.mjs`
+- Worker served from same origin to prevent CORS errors
+- 30-second timeout for PDF loading, 15-second timeout per page
+- Comprehensive console logging for debugging
 
 **Usage:**
 ```typescript
