@@ -6,13 +6,15 @@ import { Device } from '../../../../core/services/device.service';
 import { ServiceTicket, ServiceTicketStatus, TicketPriority, CreateTicketRequest, RequestType } from '../../../../core/models/service-ticket.model';
 import { ServiceTicketService } from '../../../../core/services/service-ticket.service';
 import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../../../shared/components/service-request-dialogs/create-service-request-dialog';
+import { TicketDetailModalComponent } from './ticket-detail-modal.component';
 
 @Component({
   selector: 'app-service-tickets-tab',
   standalone: true,
   imports: [
     CommonModule,
-    CreateServiceRequestDialogComponent
+    CreateServiceRequestDialogComponent,
+    TicketDetailModalComponent
   ],
   templateUrl: './service-tickets-tab.component.html',
   styleUrl: './service-tickets-tab.component.scss'

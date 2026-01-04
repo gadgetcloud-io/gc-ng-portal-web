@@ -79,4 +79,11 @@
     (close)="closeCreateDialog()"
     (requestCreated)="onTicketCreated($event)"
   ></gc-create-service-request-dialog>
+
+  <!-- Ticket Detail Modal -->
+  <app-ticket-detail-modal
+    [ticket]="selectedTicket"
+    [isOpen]="isDetailModalOpen"
+    (close)="closeDetailModal()"
+  ></app-ticket-detail-modal>
 </div>
