@@ -59,23 +59,39 @@
       <div
         *ngFor="let uploadFile of selectedFiles; let i = index"
         class="file-item"
-        [class.has-error]="uploadFile.error">
+        [class.has-error]="uploadFile.error"
+        [class.is-converting]="uploadFile.isConverting">
 
-        <div class="file-icon">{{ getFileIcon(uploadFile.file.name) }}</div>
+        <div class="file-icon">
+          <span *ngIf="!uploadFile.isConverting">{{ getFileIcon(uploadFile.file.name) }}</span>
+          <span class="converting-spinner" *ngIf="uploadFile.isConverting">🔄</span>
+        </div>
 
         <div class="file-info">
-          <div class="file-name">{{ uploadFile.file.name }}</div>
-          <div class="file-meta">
+          <div class="file-name">
+            {{ uploadFile.originalFileName || uploadFile.file.name }}
+            <span class="converted-badge" *ngIf="uploadFile.originalFileName && !uploadFile.isConverting">
+              (from PDF)
+            </span>
+          </div>
+          <div class="file-meta" *ngIf="!uploadFile.isConverting">
             <span class="file-size">{{ formatFileSize(uploadFile.file.size) }}</span>
             <span class="meta-separator" *ngIf="!uploadFile.error">•</span>
             <span class="file-type" *ngIf="!uploadFile.error">{{ uploadFile.file.type || 'Unknown' }}</span>
+          </div>
+          <div class="file-converting" *ngIf="uploadFile.isConverting && uploadFile.conversionMessage">
+            ⏳ {{ uploadFile.conversionMessage }}
           </div>
           <div class="file-error" *ngIf="uploadFile.error">
             ⚠️ {{ uploadFile.error }}
           </div>
         </div>
 
-        <button class="btn-remove" (click)="removeFile(i)" title="Remove file">
+        <button
+          class="btn-remove"
+          (click)="removeFile(i)"
+          title="Remove file"
+          [disabled]="uploadFile.isConverting">
           ✕
         </button>
       </div>

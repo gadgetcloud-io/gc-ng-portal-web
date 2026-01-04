@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PdfConverterService, ConversionProgress } from '../../../core/services/pdf-converter.service';
 
 export interface UploadFile {
   file: File;
@@ -8,6 +9,9 @@ export interface UploadFile {
   error?: string;
   documentType: string;
   notes: string;
+  isConverting?: boolean;
+  conversionMessage?: string;
+  originalFileName?: string; // For PDF conversions
 }
 
 @Component({
@@ -27,6 +31,9 @@ export class DocumentUploadZoneComponent {
   selectedFiles: UploadFile[] = [];
   defaultDocumentType = 'other';
   notes = '';
+  isProcessingPdf = false;
+
+  constructor(private pdfConverter: PdfConverterService) {}
 
   // File validation
   readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -79,32 +86,96 @@ export class DocumentUploadZoneComponent {
     this.fileInput.nativeElement.click();
   }
 
-  handleFiles(files: File[]): void {
-    const validFiles: UploadFile[] = [];
-
+  async handleFiles(files: File[]): Promise<void> {
     for (const file of files) {
       const validation = this.validateFile(file);
 
-      if (validation.valid) {
-        validFiles.push({
-          file,
-          progress: 0,
-          documentType: this.defaultDocumentType,
-          notes: this.notes
-        });
-      } else {
+      if (!validation.valid) {
         // Show error for invalid file
-        validFiles.push({
+        this.selectedFiles.push({
           file,
           progress: 0,
           error: validation.error,
           documentType: this.defaultDocumentType,
           notes: this.notes
         });
+        continue;
+      }
+
+      // Check if file is PDF
+      if (this.pdfConverter.isPdfFile(file)) {
+        await this.handlePdfConversion(file);
+      } else {
+        // Regular image file
+        this.selectedFiles.push({
+          file,
+          progress: 0,
+          documentType: this.defaultDocumentType,
+          notes: this.notes
+        });
       }
     }
+  }
 
-    this.selectedFiles = [...this.selectedFiles, ...validFiles];
+  private async handlePdfConversion(pdfFile: File): Promise<void> {
+    // Create a placeholder entry to show conversion progress
+    const placeholderIndex = this.selectedFiles.length;
+    this.selectedFiles.push({
+      file: pdfFile,
+      progress: 0,
+      documentType: this.defaultDocumentType,
+      notes: this.notes,
+      isConverting: true,
+      conversionMessage: 'Preparing to convert PDF...',
+      originalFileName: pdfFile.name
+    });
+
+    this.isProcessingPdf = true;
+
+    try {
+      // Convert PDF to images
+      const convertedImages = await this.pdfConverter.convertPdfToImages(
+        pdfFile,
+        {
+          scale: 2.0,
+          quality: 0.85,
+          imageFormat: 'image/jpeg',
+          maxPages: 10
+        },
+        (progress: ConversionProgress) => {
+          // Update progress message
+          if (this.selectedFiles[placeholderIndex]) {
+            this.selectedFiles[placeholderIndex].conversionMessage = progress.message;
+          }
+        }
+      );
+
+      // Remove the placeholder
+      this.selectedFiles.splice(placeholderIndex, 1);
+
+      // Add all converted images
+      for (const convertedImage of convertedImages) {
+        this.selectedFiles.push({
+          file: convertedImage.file,
+          progress: 0,
+          documentType: 'photo', // Converted PDFs are photos
+          notes: this.notes,
+          originalFileName: pdfFile.name
+        });
+      }
+
+    } catch (error) {
+      console.error('PDF conversion failed:', error);
+
+      // Update placeholder to show error
+      if (this.selectedFiles[placeholderIndex]) {
+        this.selectedFiles[placeholderIndex].isConverting = false;
+        this.selectedFiles[placeholderIndex].error =
+          error instanceof Error ? error.message : 'Failed to convert PDF. Please try again.';
+      }
+    } finally {
+      this.isProcessingPdf = false;
+    }
   }
 
   validateFile(file: File): { valid: boolean; error?: string } {
