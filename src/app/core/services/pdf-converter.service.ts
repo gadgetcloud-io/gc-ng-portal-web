@@ -125,48 +125,67 @@ export class PdfConverterService {
         );
         console.log(`[PDF Converter] Page ${pageNum} rendered successfully`);
 
-        // Convert canvas to blob
-        const blob = await new Promise<Blob>((resolve, reject) => {
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                resolve(blob);
-              } else {
-                reject(new Error('Failed to convert canvas to blob'));
-              }
-            },
-            imageFormat,
-            quality
-          );
-        });
+        // Convert canvas to blob with timeout
+        console.log(`[PDF Converter] Converting canvas to blob (${imageFormat}, quality: ${quality})...`);
+        const blob = await this.withTimeout(
+          new Promise<Blob>((resolve, reject) => {
+            try {
+              canvas.toBlob(
+                (blob) => {
+                  if (blob) {
+                    console.log(`[PDF Converter] Blob created successfully: ${blob.size} bytes`);
+                    resolve(blob);
+                  } else {
+                    reject(new Error('Canvas toBlob returned null'));
+                  }
+                },
+                imageFormat,
+                quality
+              );
+            } catch (error) {
+              console.error('[PDF Converter] Error in toBlob:', error);
+              reject(error);
+            }
+          }),
+          10000,
+          `Canvas to blob conversion timed out for page ${pageNum}`
+        );
 
         // Create a File object from the blob
+        console.log(`[PDF Converter] Creating File object from blob...`);
         const fileName = this.generateImageFileName(pdfFile.name, pageNum, totalPages, imageFormat);
         const imageFile = new File([blob], fileName, { type: imageFormat });
+        console.log(`[PDF Converter] File created: ${fileName} (${imageFile.size} bytes)`);
 
+        console.log(`[PDF Converter] Adding image to array...`);
         convertedImages.push({
           file: imageFile,
           pageNumber: pageNum,
           width: viewport.width,
           height: viewport.height
         });
+        console.log(`[PDF Converter] Image added, array length: ${convertedImages.length}`);
 
         // Report progress
+        console.log(`[PDF Converter] Reporting progress for page ${pageNum}...`);
         progressCallback?.({
           currentPage: pageNum,
           totalPages,
           status: 'converting',
           message: `Converted page ${pageNum} of ${totalPages}`
         });
+        console.log(`[PDF Converter] Progress reported`);
       }
 
       // Report completion
+      console.log(`[PDF Converter] Conversion complete, reporting final status...`);
       progressCallback?.({
         currentPage: totalPages,
         totalPages,
         status: 'complete',
         message: `Converted ${totalPages} page${totalPages > 1 ? 's' : ''} successfully`
       });
+      console.log(`[PDF Converter] Returning ${convertedImages.length} converted images`);
 
       return convertedImages;
 

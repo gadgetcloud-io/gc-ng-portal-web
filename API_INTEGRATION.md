@@ -276,11 +276,17 @@ Handles client-side PDF to image conversion using PDF.js:
 - Worker served from same origin to prevent CORS errors
 - 30-second timeout for PDF loading, 15-second timeout per page
 - Comprehensive console logging for debugging
+- Manual change detection (`ChangeDetectorRef`) to update UI after async conversion
+  - Required because Angular's automatic change detection doesn't detect array modifications in async callbacks
+  - Triggers UI updates after progress changes, conversion completion, and errors
 
 **Usage:**
 ```typescript
 // In a component
-constructor(private pdfConverter: PdfConverterService) {}
+constructor(
+  private pdfConverter: PdfConverterService,
+  private cdr: ChangeDetectorRef
+) {}
 
 async uploadPdf(file: File) {
   const images = await this.pdfConverter.convertPdfToImages(
@@ -293,6 +299,7 @@ async uploadPdf(file: File) {
     },
     (progress) => {
       console.log(`Converting page ${progress.currentPage}/${progress.totalPages}`);
+      this.cdr.detectChanges(); // Update UI during conversion
     }
   );
 
@@ -300,6 +307,8 @@ async uploadPdf(file: File) {
   for (const img of images) {
     await documentService.uploadDocument(img.file);
   }
+
+  this.cdr.detectChanges(); // Update UI after conversion complete
 }
 ```
 

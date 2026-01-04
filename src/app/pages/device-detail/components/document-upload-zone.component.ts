@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PdfConverterService, ConversionProgress } from '../../../core/services/pdf-converter.service';
@@ -33,7 +33,10 @@ export class DocumentUploadZoneComponent {
   notes = '';
   isProcessingPdf = false;
 
-  constructor(private pdfConverter: PdfConverterService) {}
+  constructor(
+    private pdfConverter: PdfConverterService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   // File validation
   readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -146,6 +149,7 @@ export class DocumentUploadZoneComponent {
           // Update progress message
           if (this.selectedFiles[placeholderIndex]) {
             this.selectedFiles[placeholderIndex].conversionMessage = progress.message;
+            this.cdr.detectChanges();
           }
         }
       );
@@ -164,6 +168,9 @@ export class DocumentUploadZoneComponent {
         });
       }
 
+      // Trigger change detection to update UI
+      this.cdr.detectChanges();
+
     } catch (error) {
       console.error('PDF conversion failed:', error);
 
@@ -172,6 +179,7 @@ export class DocumentUploadZoneComponent {
         this.selectedFiles[placeholderIndex].isConverting = false;
         this.selectedFiles[placeholderIndex].error =
           error instanceof Error ? error.message : 'Failed to convert PDF. Please try again.';
+        this.cdr.detectChanges();
       }
     } finally {
       this.isProcessingPdf = false;
