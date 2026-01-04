@@ -64,29 +64,35 @@
 
     <!-- Requests List -->
     <div *ngIf="!isLoading && filteredRequests.length > 0" class="requests-list">
-      <div *ngFor="let request of filteredRequests" class="request-card" (click)="viewRequestDetails(request)">
+      <div
+        *ngFor="let ticket of filteredRequests"
+        [id]="'ticket-' + ticket.id"
+        class="request-card"
+        [class.highlighted]="ticket.id === highlightedTicketId"
+        (click)="viewRequestDetails(ticket)"
+      >
         <div class="request-header">
           <div class="request-type">
-            <span class="type-icon">{{ getTypeIcon(request.requestType) }}</span>
-            <span class="type-label">{{ getTypeLabel(request.requestType) }}</span>
+            <span class="type-icon">{{ getTypeIcon(ticket.data.requestType) }}</span>
+            <span class="type-label">{{ getTypeLabel(ticket.data.requestType) }}</span>
           </div>
           <div class="request-badges">
-            <span class="badge priority-badge" [class]="getPriorityColor(request.priority)">
-              {{ getPriorityLabel(request.priority) }}
+            <span class="badge priority-badge" [class]="getPriorityColor(ticket.priority)">
+              {{ getPriorityLabel(ticket.priority) }}
             </span>
-            <span class="badge status-badge" [class]="getStatusColor(request.status)">
-              {{ getStatusLabel(request.status) }}
+            <span class="badge status-badge" [class]="getStatusColor(ticket.status)">
+              {{ getStatusLabel(ticket.status) }}
             </span>
           </div>
         </div>
 
         <div class="request-content">
-          <div class="request-id">#{{ request.id }}</div>
-          <h3 class="request-subject">{{ request.subject }}</h3>
-          <p class="request-description">{{ request.description }}</p>
-          <div class="request-gadget">
-            <span class="gadget-icon">📱</span>
-            <span>{{ request.deviceName }}</span>
+          <div class="request-id">#{{ ticket.id }}</div>
+          <h3 class="request-subject">{{ ticket.data.additionalNotes || 'Service Request' }}</h3>
+          <p class="request-description">{{ ticket.data.issueDescription }}</p>
+          <div class="request-device" *ngIf="ticket.data.deviceId">
+            <span class="device-icon">📱</span>
+            <span>Device ID: {{ ticket.data.deviceId }}</span>
           </div>
         </div>
 
@@ -94,16 +100,16 @@
           <div class="request-dates">
             <div class="date-item">
               <span class="date-label">Created:</span>
-              <span class="date-value">{{ formatDate(request.createdAt) }}</span>
+              <span class="date-value">{{ formatDate(ticket.createdAt) }}</span>
             </div>
             <div class="date-item">
               <span class="date-label">Updated:</span>
-              <span class="date-value">{{ formatDate(request.updatedAt) }}</span>
+              <span class="date-value">{{ formatDate(ticket.updatedAt) }}</span>
             </div>
           </div>
-          <div class="request-assigned" *ngIf="request.assignedTo">
+          <div class="request-assigned" *ngIf="ticket.assignedTo">
             <span class="assigned-icon">👤</span>
-            <span>{{ request.assignedTo }}</span>
+            <span>{{ ticket.assignedTo }}</span>
           </div>
         </div>
       </div>
@@ -111,12 +117,9 @@
   </div>
 </section>
 
-<!-- Note about mock data -->
-<section class="note-section" *ngIf="!isLoading && filteredRequests.length > 0">
-  <div class="container">
-    <div class="info-box">
-      <span class="info-icon">ℹ️</span>
-      <p>This page is currently showing mock data. API integration with the backend is pending.</p>
-    </div>
-  </div>
-</section>
+<!-- Ticket Detail Modal -->
+<app-ticket-detail-modal
+  [ticket]="selectedTicket"
+  [isOpen]="isDetailModalOpen"
+  (close)="closeDetailModal()"
+></app-ticket-detail-modal>

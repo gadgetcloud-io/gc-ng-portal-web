@@ -62,9 +62,9 @@ export class AddDeviceDialogComponent implements OnDestroy {
       model: [''],
 
       // Step 2: Purchase & Warranty
-      purchaseDate: ['', [Validators.required]],
+      purchaseDate: [''],
       purchasePrice: [''],
-      warrantyExpires: ['', [Validators.required]],
+      warrantyExpires: [''],
       warrantyProvider: [''],
 
       // Step 3: Additional Details
@@ -151,7 +151,7 @@ export class AddDeviceDialogComponent implements OnDestroy {
       case 1:
         return ['name', 'category'];
       case 2:
-        return ['purchaseDate', 'warrantyExpires'];
+        return []; // Purchase Date and Warranty Expires are now optional
       case 3:
         return [];
       default:
@@ -173,10 +173,13 @@ export class AddDeviceDialogComponent implements OnDestroy {
       return;
     }
 
-    // Validate dates
+    // Validate dates (only if both are provided)
     const formValue = this.deviceForm.value;
     if (formValue.warrantyExpires && formValue.purchaseDate) {
-      if (new Date(formValue.warrantyExpires) < new Date(formValue.purchaseDate)) {
+      const warrantyDate = new Date(formValue.warrantyExpires);
+      const purchaseDate = new Date(formValue.purchaseDate);
+
+      if (warrantyDate < purchaseDate) {
         this.error = 'Warranty expiration must be after purchase date';
         return;
       }

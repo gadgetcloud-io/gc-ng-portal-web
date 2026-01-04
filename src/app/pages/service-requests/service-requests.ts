@@ -1,56 +1,63 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
-
-export interface ServiceRequest {
-  id: string;
-  deviceName: string;
-  requestType: 'repair' | 'maintenance' | 'warranty-claim' | 'support';
-  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  subject: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  assignedTo?: string;
-}
+import { ServiceTicketService } from '../../core/services/service-ticket.service';
+import { ServiceTicket } from '../../core/models/service-ticket.model';
+import { TicketDetailModalComponent } from '../device-detail/tabs/service-tickets-tab/ticket-detail-modal.component';
 
 @Component({
   selector: 'app-service-requests',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, TicketDetailModalComponent],
   templateUrl: './service-requests.html',
   styleUrl: './service-requests.scss'
 })
-export class ServiceRequestsComponent implements OnInit {
+export class ServiceRequestsComponent implements OnInit, OnDestroy {
   user: User | null = null;
-  serviceRequests: ServiceRequest[] = [];
-  filteredRequests: ServiceRequest[] = [];
+  serviceRequests: ServiceTicket[] = [];
+  filteredRequests: ServiceTicket[] = [];
   isLoading = false;
   selectedStatus = 'all';
   selectedType = 'all';
+  highlightedTicketId: string | null = null;
+
+  // Modal state
+  isDetailModalOpen = false;
+  selectedTicket: ServiceTicket | null = null;
+
+  private destroy$ = new Subject<void>();
 
   statuses = [
     { value: 'all', label: 'All Statuses' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'in-progress', label: 'In Progress' },
+    { value: 'submitted', label: 'Submitted' },
+    { value: 'open', label: 'Open' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'pending_customer', label: 'Pending Customer' },
+    { value: 'resolved', label: 'Resolved' },
+    { value: 'closed', label: 'Closed' },
+    { value: 'processing', label: 'Processing' },
     { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' }
+    { value: 'failed', label: 'Failed' }
   ];
 
   types = [
     { value: 'all', label: 'All Types' },
     { value: 'repair', label: 'Repair' },
     { value: 'maintenance', label: 'Maintenance' },
-    { value: 'warranty-claim', label: 'Warranty Claim' },
-    { value: 'support', label: 'Support' }
+    { value: 'inspection', label: 'Inspection' },
+    { value: 'warranty_claim', label: 'Warranty Claim' },
+    { value: 'replacement', label: 'Replacement' }
   ];
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private serviceTicketService: ServiceTicketService
   ) {}
 
   ngOnInit(): void {
@@ -61,62 +68,53 @@ export class ServiceRequestsComponent implements OnInit {
       return;
     }
 
+    // Check for ticketId query parameter
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.highlightedTicketId = params['ticketId'] || null;
+      });
+
     this.loadServiceRequests();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   private loadServiceRequests(): void {
-    // TODO: Replace with actual API call to backend
-    // For now, using mock data
     this.isLoading = true;
 
-    setTimeout(() => {
-      this.serviceRequests = [
-        {
-          id: 'SR-001',
-          deviceName: 'iPhone 13 Pro',
-          requestType: 'repair',
-          status: 'in-progress',
-          priority: 'high',
-          subject: 'Screen replacement needed',
-          description: 'Cracked screen after accidental drop',
-          createdAt: '2025-12-20T10:00:00Z',
-          updatedAt: '2025-12-28T15:30:00Z',
-          assignedTo: 'Tech Support Team'
-        },
-        {
-          id: 'SR-002',
-          deviceName: 'MacBook Pro 16"',
-          requestType: 'maintenance',
-          status: 'completed',
-          priority: 'medium',
-          subject: 'Battery health check',
-          description: 'Regular battery health inspection',
-          createdAt: '2025-12-15T14:00:00Z',
-          updatedAt: '2025-12-22T11:00:00Z',
-          assignedTo: 'Maintenance Team'
-        },
-        {
-          id: 'SR-003',
-          deviceName: 'AirPods Pro',
-          requestType: 'warranty-claim',
-          status: 'pending',
-          priority: 'low',
-          subject: 'Left earbud not working',
-          description: 'Left earbud stopped working within warranty period',
-          createdAt: '2025-12-28T09:00:00Z',
-          updatedAt: '2025-12-28T09:00:00Z'
-        }
-      ];
+    this.serviceTicketService.listTickets()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (tickets) => {
+          this.serviceRequests = tickets;
+          this.applyFilters();
+          this.isLoading = false;
 
-      this.applyFilters();
-      this.isLoading = false;
-    }, 500);
+          // Scroll to highlighted ticket if present
+          if (this.highlightedTicketId) {
+            setTimeout(() => {
+              const element = document.getElementById(`ticket-${this.highlightedTicketId}`);
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 100);
+          }
+        },
+        error: (err) => {
+          console.error('Error loading service tickets:', err);
+          this.isLoading = false;
+        }
+      });
   }
 
   applyFilters(): void {
-    this.filteredRequests = this.serviceRequests.filter(request => {
-      const matchesStatus = this.selectedStatus === 'all' || request.status === this.selectedStatus;
-      const matchesType = this.selectedType === 'all' || request.requestType === this.selectedType;
+    this.filteredRequests = this.serviceRequests.filter(ticket => {
+      const matchesStatus = this.selectedStatus === 'all' || ticket.status === this.selectedStatus;
+      const matchesType = this.selectedType === 'all' || ticket.data.requestType === this.selectedType;
       return matchesStatus && matchesType;
     });
   }
@@ -133,13 +131,23 @@ export class ServiceRequestsComponent implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'pending':
+      case 'submitted':
         return 'status-pending';
-      case 'in-progress':
+      case 'open':
+        return 'status-progress';
+      case 'in_progress':
+        return 'status-progress';
+      case 'pending_customer':
+        return 'status-pending';
+      case 'resolved':
+        return 'status-completed';
+      case 'closed':
+        return 'status-completed';
+      case 'processing':
         return 'status-progress';
       case 'completed':
         return 'status-completed';
-      case 'cancelled':
+      case 'failed':
         return 'status-cancelled';
       default:
         return '';
@@ -147,18 +155,7 @@ export class ServiceRequestsComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    switch (status) {
-      case 'pending':
-        return 'Pending';
-      case 'in-progress':
-        return 'In Progress';
-      case 'completed':
-        return 'Completed';
-      case 'cancelled':
-        return 'Cancelled';
-      default:
-        return status;
-    }
+    return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
   getPriorityColor(priority: string): string {
@@ -197,28 +194,19 @@ export class ServiceRequestsComponent implements OnInit {
         return '🔧';
       case 'maintenance':
         return '🛠️';
-      case 'warranty-claim':
+      case 'warranty_claim':
         return '🛡️';
-      case 'support':
-        return '💬';
+      case 'inspection':
+        return '🔍';
+      case 'replacement':
+        return '🔄';
       default:
         return '📋';
     }
   }
 
   getTypeLabel(type: string): string {
-    switch (type) {
-      case 'repair':
-        return 'Repair';
-      case 'maintenance':
-        return 'Maintenance';
-      case 'warranty-claim':
-        return 'Warranty Claim';
-      case 'support':
-        return 'Support';
-      default:
-        return type;
-    }
+    return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
   formatDate(date: string): string {
@@ -237,8 +225,13 @@ export class ServiceRequestsComponent implements OnInit {
     alert('New service request dialog will be implemented. This will allow users to create new service tickets.');
   }
 
-  viewRequestDetails(request: ServiceRequest): void {
-    // TODO: Implement request details view
-    alert(`View details for ${request.id}: ${request.subject}`);
+  viewRequestDetails(ticket: ServiceTicket): void {
+    this.selectedTicket = ticket;
+    this.isDetailModalOpen = true;
+  }
+
+  closeDetailModal(): void {
+    this.isDetailModalOpen = false;
+    this.selectedTicket = null;
   }
 }

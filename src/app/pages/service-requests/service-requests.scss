@@ -131,6 +131,12 @@
       border-color: #00B4A6;
     }
 
+    &.highlighted {
+      border: 2px solid #00B4A6;
+      box-shadow: 0 0 0 3px rgba(0, 180, 166, 0.1);
+      background: linear-gradient(to right, rgba(0, 180, 166, 0.02), white);
+    }
+
     .request-header {
       display: flex;
       justify-content: space-between;

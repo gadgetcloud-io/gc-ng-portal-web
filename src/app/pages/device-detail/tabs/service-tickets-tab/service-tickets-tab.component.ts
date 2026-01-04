@@ -1,20 +1,19 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Device } from '../../../../core/services/device.service';
 import { ServiceTicket, ServiceTicketStatus, TicketPriority, CreateTicketRequest, RequestType } from '../../../../core/models/service-ticket.model';
 import { ServiceTicketService } from '../../../../core/services/service-ticket.service';
 import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../../../shared/components/service-request-dialogs/create-service-request-dialog';
-import { TicketDetailModalComponent } from './ticket-detail-modal.component';
 
 @Component({
   selector: 'app-service-tickets-tab',
   standalone: true,
   imports: [
     CommonModule,
-    CreateServiceRequestDialogComponent,
-    TicketDetailModalComponent
+    CreateServiceRequestDialogComponent
   ],
   templateUrl: './service-tickets-tab.component.html',
   styleUrl: './service-tickets-tab.component.scss'
@@ -28,14 +27,13 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
 
   // Dialog states
   isCreateDialogOpen = false;
-  isDetailModalOpen = false;
-  selectedTicket: ServiceTicket | null = null;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private serviceTicketService: ServiceTicketService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -106,27 +104,10 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
   }
 
   viewTicketDetails(ticket: ServiceTicket): void {
-    this.selectedTicket = ticket;
-    this.isDetailModalOpen = true;
-  }
-
-  closeDetailModal(): void {
-    this.isDetailModalOpen = false;
-    this.selectedTicket = null;
-  }
-
-  onMessageAdded(): void {
-    // Refresh ticket details if modal is open
-    if (this.selectedTicket) {
-      this.serviceTicketService.getTicket(this.selectedTicket.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (ticket) => {
-            this.selectedTicket = ticket;
-            this.cdr.detectChanges();
-          }
-        });
-    }
+    // Navigate to service requests page
+    this.router.navigate(['/service-requests'], {
+      queryParams: { ticketId: ticket.id }
+    });
   }
 
   private mapPriorityToUrgency(priority: string): 'low' | 'normal' | 'high' | 'critical' {
