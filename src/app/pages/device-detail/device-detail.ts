@@ -9,6 +9,7 @@ import { DetailsTabComponent } from './tabs/details-tab.component';
 import { WarrantyTabComponent } from './tabs/warranty-tab.component';
 import { DocumentsTabComponent } from './tabs/documents-tab.component';
 import { NotesTabComponent } from './tabs/notes-tab.component';
+import { ServiceTicketsTabComponent } from './tabs/service-tickets-tab/service-tickets-tab.component';
 
 @Component({
   selector: 'gc-device-detail',
@@ -20,7 +21,8 @@ import { NotesTabComponent } from './tabs/notes-tab.component';
     DetailsTabComponent,
     WarrantyTabComponent,
     DocumentsTabComponent,
-    NotesTabComponent
+    NotesTabComponent,
+    ServiceTicketsTabComponent
   ],
   templateUrl: './device-detail.html',
   styleUrls: ['./device-detail.scss']
@@ -37,7 +39,8 @@ export class DeviceDetailComponent implements OnInit {
     { id: 'details', label: 'Details', icon: '📋' },
     { id: 'warranty', label: 'Warranty', icon: '🛡️' },
     { id: 'documents', label: 'Documents', icon: '📁' },
-    { id: 'notes', label: 'Notes', icon: '📝' }
+    { id: 'notes', label: 'Notes', icon: '📝' },
+    { id: 'service-tickets', label: 'Service Tickets', icon: '🔧' }
   ];
 
   // RBAC state

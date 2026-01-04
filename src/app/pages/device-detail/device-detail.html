@@ -104,6 +104,12 @@
         [isUpdating]="isUpdating"
         (fieldUpdate)="onFieldUpdate($event)">
       </app-notes-tab>
+
+      <!-- Service Tickets Tab -->
+      <app-service-tickets-tab
+        *ngIf="activeTabId === 'service-tickets'"
+        [device]="device">
+      </app-service-tickets-tab>
     </div>
   </div>
 </div>

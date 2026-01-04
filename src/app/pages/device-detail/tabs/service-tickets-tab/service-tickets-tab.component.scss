@@ -1,0 +1,273 @@
+.service-tickets-tab {
+  padding: var(--space-6);
+
+  .tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .header-content {
+      flex: 1;
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-navy-900);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      p {
+        font-size: 0.875rem;
+        color: var(--color-gray-600);
+        margin: 0;
+      }
+    }
+
+    .create-ticket-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-6);
+      background: var(--brand-primary-700);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-base);
+
+      &:hover {
+        background: var(--brand-primary-800);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .icon {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .loading-state,
+  .error-state,
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12) var(--space-6);
+    text-align: center;
+  }
+
+  .loading-state {
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(0, 128, 192, 0.1);
+      border-top-color: var(--brand-primary-700);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: var(--space-4);
+    }
+
+    p {
+      color: var(--color-gray-600);
+      font-size: 0.875rem;
+    }
+  }
+
+  .error-state {
+    .icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-4);
+    }
+
+    p {
+      color: var(--color-red-600);
+      font-size: 1rem;
+      margin-bottom: var(--space-4);
+    }
+
+    button {
+      padding: var(--space-2) var(--space-4);
+      background: var(--brand-primary-700);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all var(--transition-base);
+
+      &:hover {
+        background: var(--brand-primary-800);
+      }
+    }
+  }
+
+  .empty-state {
+    .icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-navy-900);
+      margin: 0 0 var(--space-2) 0;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--color-gray-600);
+      margin: 0 0 var(--space-6) 0;
+      max-width: 400px;
+    }
+
+    .primary-btn {
+      padding: var(--space-3) var(--space-6);
+      background: var(--brand-primary-700);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-base);
+
+      &:hover {
+        background: var(--brand-primary-800);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+    }
+  }
+
+  .tickets-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-4);
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+
+    .ticket-card {
+      background: white;
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      cursor: pointer;
+      transition: all var(--transition-base);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--brand-primary-700);
+      }
+
+      .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-3);
+
+        .ticket-id {
+          font-family: 'Courier New', monospace;
+          font-size: 0.75rem;
+          color: var(--color-gray-500);
+          font-weight: 600;
+        }
+
+        .badges {
+          display: flex;
+          gap: var(--space-2);
+
+          .status-badge,
+          .priority-badge {
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+            text-transform: capitalize;
+          }
+        }
+      }
+
+      .ticket-content {
+        margin-bottom: var(--space-3);
+
+        .request-type {
+          display: flex;
+          align-items: center;
+          gap: var(--space-2);
+          margin-bottom: var(--space-2);
+
+          .icon {
+            font-size: 1.25rem;
+          }
+
+          .type-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-navy-900);
+            text-transform: capitalize;
+          }
+        }
+
+        .description {
+          font-size: 0.875rem;
+          color: var(--color-gray-600);
+          margin: 0;
+          line-height: 1.5;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      }
+
+      .ticket-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: var(--space-3);
+        border-top: 1px solid var(--color-gray-200);
+
+        .timestamp,
+        .assigned {
+          display: flex;
+          align-items: center;
+          gap: var(--space-1);
+          font-size: 0.75rem;
+          color: var(--color-gray-500);
+
+          .icon {
+            font-size: 1rem;
+          }
+        }
+
+        .assigned {
+          color: var(--brand-primary-700);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

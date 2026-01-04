@@ -1,0 +1,82 @@
+<div class="service-tickets-tab">
+  <!-- Header with Create Button -->
+  <div class="tab-header">
+    <div class="header-content">
+      <h3>Service Tickets</h3>
+      <p>Manage repairs, maintenance, and warranty claims for this device</p>
+    </div>
+    <button class="create-ticket-btn" (click)="openCreateDialog()">
+      <span class="icon">➕</span>
+      <span>New Ticket</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading service tickets...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <span class="icon">⚠️</span>
+    <p>{{ error }}</p>
+    <button (click)="loadTickets()">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && tickets.length === 0" class="empty-state">
+    <span class="icon">📝</span>
+    <h4>No service tickets yet</h4>
+    <p>Create your first service ticket to track repairs, maintenance, or warranty claims for this device.</p>
+    <button class="primary-btn" (click)="openCreateDialog()">Create Ticket</button>
+  </div>
+
+  <!-- Ticket List -->
+  <div *ngIf="!isLoading && !error && tickets.length > 0" class="tickets-list">
+    <div
+      *ngFor="let ticket of tickets"
+      class="ticket-card"
+      (click)="viewTicketDetails(ticket)"
+    >
+      <div class="ticket-header">
+        <div class="ticket-id">{{ ticket.id }}</div>
+        <div class="badges">
+          <span class="status-badge" [style.background-color]="getStatusColor(ticket.status)">
+            {{ formatStatus(ticket.status) }}
+          </span>
+          <span class="priority-badge" [style.background-color]="getPriorityColor(ticket.priority)">
+            {{ ticket.priority }}
+          </span>
+        </div>
+      </div>
+
+      <div class="ticket-content">
+        <div class="request-type">
+          <span class="icon">{{ getRequestTypeIcon(ticket.data.requestType) }}</span>
+          <span class="type-label">{{ formatRequestType(ticket.data.requestType) }}</span>
+        </div>
+        <p class="description">{{ ticket.data.issueDescription }}</p>
+      </div>
+
+      <div class="ticket-footer">
+        <div class="timestamp">
+          <span class="icon">🕐</span>
+          <span>{{ formatDate(ticket.createdAt) }}</span>
+        </div>
+        <div class="assigned" *ngIf="ticket.assignedTo">
+          <span class="icon">👤</span>
+          <span>Assigned</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Ticket Dialog (Reuse existing component) -->
+  <gc-create-service-request-dialog
+    [isOpen]="isCreateDialogOpen"
+    [device]="device"
+    (close)="closeCreateDialog()"
+    (requestCreated)="onTicketCreated($event)"
+  ></gc-create-service-request-dialog>
+</div>
