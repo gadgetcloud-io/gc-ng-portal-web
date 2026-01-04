@@ -1,0 +1,225 @@
+### Page state
+- Page URL: https://www.gadgetcloud.io/
+- Page Title: GadgetCloud - Smart Device & Warranty Management
+- Page Snapshot:
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - navigation [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Services" [ref=e9] [cursor=pointer]:
+          - /url: /features
+        - link "Pricing" [ref=e10] [cursor=pointer]:
+          - /url: /pricing
+        - link "What is New?" [ref=e11] [cursor=pointer]:
+          - /url: /blog
+      - link "Gadget Cloud Gadget care simplified" [ref=e12] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - generic [ref=e15]: Gadget
+            - generic [ref=e16]: Cloud
+          - generic [ref=e17]: Gadget care simplified
+      - button [ref=e20] [cursor=pointer]:
+        - img [ref=e21]
+        - img [ref=e23]
+  - main [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - heading "Gadget care, delightfully simple" [level=1] [ref=e31]:
+            - text: Gadget care,
+            - generic [ref=e32]: delightfully simple
+          - paragraph [ref=e33]: Track warranties. Store receipts. Never lose a gadget manual again. All your tech, beautifully organized in one happy place.
+          - generic [ref=e34]:
+            - button "Get Started Free" [ref=e35] [cursor=pointer]
+            - button "See How It Works" [ref=e36] [cursor=pointer]
+          - generic [ref=e37]:
+            - generic [ref=e38]:
+              - generic [ref=e39]: 10K+
+              - generic [ref=e40]: Happy Users
+            - generic [ref=e41]:
+              - generic [ref=e42]: 50K+
+              - generic [ref=e43]: Gadgets Tracked
+            - generic [ref=e44]:
+              - generic [ref=e45]: 99%
+              - generic [ref=e46]: Warranty Saved
+        - img [ref=e48]:
+          - generic [ref=e66]:
+            - generic [ref=e72]: ⚡
+            - generic [ref=e75]: 🎯
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - heading "Everything you need, nothing you don't" [level=2] [ref=e79]
+          - paragraph [ref=e80]: Gadget management shouldn't be complicated. We made it simple, smart, and dare we say... fun?
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - heading "Warranty Tracking" [level=3] [ref=e83]
+            - paragraph [ref=e84]: Never lose track of warranty expiration dates. Get smart reminders before they expire.
+          - generic [ref=e85]:
+            - heading "Document Storage" [level=3] [ref=e86]
+            - paragraph [ref=e87]: Store all your receipts, manuals, and documents in one secure cloud-based location.
+          - generic [ref=e88]:
+            - heading "Device Inventory" [level=3] [ref=e89]
+            - paragraph [ref=e90]: Organize all your gadgets with photos, specs, and purchase details in beautiful cards.
+          - generic [ref=e91]:
+            - heading "Smart Reminders" [level=3] [ref=e92]
+            - paragraph [ref=e93]: Automated notifications for warranty renewals, service schedules, and important dates.
+          - generic [ref=e94]:
+            - heading "Family Sharing" [level=3] [ref=e95]
+            - paragraph [ref=e96]: Manage devices for your whole family. Perfect for parents tracking kids' gadgets.
+          - generic [ref=e97]:
+            - heading "Secure & Private" [level=3] [ref=e98]
+            - paragraph [ref=e99]: Bank-level encryption keeps your data safe. Your gadgets, your data, your control.
+      - generic [ref=e101]:
+        - generic [ref=e102]:
+          - heading "Three steps to gadget zen" [level=2] [ref=e103]
+          - paragraph [ref=e104]: Getting started is ridiculously easy
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - generic [ref=e107]: "1"
+            - generic [ref=e108]:
+              - heading "Add Your Gadgets" [level=3] [ref=e109]
+              - paragraph [ref=e110]: Snap a photo or enter details manually. Takes less than 30 seconds per device.
+            - generic [ref=e111]: +
+          - generic [ref=e112]:
+            - generic [ref=e113]: "2"
+            - generic [ref=e114]:
+              - heading "Upload Documents" [level=3] [ref=e115]
+              - paragraph [ref=e116]: Store receipts, warranties, and manuals. Scan or upload from your device.
+          - generic [ref=e117]:
+            - generic [ref=e118]: "3"
+            - generic [ref=e119]:
+              - heading "Relax & Get Notified" [level=3] [ref=e120]
+              - paragraph [ref=e121]: We'll remind you before warranties expire. Sit back and let GadgetCloud do the work.
+      - generic [ref=e124]:
+        - generic [ref=e126]:
+          - generic [ref=e127]: "4.9"
+          - generic [ref=e128]: ★★★★★
+          - generic [ref=e129]: Average rating from 2,500+ reviews
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - generic [ref=e132]: "\"GadgetCloud saved me $500 on a laptop repair that was still under warranty. I had completely forgotten about it!\""
+            - generic [ref=e133]:
+              - generic [ref=e134]: SC
+              - generic [ref=e135]:
+                - generic [ref=e136]: Sarah Chen
+                - generic [ref=e137]: Small Business Owner
+          - generic [ref=e138]:
+            - generic [ref=e139]: "\"Managing gadgets for my family of 5 was chaos. Now everything is organized and I get reminders for all devices.\""
+            - generic [ref=e140]:
+              - generic [ref=e141]: MR
+              - generic [ref=e142]:
+                - generic [ref=e143]: Michael Rodriguez
+                - generic [ref=e144]: Dad & Tech Enthusiast
+          - generic [ref=e145]:
+            - generic [ref=e146]: "\"The interface is so clean and playful. Finally, a productivity app that doesn't feel like work!\""
+            - generic [ref=e147]:
+              - generic [ref=e148]: ET
+              - generic [ref=e149]:
+                - generic [ref=e150]: Emma Thompson
+                - generic [ref=e151]: Product Designer
+      - generic [ref=e154]:
+        - heading "Ready to simplify your gadget life?" [level=2] [ref=e155]
+        - paragraph [ref=e156]: Join 10,000+ happy users who never lose track of their tech.
+        - button "Get Started Free →" [ref=e157] [cursor=pointer]
+        - paragraph [ref=e158]: Free forever for up to 5 gadgets. No credit card required.
+  - contentinfo [ref=e160]:
+    - generic [ref=e161]:
+      - generic [ref=e162]:
+        - generic [ref=e163]:
+          - link "Gadget Cloud Gadget care simplified" [ref=e164] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - generic [ref=e167]: Gadget
+                - generic [ref=e168]: Cloud
+              - generic [ref=e169]: Gadget care simplified
+          - paragraph [ref=e170]: Manage your gadgets effortlessly. Track repairs, warranties, and keep all your gadget information organized in one secure place.
+          - generic [ref=e171]:
+            - link "Twitter" [ref=e172] [cursor=pointer]:
+              - /url: https://twitter.com/gadgetcloud
+              - img [ref=e173]
+            - link "LinkedIn" [ref=e175] [cursor=pointer]:
+              - /url: https://linkedin.com/company/gadgetcloud
+              - img [ref=e176]
+            - link "GitHub" [ref=e178] [cursor=pointer]:
+              - /url: https://github.com/gadgetcloud
+              - img [ref=e179]
+            - link "YouTube" [ref=e181] [cursor=pointer]:
+              - /url: https://youtube.com/@gadgetcloud
+              - img [ref=e182]
+        - generic [ref=e184]:
+          - generic [ref=e185]:
+            - heading "Product" [level=3] [ref=e186]
+            - list [ref=e187]:
+              - listitem [ref=e188]:
+                - link "Features" [ref=e189] [cursor=pointer]:
+                  - /url: /features
+              - listitem [ref=e190]:
+                - link "Pricing" [ref=e191] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e192]:
+                - link "Security" [ref=e193]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e194]:
+                - link "Roadmap" [ref=e195]:
+                  - /url: javascript:void(0)
+          - generic [ref=e196]:
+            - heading "Company" [level=3] [ref=e197]
+            - list [ref=e198]:
+              - listitem [ref=e199]:
+                - link "About Us" [ref=e200] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e201]:
+                - link "Careers" [ref=e202]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e203]:
+                - link "Blog" [ref=e204]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e205]:
+                - link "Press Kit" [ref=e206]:
+                  - /url: javascript:void(0)
+          - generic [ref=e207]:
+            - heading "Resources" [level=3] [ref=e208]
+            - list [ref=e209]:
+              - listitem [ref=e210]:
+                - link "Documentation" [ref=e211]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e212]:
+                - link "API Reference" [ref=e213]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e214]:
+                - link "Help Center" [ref=e215]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e216]:
+                - link "Community" [ref=e217]:
+                  - /url: javascript:void(0)
+          - generic [ref=e218]:
+            - heading "Legal" [level=3] [ref=e219]
+            - list [ref=e220]:
+              - listitem [ref=e221]:
+                - link "Privacy Policy" [ref=e222]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e223]:
+                - link "Terms of Service" [ref=e224]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e225]:
+                - link "Cookie Policy" [ref=e226]:
+                  - /url: javascript:void(0)
+              - listitem [ref=e227]:
+                - link "GDPR" [ref=e228]:
+                  - /url: javascript:void(0)
+      - generic [ref=e229]:
+        - paragraph [ref=e230]: © 2026 GadgetCloud. All rights reserved.
+        - generic [ref=e231]:
+          - generic [ref=e232]: Made with ❤️ for gadget lovers
+          - generic [ref=e233]: •
+          - link "hello@gadgetcloud.io" [ref=e234] [cursor=pointer]:
+            - /url: mailto:hello@gadgetcloud.io
+  - button "Help & Support" [ref=e235] [cursor=pointer]:
+    - generic [ref=e236]: "?"
+    - generic [ref=e237]: Help
+```
