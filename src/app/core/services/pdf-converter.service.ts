@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Configure PDF.js worker - use unpkg CDN
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+// Configure PDF.js worker - use local bundled worker to avoid CORS issues
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdfjs/pdf.worker.min.mjs';
 
 export interface ConvertedImage {
   file: File;
@@ -50,6 +50,8 @@ export class PdfConverterService {
     const convertedImages: ConvertedImage[] = [];
 
     try {
+      console.log('[PDF Converter] Starting conversion for:', pdfFile.name, `(${pdfFile.size} bytes)`);
+
       // Report loading progress
       progressCallback?.({
         currentPage: 0,
@@ -58,10 +60,22 @@ export class PdfConverterService {
         message: 'Loading PDF...'
       });
 
-      // Load the PDF file
+      // Load the PDF file with timeout
+      console.log('[PDF Converter] Reading file as ArrayBuffer...');
       const arrayBuffer = await pdfFile.arrayBuffer();
+      console.log('[PDF Converter] ArrayBuffer loaded:', arrayBuffer.byteLength, 'bytes');
+
+      console.log('[PDF Converter] Creating PDF.js loading task...');
       const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
+
+      console.log('[PDF Converter] Waiting for PDF to load...');
+      const pdf = await this.withTimeout(
+        loadingTask.promise,
+        30000, // 30 second timeout
+        'PDF loading timed out after 30 seconds'
+      );
+
+      console.log('[PDF Converter] PDF loaded successfully, pages:', pdf.numPages);
 
       const totalPages = Math.min(pdf.numPages, maxPages);
 
@@ -75,8 +89,17 @@ export class PdfConverterService {
 
       // Convert each page to an image
       for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
+        console.log(`[PDF Converter] Processing page ${pageNum}/${totalPages}...`);
+
+        const page = await this.withTimeout(
+          pdf.getPage(pageNum),
+          15000,
+          `Failed to get page ${pageNum}`
+        );
+        console.log(`[PDF Converter] Page ${pageNum} loaded`);
+
         const viewport = page.getViewport({ scale });
+        console.log(`[PDF Converter] Viewport size: ${viewport.width}x${viewport.height}`);
 
         // Create canvas for rendering
         const canvas = document.createElement('canvas');
@@ -90,11 +113,17 @@ export class PdfConverterService {
         canvas.height = viewport.height;
 
         // Render PDF page to canvas
-        await page.render({
-          canvasContext: context,
-          viewport: viewport,
-          canvas: canvas
-        }).promise;
+        console.log(`[PDF Converter] Rendering page ${pageNum} to canvas...`);
+        await this.withTimeout(
+          page.render({
+            canvasContext: context,
+            viewport: viewport,
+            canvas: canvas
+          }).promise,
+          15000,
+          `Page ${pageNum} rendering timed out`
+        );
+        console.log(`[PDF Converter] Page ${pageNum} rendered successfully`);
 
         // Convert canvas to blob
         const blob = await new Promise<Blob>((resolve, reject) => {
@@ -193,5 +222,21 @@ export class PdfConverterService {
     // Very rough estimate: ~1 second per MB
     const sizeInMB = fileSizeBytes / (1024 * 1024);
     return Math.max(1, Math.round(sizeInMB));
+  }
+
+  /**
+   * Wrap a promise with a timeout
+   * @param promise The promise to wrap
+   * @param timeoutMs Timeout in milliseconds
+   * @param errorMessage Error message if timeout occurs
+   * @returns Promise that rejects if timeout is reached
+   */
+  private withTimeout<T>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> {
+    return Promise.race([
+      promise,
+      new Promise<T>((_, reject) =>
+        setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+      )
+    ]);
   }
 }
