@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { firstValueFrom } from 'rxjs';
 import { PhotoAnalysisService, PhotoAnalysisResponse } from './photo-analysis.service';
 import { environment } from '../../../environments/environment';
 
@@ -24,7 +25,7 @@ describe('PhotoAnalysisService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should analyze photo successfully with category hint', (done) => {
+  it('should analyze photo successfully with category hint', async () => {
     const mockFile = new File(['mock image content'], 'device.jpg', { type: 'image/jpeg' });
     const mockResponse: PhotoAnalysisResponse = {
       extractedData: {
@@ -44,22 +45,22 @@ describe('PhotoAnalysisService', () => {
       warnings: []
     };
 
-    service.analyzePhoto(mockFile, 'phone').subscribe(response => {
-      expect(response.status).toBe('success');
-      expect(response.extractedData.brand).toBe('Apple');
-      expect(response.extractedData.model).toBe('iPhone 15 Pro');
-      expect(response.extractedData.serialNumber).toBe('F17XH4K2Q1GH');
-      expect(response.extractedData.confidence.brand).toBe(0.92);
-      done();
-    });
+    const responsePromise = firstValueFrom(service.analyzePhoto(mockFile, 'phone'));
 
     const req = httpMock.expectOne(`${environment.apiUrl}/api/items/analyze-photo`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body instanceof FormData).toBe(true);
     req.flush(mockResponse);
+
+    const response = await responsePromise;
+    expect(response.status).toBe('success');
+    expect(response.extractedData.brand).toBe('Apple');
+    expect(response.extractedData.model).toBe('iPhone 15 Pro');
+    expect(response.extractedData.serialNumber).toBe('F17XH4K2Q1GH');
+    expect(response.extractedData.confidence.brand).toBe(0.92);
   });
 
-  it('should analyze photo successfully without category hint', (done) => {
+  it('should analyze photo successfully without category hint', async () => {
     const mockFile = new File(['mock image content'], 'device.jpg', { type: 'image/jpeg' });
     const mockResponse: PhotoAnalysisResponse = {
       extractedData: {
@@ -79,18 +80,18 @@ describe('PhotoAnalysisService', () => {
       warnings: []
     };
 
-    service.analyzePhoto(mockFile).subscribe(response => {
-      expect(response.status).toBe('success');
-      expect(response.extractedData.brand).toBe('Samsung');
-      done();
-    });
+    const responsePromise = firstValueFrom(service.analyzePhoto(mockFile));
 
     const req = httpMock.expectOne(`${environment.apiUrl}/api/items/analyze-photo`);
     expect(req.request.method).toBe('POST');
     req.flush(mockResponse);
+
+    const response = await responsePromise;
+    expect(response.status).toBe('success');
+    expect(response.extractedData.brand).toBe('Samsung');
   });
 
-  it('should handle partial analysis result', (done) => {
+  it('should handle partial analysis result', async () => {
     const mockFile = new File(['mock image content'], 'device.jpg', { type: 'image/jpeg' });
     const mockResponse: PhotoAnalysisResponse = {
       extractedData: {
@@ -108,19 +109,19 @@ describe('PhotoAnalysisService', () => {
       warnings: ['Model could not be extracted with high confidence', 'Serial number not found']
     };
 
-    service.analyzePhoto(mockFile).subscribe(response => {
-      expect(response.status).toBe('partial');
-      expect(response.extractedData.brand).toBe('Apple');
-      expect(response.extractedData.model).toBeUndefined();
-      expect(response.warnings.length).toBe(2);
-      done();
-    });
+    const responsePromise = firstValueFrom(service.analyzePhoto(mockFile));
 
     const req = httpMock.expectOne(`${environment.apiUrl}/api/items/analyze-photo`);
     req.flush(mockResponse);
+
+    const response = await responsePromise;
+    expect(response.status).toBe('partial');
+    expect(response.extractedData.brand).toBe('Apple');
+    expect(response.extractedData.model).toBeUndefined();
+    expect(response.warnings.length).toBe(2);
   });
 
-  it('should handle failed analysis result', (done) => {
+  it('should handle failed analysis result', async () => {
     const mockFile = new File(['mock image content'], 'blurry.jpg', { type: 'image/jpeg' });
     const mockResponse: PhotoAnalysisResponse = {
       extractedData: {
@@ -136,29 +137,25 @@ describe('PhotoAnalysisService', () => {
       warnings: ['Image quality too low', 'No text detected']
     };
 
-    service.analyzePhoto(mockFile).subscribe(response => {
-      expect(response.status).toBe('failed');
-      expect(response.extractedData.brand).toBeUndefined();
-      expect(response.warnings.length).toBe(2);
-      done();
-    });
+    const responsePromise = firstValueFrom(service.analyzePhoto(mockFile));
 
     const req = httpMock.expectOne(`${environment.apiUrl}/api/items/analyze-photo`);
     req.flush(mockResponse);
+
+    const response = await responsePromise;
+    expect(response.status).toBe('failed');
+    expect(response.extractedData.brand).toBeUndefined();
+    expect(response.warnings.length).toBe(2);
   });
 
-  it('should handle HTTP error', (done) => {
+  it('should handle HTTP error', async () => {
     const mockFile = new File(['mock image content'], 'device.jpg', { type: 'image/jpeg' });
 
-    service.analyzePhoto(mockFile).subscribe({
-      next: () => fail('should have failed'),
-      error: (error) => {
-        expect(error).toBeTruthy();
-        done();
-      }
-    });
+    const responsePromise = firstValueFrom(service.analyzePhoto(mockFile));
 
     const req = httpMock.expectOne(`${environment.apiUrl}/api/items/analyze-photo`);
     req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+
+    await expect(responsePromise).rejects.toThrow();
   });
 });
