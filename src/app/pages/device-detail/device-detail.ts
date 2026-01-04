@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DeviceService, Device } from '../../core/services/device.service';
@@ -10,6 +10,7 @@ import { WarrantyTabComponent } from './tabs/warranty-tab.component';
 import { DocumentsTabComponent } from './tabs/documents-tab.component';
 import { NotesTabComponent } from './tabs/notes-tab.component';
 import { ServiceTicketsTabComponent } from './tabs/service-tickets-tab/service-tickets-tab.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'gc-device-detail',
@@ -25,7 +26,8 @@ import { ServiceTicketsTabComponent } from './tabs/service-tickets-tab/service-t
     ServiceTicketsTabComponent
   ],
   templateUrl: './device-detail.html',
-  styleUrls: ['./device-detail.scss']
+  styleUrls: ['./device-detail.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeviceDetailComponent implements OnInit {
   deviceId: string = '';
@@ -70,11 +72,12 @@ export class DeviceDetailComponent implements OnInit {
     }
 
     if (this.deviceId) {
-      this.loadDevice();
-      this.loadFieldConfigs();
+      // Parallelize API calls for faster loading
+      this.loadDeviceAndConfigs();
     } else {
       this.error = 'No device ID provided';
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -171,28 +174,39 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   /**
-   * Load device details
+   * Load device details and field configs in parallel
    */
-  private loadDevice(): void {
+  private loadDeviceAndConfigs(): void {
     this.loading = true;
+    this.loadingFieldConfigs = true;
     this.error = null;
 
-    this.deviceService.getDeviceById(this.deviceId).subscribe({
-      next: (device) => {
-        if (device) {
-          this.device = device;
+    forkJoin({
+      device: this.deviceService.getDeviceById(this.deviceId),
+      configs: this.rbacService.getFieldConfig('gc-items')
+    }).subscribe({
+      next: (results) => {
+        // Handle device result
+        if (results.device) {
+          this.device = results.device;
           // Update breadcrumb with device name
-          this.breadcrumbService.setLabel(`/my-gadgets/${this.deviceId}`, device.name);
+          this.breadcrumbService.setLabel(`/my-gadgets/${this.deviceId}`, results.device.name);
         } else {
           this.error = 'Device not found';
         }
+
+        // Handle field configs result
+        this.fieldConfigs = results.configs;
+
         this.loading = false;
+        this.loadingFieldConfigs = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading device:', err);
+        console.error('Error loading device data:', err);
         this.error = 'Failed to load device details';
         this.loading = false;
+        this.loadingFieldConfigs = false;
         this.cdr.detectChanges();
       }
     });
@@ -308,25 +322,6 @@ export class DeviceDetailComponent implements OnInit {
     });
   }
 
-  /**
-   * Load field configurations from RBAC API
-   */
-  private loadFieldConfigs(): void {
-    this.loadingFieldConfigs = true;
-
-    this.rbacService.getFieldConfig('gc-items').subscribe({
-      next: (configs) => {
-        this.fieldConfigs = configs;
-        this.loadingFieldConfigs = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error loading field configs:', err);
-        this.loadingFieldConfigs = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
 
   /**
    * Format field name for display
