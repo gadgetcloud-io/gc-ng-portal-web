@@ -251,6 +251,100 @@ When deploying to production:
 2. Increase timeout in environment
 3. Check network connectivity
 
+## Document Upload with PDF Conversion
+
+### Overview
+
+The frontend automatically converts PDF files to images before uploading to maintain compatibility and consistent image processing on the backend.
+
+### PDF Converter Service (`src/app/core/services/pdf-converter.service.ts`)
+
+Handles client-side PDF to image conversion using PDF.js:
+
+**Features:**
+- Multi-page support (converts each page separately)
+- High-quality rendering (2x scale factor)
+- JPEG compression (85% quality)
+- Safety limits (max 10 pages per PDF)
+- Real-time progress tracking
+- Smart filename generation
+
+**Usage:**
+```typescript
+// In a component
+constructor(private pdfConverter: PdfConverterService) {}
+
+async uploadPdf(file: File) {
+  const images = await this.pdfConverter.convertPdfToImages(
+    file,
+    {
+      scale: 2.0,
+      quality: 0.85,
+      imageFormat: 'image/jpeg',
+      maxPages: 10
+    },
+    (progress) => {
+      console.log(`Converting page ${progress.currentPage}/${progress.totalPages}`);
+    }
+  );
+
+  // Upload each converted image
+  for (const img of images) {
+    await documentService.uploadDocument(img.file);
+  }
+}
+```
+
+**Configuration Options:**
+- `scale`: Rendering scale (default: 2.0 for high quality)
+- `quality`: JPEG quality 0-1 (default: 0.85)
+- `imageFormat`: 'image/jpeg' or 'image/png' (default: JPEG)
+- `maxPages`: Maximum pages to convert (default: 10)
+
+**File Naming:**
+- Single page PDF: `original-name.jpg`
+- Multi-page PDF: `original-name_page1.jpg`, `original-name_page2.jpg`, etc.
+
+### Document Upload Zone Component
+
+The upload zone automatically detects and converts PDFs:
+
+1. User drops/selects PDF file
+2. Component detects PDF via `isPdfFile()` check
+3. Conversion starts with progress indicator
+4. Each page converted to separate JPEG image
+5. Original PDF replaced with converted images
+6. Images uploaded via standard document API
+
+**UI Feedback:**
+- Spinning indicator (🔄) during conversion
+- Status messages ("Converting page X of Y...")
+- "(from PDF)" badge on converted images
+- Disabled remove button during conversion
+- Teal highlight for converting files
+
+### Backend Integration
+
+**POST /api/documents/upload**
+
+Upload converted images (not PDFs):
+```
+FormData:
+  - file: <image file>
+  - name: <document name>
+  - type: photo (for converted PDFs)
+  - deviceId: <device ID>
+  - notes: <optional notes>
+```
+
+Backend receives standard image files and handles thumbnail generation automatically.
+
+**Benefits:**
+- No backend PDF handling required
+- Consistent image processing pipeline
+- Better mobile compatibility
+- Reduced server-side complexity
+
 ## Next Steps
 
 To fully integrate with backend:
@@ -258,8 +352,8 @@ To fully integrate with backend:
 1. ✅ API client service
 2. ✅ HTTP interceptor
 3. ✅ AuthService API mode
-4. ⏳ Device management API
-5. ⏳ Document upload API
+4. ✅ Device management API
+5. ✅ Document upload API (with PDF conversion)
 6. ⏳ Settings API
 7. ⏳ Notifications API
 
