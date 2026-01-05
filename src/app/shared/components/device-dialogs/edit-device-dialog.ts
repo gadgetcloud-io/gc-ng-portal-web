@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../modal/modal';
 import { ButtonComponent } from '../button/button';
 import { DeviceService, Device } from '../../../core/services/device.service';
-import { DocumentService, Document } from '../../../core/services/document.service';
+import { DocumentService, GenericDocument } from '../../../core/services/document.service';
 
 @Component({
   selector: 'gc-edit-device-dialog',
@@ -28,7 +28,7 @@ export class EditDeviceDialogComponent implements OnChanges {
   currentTab: 'basic' | 'purchase' | 'notes' | 'documents' = 'basic';
 
   // Document management
-  documents: Document[] = [];
+  documents: GenericDocument[] = [];
   documentsLoading = false;
   uploadProgress = 0;
 
@@ -175,7 +175,8 @@ export class EditDeviceDialogComponent implements OnChanges {
       this.documentService.createDocument({
         name: file.name,
         type: 'other',
-        deviceId: this.editedDevice.id,
+        parentType: 'item',
+        parentId: this.editedDevice.id,
         file
       }).subscribe({
         next: (result: any) => {
@@ -197,7 +198,7 @@ export class EditDeviceDialogComponent implements OnChanges {
     });
   }
 
-  downloadDocument(doc: Document): void {
+  downloadDocument(doc: GenericDocument): void {
     this.documentService.downloadDocument(doc.id).subscribe({
       next: (result) => {
         if (result.success && result.fileData) {
@@ -216,7 +217,7 @@ export class EditDeviceDialogComponent implements OnChanges {
     });
   }
 
-  deleteDocument(doc: Document): void {
+  deleteDocument(doc: GenericDocument): void {
     if (!confirm(`Delete "${doc.name}"?`)) return;
 
     this.documentService.deleteDocument(doc.id).subscribe({

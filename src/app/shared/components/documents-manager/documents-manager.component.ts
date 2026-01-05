@@ -2,35 +2,42 @@ import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DocumentService, Document } from '../../../core/services/document.service';
-import { DocumentCardComponent, Document as CardDocument } from '../components/document-card.component';
-import { DocumentUploadZoneComponent, UploadFile } from '../components/document-upload-zone.component';
+import { DocumentService, GenericDocument } from '../../../core/services/document.service';
+import { DocumentCardComponent } from './document-card.component';
+import { DocumentUploadZoneComponent, UploadFile } from './document-upload-zone.component';
+
+export type ParentType = 'item' | 'service_ticket' | 'user';
+
+export interface DocumentCardModel {
+  id: string;
+  fileName: string;
+  documentType: string;
+  fileSize: number;
+  uploadedAt: string;
+  thumbnailUrl?: string;
+  downloadUrl?: string;
+}
 
 @Component({
-  selector: 'app-documents-tab',
+  selector: 'app-documents-manager',
   standalone: true,
   imports: [CommonModule, DocumentCardComponent, DocumentUploadZoneComponent],
-  templateUrl: './documents-tab.component.html',
-  styleUrl: './documents-tab.component.scss'
+  templateUrl: './documents-manager.component.html',
+  styleUrl: './documents-manager.component.scss'
 })
-export class DocumentsTabComponent implements OnInit, OnDestroy {
-  @Input() deviceId: string = '';
-  @Input() deviceName: string = '';
+export class DocumentsManagerComponent implements OnInit, OnDestroy {
+  @Input() parentType: ParentType = 'item';
+  @Input() parentId: string = '';
+  @Input() parentName: string = '';
+  @Input() allowedDocumentTypes?: string[];
 
-  documents: CardDocument[] = [];
-  filteredDocuments: CardDocument[] = [];
+  documents: DocumentCardModel[] = [];
+  filteredDocuments: DocumentCardModel[] = [];
   isLoading: boolean = true;
   error: string | null = null;
 
   selectedFilter: string = 'all';
-  documentTypes = [
-    { value: 'all', label: 'All' },
-    { value: 'receipt', label: 'Receipts' },
-    { value: 'warranty', label: 'Warranties' },
-    { value: 'photo', label: 'Photos' },
-    { value: 'manual', label: 'Manuals' },
-    { value: 'other', label: 'Other' }
-  ];
+  documentTypes: { value: string; label: string }[] = [];
 
   private destroy$ = new Subject<void>();
 
@@ -40,6 +47,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.initializeDocumentTypes();
     this.loadDocuments();
   }
 
@@ -48,11 +56,37 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  private initializeDocumentTypes(): void {
+    // Default types for all contexts
+    const defaultTypes = [
+      { value: 'all', label: 'All' },
+      { value: 'receipt', label: 'Receipts' },
+      { value: 'invoice', label: 'Invoices' },
+      { value: 'warranty', label: 'Warranties' },
+      { value: 'photo', label: 'Photos' },
+      { value: 'manual', label: 'Manuals' },
+      { value: 'report', label: 'Reports' },
+      { value: 'contract', label: 'Contracts' },
+      { value: 'id', label: 'ID Documents' },
+      { value: 'other', label: 'Other' }
+    ];
+
+    if (this.allowedDocumentTypes && this.allowedDocumentTypes.length > 0) {
+      // Filter to only show allowed types
+      this.documentTypes = defaultTypes.filter(
+        type => type.value === 'all' || this.allowedDocumentTypes!.includes(type.value)
+      );
+    } else {
+      // Use all types
+      this.documentTypes = defaultTypes;
+    }
+  }
+
   loadDocuments(): void {
     this.isLoading = true;
     this.error = null;
 
-    this.documentService.getDocumentsByParent('item', this.deviceId)
+    this.documentService.getDocumentsByParent(this.parentType, this.parentId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (docs) => {
@@ -69,7 +103,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
       });
   }
 
-  mapDocumentToCard(doc: Document): CardDocument {
+  mapDocumentToCard(doc: GenericDocument): DocumentCardModel {
     return {
       id: doc.id,
       fileName: doc.name,
@@ -99,8 +133,9 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 
     this.documentService.createDocument({
       name: uploadFile.file.name,
-      type: uploadFile.documentType as any,
-      deviceId: this.deviceId,
+      type: uploadFile.documentType,
+      parentType: this.parentType,
+      parentId: this.parentId,
       file: uploadFile.file,
       notes: uploadFile.notes
     }).subscribe({
@@ -121,13 +156,13 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
     });
   }
 
-  onPreview(document: CardDocument): void {
+  onPreview(document: DocumentCardModel): void {
     console.log('Preview document:', document);
     // TODO: Implement preview modal in Phase 4
     alert(`Preview functionality coming soon!\n\nDocument: ${document.fileName}`);
   }
 
-  onDownload(document: CardDocument): void {
+  onDownload(document: DocumentCardModel): void {
     this.documentService.downloadDocument(document.id).subscribe({
       next: (result) => {
         if (result.success && result.fileData) {
@@ -192,5 +227,18 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 
   get hasFilteredDocuments(): boolean {
     return this.filteredDocuments.length > 0;
+  }
+
+  get contextLabel(): string {
+    switch (this.parentType) {
+      case 'item':
+        return 'Device';
+      case 'service_ticket':
+        return 'Ticket';
+      case 'user':
+        return 'Profile';
+      default:
+        return 'Parent';
+    }
   }
 }

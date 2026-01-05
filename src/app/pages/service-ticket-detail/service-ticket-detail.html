@@ -19,204 +19,224 @@
     <h1>Service Ticket Details</h1>
   </div>
 
-  <!-- Ticket Overview Section -->
-  <section class="ticket-overview">
-    <div class="ticket-header-section">
-      <div class="ticket-id-large">{{ ticket.id }}</div>
-      <div class="badges">
-        <span class="status-badge" [style.background-color]="getStatusColor(ticket.status)">
-          {{ formatStatus(ticket.status) }}
-        </span>
-        <span class="priority-badge" [style.background-color]="getPriorityColor(ticket.priority)">
-          {{ ticket.priority }}
-        </span>
-      </div>
+  <!-- 2-Column Layout -->
+  <div class="two-column-layout">
+    <!-- LEFT COLUMN: Editable Fields + Messages -->
+    <div class="left-column">
+      <!-- Editable Fields (Support/Admin only) -->
+      <section class="editable-fields-section" *ngIf="canEditFields">
+        <h3 class="section-title">Manage Ticket</h3>
+
+        <!-- Feedback Messages -->
+        <div class="feedback-messages" *ngIf="updateSuccess || updateError">
+          <div class="success-message" *ngIf="updateSuccess">✓ {{ updateSuccess }}</div>
+          <div class="error-message" *ngIf="updateError">✗ {{ updateError }}</div>
+        </div>
+
+        <!-- Status -->
+        <div class="field-edit-row">
+          <label>Status</label>
+          <div class="field-display" *ngIf="!editMode['status']">
+            <span class="status-badge" [style.background-color]="getStatusColor(ticket.status)">
+              {{ formatStatus(ticket.status) }}
+            </span>
+            <button class="edit-icon-btn" (click)="enterEditMode('status')"
+                    [disabled]="!isFieldEditable('status')">✏️</button>
+          </div>
+          <div class="field-edit-mode" *ngIf="editMode['status']">
+            <select [(ngModel)]="editValues['status']" class="form-input">
+              <option *ngFor="let val of fieldConfigs['status']?.allowedValues" [value]="val">
+                {{ formatStatus(val) }}
+              </option>
+            </select>
+            <button class="btn-save" (click)="saveField('status')">Save</button>
+            <button class="btn-cancel" (click)="cancelEdit('status')">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Priority -->
+        <div class="field-edit-row">
+          <label>Priority</label>
+          <div class="field-display" *ngIf="!editMode['priority']">
+            <span class="priority-badge" [style.background-color]="getPriorityColor(ticket.priority)">
+              {{ ticket.priority }}
+            </span>
+            <button class="edit-icon-btn" (click)="enterEditMode('priority')"
+                    [disabled]="!isFieldEditable('priority')">✏️</button>
+          </div>
+          <div class="field-edit-mode" *ngIf="editMode['priority']">
+            <select [(ngModel)]="editValues['priority']" class="form-input">
+              <option *ngFor="let val of fieldConfigs['priority']?.allowedValues" [value]="val">
+                {{ val }}
+              </option>
+            </select>
+            <button class="btn-save" (click)="saveField('priority')">Save</button>
+            <button class="btn-cancel" (click)="cancelEdit('priority')">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Assigned To -->
+        <div class="field-edit-row">
+          <label>Assigned To</label>
+          <div class="field-display" *ngIf="!editMode['assignedTo']">
+            <span>{{ ticket.assignedTo || 'Unassigned' }}</span>
+            <button class="edit-icon-btn" (click)="enterEditMode('assignedTo')"
+                    [disabled]="!isFieldEditable('assignedTo')">✏️</button>
+          </div>
+          <div class="field-edit-mode" *ngIf="editMode['assignedTo']">
+            <input type="text" [(ngModel)]="editValues['assignedTo']"
+                   class="form-input" placeholder="Enter email or name" [maxLength]="100">
+            <button class="btn-save" (click)="saveField('assignedTo')">Save</button>
+            <button class="btn-cancel" (click)="cancelEdit('assignedTo')">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Messages Thread -->
+      <section class="messages-section">
+        <div class="message-header">
+          <h3>Messages ({{ visibleMessages.length }})</h3>
+          <button class="refresh-btn" (click)="refreshMessages()"
+                  [disabled]="loadingMessages">🔄 Refresh</button>
+        </div>
+
+        <div class="loading-messages" *ngIf="loadingMessages">Loading messages...</div>
+
+        <div class="empty-messages" *ngIf="!loadingMessages && visibleMessages.length === 0">
+          No messages yet. Start the conversation!
+        </div>
+
+        <div class="message-thread" *ngIf="!loadingMessages && visibleMessages.length > 0">
+          <div class="message-item" *ngFor="let msg of visibleMessages"
+               [class.message-own]="msg.senderId === currentUser?.id"
+               [class.internal-note]="msg.isInternal">
+            <div class="message-header-line">
+              <span class="sender-name">{{ msg.senderName }}</span>
+              <span class="sender-role" [class]="'role-' + msg.senderRole">
+                {{ msg.senderRole }}
+              </span>
+              <span class="internal-badge" *ngIf="msg.isInternal">🔒 Internal</span>
+              <span class="message-time">{{ formatMessageTime(msg.createdAt) }}</span>
+            </div>
+            <div class="message-text">{{ msg.message }}</div>
+          </div>
+        </div>
+
+        <div class="message-input-area">
+          <textarea [(ngModel)]="newMessageText"
+                    placeholder="Type your message..."
+                    class="message-input"
+                    rows="3"
+                    [disabled]="sendingMessage"
+                    (keydown)="onMessageKeydown($event)">
+          </textarea>
+          <div class="message-actions">
+            <div class="left-actions">
+              <span class="input-hint">Ctrl+Enter to send</span>
+              <label class="internal-checkbox" *ngIf="canSeeInternalNotes">
+                <input type="checkbox" [(ngModel)]="markAsInternal">
+                <span>Internal note (support only)</span>
+              </label>
+            </div>
+            <button class="btn-send"
+                    (click)="sendMessage()"
+                    [disabled]="!newMessageText.trim() || sendingMessage">
+              {{ sendingMessage ? 'Sending...' : (markAsInternal ? 'Add Note' : 'Send') }}
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
 
-  <!-- Editable Fields (Support/Admin only) -->
-  <section class="editable-fields-section" *ngIf="canEditFields">
-    <h3 class="section-title">Manage Ticket</h3>
+    <!-- RIGHT COLUMN: Ticket Information (Non-editable) -->
+    <div class="right-column">
+      <!-- Ticket Overview -->
+      <section class="ticket-overview">
+        <div class="ticket-header-section">
+          <div class="ticket-id-large">{{ ticket.id }}</div>
+          <div class="badges">
+            <span class="status-badge" [style.background-color]="getStatusColor(ticket.status)">
+              {{ formatStatus(ticket.status) }}
+            </span>
+            <span class="priority-badge" [style.background-color]="getPriorityColor(ticket.priority)">
+              {{ ticket.priority }}
+            </span>
+          </div>
+        </div>
+      </section>
 
-    <!-- Status -->
-    <div class="field-edit-row">
-      <label>Status</label>
-      <div class="field-display" *ngIf="!editMode['status']">
-        <span class="status-badge" [style.background-color]="getStatusColor(ticket.status)">
-          {{ formatStatus(ticket.status) }}
-        </span>
-        <button class="edit-icon-btn" (click)="enterEditMode('status')"
-                [disabled]="!isFieldEditable('status')">✏️</button>
-      </div>
-      <div class="field-edit-mode" *ngIf="editMode['status']">
-        <select [(ngModel)]="editValues['status']" class="form-input">
-          <option *ngFor="let val of fieldConfigs['status']?.allowedValues" [value]="val">
-            {{ formatStatus(val) }}
-          </option>
-        </select>
-        <button class="btn-save" (click)="saveField('status')">Save</button>
-        <button class="btn-cancel" (click)="cancelEdit('status')">Cancel</button>
-      </div>
+      <!-- Request Details -->
+      <section class="request-details">
+        <h3 class="section-title">Request Details</h3>
+
+        <!-- Request Type -->
+        <div class="detail-section">
+          <label>Request Type</label>
+          <div class="request-type-display">
+            <span class="icon">{{ getRequestTypeIcon(ticket.data.requestType) }}</span>
+            <span>{{ formatRequestType(ticket.data.requestType) }}</span>
+          </div>
+        </div>
+
+        <!-- Issue Description -->
+        <div class="detail-section">
+          <label>Issue Description</label>
+          <p class="description-text">{{ ticket.data.issueDescription }}</p>
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="detail-section" *ngIf="ticket.data.additionalNotes">
+          <label>Additional Notes</label>
+          <p class="notes-text">{{ ticket.data.additionalNotes }}</p>
+        </div>
+
+        <!-- Urgency -->
+        <div class="detail-section" *ngIf="ticket.data.urgency">
+          <label>Urgency</label>
+          <span class="urgency-badge">{{ ticket.data.urgency }}</span>
+        </div>
+
+        <!-- Device ID (if present) -->
+        <div class="detail-section" *ngIf="ticket.data.deviceId">
+          <label>Device</label>
+          <div class="device-display">
+            <span class="icon">📱</span>
+            <span>{{ ticket.data.deviceId }}</span>
+          </div>
+        </div>
+
+        <!-- Timestamps -->
+        <div class="detail-section">
+          <label>Created</label>
+          <p>{{ formatDateTime(ticket.createdAt) }}</p>
+        </div>
+
+        <div class="detail-section">
+          <label>Last Updated</label>
+          <p>{{ formatDateTime(ticket.updatedAt) }}</p>
+        </div>
+
+        <!-- Email Status -->
+        <div class="detail-section">
+          <label>Email Notification</label>
+          <p>
+            <span *ngIf="ticket.emailSent" class="status-success">✓ Sent</span>
+            <span *ngIf="!ticket.emailSent" class="status-pending">⏳ Pending</span>
+            <span *ngIf="ticket.emailSentAt"> at {{ formatDateTime(ticket.emailSentAt) }}</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Attachments/Documents Section -->
+      <section class="documents-section">
+        <h3 class="section-title">Attachments</h3>
+        <app-documents-manager
+          parentType="service_ticket"
+          [parentId]="ticket.id"
+          [parentName]="'Ticket ' + ticket.id"
+          [allowedDocumentTypes]="['photo', 'receipt', 'invoice', 'report', 'other']">
+        </app-documents-manager>
+      </section>
     </div>
-
-    <!-- Priority -->
-    <div class="field-edit-row">
-      <label>Priority</label>
-      <div class="field-display" *ngIf="!editMode['priority']">
-        <span class="priority-badge" [style.background-color]="getPriorityColor(ticket.priority)">
-          {{ ticket.priority }}
-        </span>
-        <button class="edit-icon-btn" (click)="enterEditMode('priority')"
-                [disabled]="!isFieldEditable('priority')">✏️</button>
-      </div>
-      <div class="field-edit-mode" *ngIf="editMode['priority']">
-        <select [(ngModel)]="editValues['priority']" class="form-input">
-          <option *ngFor="let val of fieldConfigs['priority']?.allowedValues" [value]="val">
-            {{ val }}
-          </option>
-        </select>
-        <button class="btn-save" (click)="saveField('priority')">Save</button>
-        <button class="btn-cancel" (click)="cancelEdit('priority')">Cancel</button>
-      </div>
-    </div>
-
-    <!-- Assigned To -->
-    <div class="field-edit-row">
-      <label>Assigned To</label>
-      <div class="field-display" *ngIf="!editMode['assignedTo']">
-        <span>{{ ticket.assignedTo || 'Unassigned' }}</span>
-        <button class="edit-icon-btn" (click)="enterEditMode('assignedTo')"
-                [disabled]="!isFieldEditable('assignedTo')">✏️</button>
-      </div>
-      <div class="field-edit-mode" *ngIf="editMode['assignedTo']">
-        <input type="text" [(ngModel)]="editValues['assignedTo']"
-               class="form-input" placeholder="Enter email or name" [maxLength]="100">
-        <button class="btn-save" (click)="saveField('assignedTo')">Save</button>
-        <button class="btn-cancel" (click)="cancelEdit('assignedTo')">Cancel</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feedback Messages -->
-  <div class="feedback-messages" *ngIf="updateSuccess || updateError">
-    <div class="success-message" *ngIf="updateSuccess">✓ {{ updateSuccess }}</div>
-    <div class="error-message" *ngIf="updateError">✗ {{ updateError }}</div>
   </div>
-
-  <!-- Request Details -->
-  <section class="request-details">
-    <h3 class="section-title">Request Details</h3>
-
-    <!-- Request Type -->
-    <div class="detail-section">
-      <label>Request Type</label>
-      <div class="request-type-display">
-        <span class="icon">{{ getRequestTypeIcon(ticket.data.requestType) }}</span>
-        <span>{{ formatRequestType(ticket.data.requestType) }}</span>
-      </div>
-    </div>
-
-    <!-- Issue Description -->
-    <div class="detail-section">
-      <label>Issue Description</label>
-      <p class="description-text">{{ ticket.data.issueDescription }}</p>
-    </div>
-
-    <!-- Additional Notes -->
-    <div class="detail-section" *ngIf="ticket.data.additionalNotes">
-      <label>Additional Notes</label>
-      <p class="notes-text">{{ ticket.data.additionalNotes }}</p>
-    </div>
-
-    <!-- Urgency -->
-    <div class="detail-section" *ngIf="ticket.data.urgency">
-      <label>Urgency</label>
-      <span class="urgency-badge">{{ ticket.data.urgency }}</span>
-    </div>
-
-    <!-- Assigned To -->
-    <div class="detail-section" *ngIf="ticket.assignedTo">
-      <label>Assigned To</label>
-      <div class="assigned-display">
-        <span class="icon">👤</span>
-        <span>{{ ticket.assignedTo }}</span>
-      </div>
-    </div>
-
-    <!-- Timestamps -->
-    <div class="detail-section">
-      <label>Created</label>
-      <p>{{ formatDateTime(ticket.createdAt) }}</p>
-    </div>
-
-    <div class="detail-section">
-      <label>Last Updated</label>
-      <p>{{ formatDateTime(ticket.updatedAt) }}</p>
-    </div>
-
-    <!-- Email Status -->
-    <div class="detail-section">
-      <label>Email Notification</label>
-      <p>
-        <span *ngIf="ticket.emailSent" class="status-success">✓ Sent</span>
-        <span *ngIf="!ticket.emailSent" class="status-pending">⏳ Pending</span>
-        <span *ngIf="ticket.emailSentAt"> at {{ formatDateTime(ticket.emailSentAt) }}</span>
-      </p>
-    </div>
-  </section>
-
-  <!-- Messages Thread -->
-  <section class="messages-section">
-    <div class="message-header">
-      <h3>Messages ({{ visibleMessages.length }})</h3>
-      <button class="refresh-btn" (click)="refreshMessages()"
-              [disabled]="loadingMessages">🔄 Refresh</button>
-    </div>
-
-    <div class="loading-messages" *ngIf="loadingMessages">Loading messages...</div>
-
-    <div class="empty-messages" *ngIf="!loadingMessages && visibleMessages.length === 0">
-      No messages yet. Start the conversation!
-    </div>
-
-    <div class="message-thread" *ngIf="!loadingMessages && visibleMessages.length > 0">
-      <div class="message-item" *ngFor="let msg of visibleMessages"
-           [class.message-own]="msg.senderId === currentUser?.id"
-           [class.internal-note]="msg.isInternal">
-        <div class="message-header-line">
-          <span class="sender-name">{{ msg.senderName }}</span>
-          <span class="sender-role" [class]="'role-' + msg.senderRole">
-            {{ msg.senderRole }}
-          </span>
-          <span class="internal-badge" *ngIf="msg.isInternal">🔒 Internal</span>
-          <span class="message-time">{{ formatMessageTime(msg.createdAt) }}</span>
-        </div>
-        <div class="message-text">{{ msg.message }}</div>
-      </div>
-    </div>
-
-    <div class="message-input-area">
-      <textarea [(ngModel)]="newMessageText"
-                placeholder="Type your message..."
-                class="message-input"
-                rows="3"
-                [disabled]="sendingMessage"
-                (keydown)="onMessageKeydown($event)">
-      </textarea>
-      <div class="message-actions">
-        <div class="left-actions">
-          <span class="input-hint">Ctrl+Enter to send</span>
-          <label class="internal-checkbox" *ngIf="canSeeInternalNotes">
-            <input type="checkbox" [(ngModel)]="markAsInternal">
-            <span>Internal note (support only)</span>
-          </label>
-        </div>
-        <button class="btn-send"
-                (click)="sendMessage()"
-                [disabled]="!newMessageText.trim() || sendingMessage">
-          {{ sendingMessage ? 'Sending...' : (markAsInternal ? 'Add Note' : 'Send') }}
-        </button>
-      </div>
-    </div>
-  </section>
 </div>

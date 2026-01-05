@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../modal/modal';
 import { ButtonComponent } from '../button/button';
-import { DocumentService, DocumentCreateRequest } from '../../../core/services/document.service';
+import { DocumentService, GenericDocumentCreateRequest } from '../../../core/services/document.service';
 import { DeviceService, Device } from '../../../core/services/device.service';
 
 @Component({
@@ -130,10 +130,11 @@ export class UploadDocumentDialogComponent implements OnInit {
     this.isUploading = true;
     this.error = '';
 
-    const request: DocumentCreateRequest = {
+    const request: GenericDocumentCreateRequest = {
       name: this.document.name,
       type: this.document.type,
-      deviceId: this.document.deviceId,
+      parentType: 'item',
+      parentId: this.document.deviceId,
       file: this.document.file,
       notes: this.document.notes
     };

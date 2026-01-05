@@ -34,11 +34,40 @@ export interface DocumentUpdateRequest {
   notes?: string;
 }
 
+// ===== GENERIC INTERFACES (Decoupled from devices) =====
+export type ParentType = 'item' | 'service_ticket' | 'user';
+
+export interface GenericDocument {
+  id: string;
+  name: string;
+  type: string;
+  parentType: ParentType;
+  parentId: string;
+  parentName?: string; // For display purposes
+  fileSize: number; // in bytes
+  fileType: string; // MIME type (e.g., 'application/pdf', 'image/png')
+  uploadDate: string; // ISO date string
+  fileData?: string; // Base64 encoded file data (for mock mode)
+  fileUrl?: string; // URL to file (for API mode)
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface GenericDocumentCreateRequest {
+  name: string;
+  type: string;
+  parentType: ParentType;
+  parentId: string;
+  file: File;
+  notes?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class DocumentService {
-  private documents = new BehaviorSubject<Document[]>([]);
+  private documents = new BehaviorSubject<GenericDocument[]>([]);
   public documents$ = this.documents.asObservable();
 
   // Toggle between mock (localStorage) and real API
@@ -55,7 +84,7 @@ export class DocumentService {
   private loadDocuments(): void {
     if (this.useApi) {
       // API mode: Load all documents from backend
-      this.apiService.get<ApiResponse<Document[]>>('/documents').pipe(
+      this.apiService.get<ApiResponse<GenericDocument[]>>('/documents').pipe(
         map(response => response.data || []),
         catchError(error => {
           console.error('Error loading documents from API:', error);
@@ -85,7 +114,7 @@ export class DocumentService {
   /**
    * Save documents to localStorage
    */
-  private saveToLocalStorage(docs: Document[]): void {
+  private saveToLocalStorage(docs: GenericDocument[]): void {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(docs));
     } catch (error) {
@@ -117,33 +146,31 @@ export class DocumentService {
   }
 
   /**
-   * Create a new document
+   * Create a new document (Generic version - supports all parent types)
    */
-  createDocument(request: DocumentCreateRequest): Observable<{
+  createDocument(request: GenericDocumentCreateRequest): Observable<{
     success: boolean;
-    document?: Document;
+    document?: GenericDocument;
     error?: string;
   }> {
     if (this.useApi) {
       // API mode: Upload file using FormData
       const formData = new FormData();
       formData.append('file', request.file);
-      formData.append('name', request.name);
-      formData.append('type', request.type);
-      formData.append('deviceId', request.deviceId);
+      formData.append('parentType', request.parentType);
+      formData.append('parentId', request.parentId);
+      formData.append('documentType', request.type);
       if (request.notes) {
         formData.append('notes', request.notes);
       }
 
-      return this.apiService.post<ApiResponse<Document>>('/documents', formData).pipe(
-        map(response => {
-          if (response.success && response.data) {
-            // Update local state
-            const currentDocs = this.documents.value;
-            this.documents.next([...currentDocs, response.data]);
-            return { success: true, document: response.data };
+      return this.apiService.post<GenericDocument>('/documents/upload', formData).pipe(
+        map((doc: any) => {
+          // API returns document directly (not wrapped in ApiResponse)
+          if (doc && doc.id) {
+            return { success: true, document: doc as GenericDocument };
           }
-          return { success: false, error: response.error || 'Failed to upload document' };
+          return { success: false, error: 'Failed to upload document' };
         }),
         catchError(error => {
           return of({ success: false, error: error.message || 'Failed to upload document' });
@@ -167,11 +194,12 @@ export class DocumentService {
       // Convert file to base64
       this.fileToBase64(request.file).then(fileData => {
         const now = new Date().toISOString();
-        const newDocument: Document = {
+        const newDocument: GenericDocument = {
           id: this.generateId(),
           name: request.name,
           type: request.type,
-          deviceId: request.deviceId,
+          parentType: request.parentType,
+          parentId: request.parentId,
           fileSize: request.file.size,
           fileType: request.file.type,
           uploadDate: now,
@@ -213,30 +241,30 @@ export class DocumentService {
   /**
    * Get all documents
    */
-  getDocuments(): Observable<Document[]> {
+  getDocuments(): Observable<GenericDocument[]> {
     return this.documents$;
   }
 
   /**
-   * Get documents for a specific device
+   * Get documents for a specific device (legacy - use getDocumentsByParent instead)
    */
-  getDocumentsByDevice(deviceId: string): Observable<Document[]> {
+  getDocumentsByDevice(deviceId: string): Observable<GenericDocument[]> {
     return this.documents$.pipe(
-      map(docs => docs.filter(doc => doc.deviceId === deviceId))
+      map(docs => docs.filter(doc => doc.parentType === 'item' && doc.parentId === deviceId))
     );
   }
 
   /**
-   * Get documents by parent type and ID (from API)
+   * Get documents by parent type and ID (from API) - Returns generic documents
    */
-  getDocumentsByParent(parentType: string, parentId: string): Observable<Document[]> {
+  getDocumentsByParent(parentType: string, parentId: string): Observable<GenericDocument[]> {
     if (this.useApi) {
       // Fetch from API with parent filters (trailing slash required)
-      return this.apiService.get<Document[]>(`/documents/?parentType=${parentType}&parentId=${parentId}`).pipe(
+      return this.apiService.get<GenericDocument[]>(`/documents/?parent_type=${parentType}&parent_id=${parentId}`).pipe(
         map((docs: any) => {
           // Handle both direct array and wrapped response
           const documents = Array.isArray(docs) ? docs : (docs.data || []);
-          return documents;
+          return documents as GenericDocument[];
         }),
         catchError(error => {
           console.error('Error fetching documents by parent:', error);
@@ -246,7 +274,7 @@ export class DocumentService {
     } else {
       // Fallback to local filtering (for mock mode)
       return this.documents$.pipe(
-        map(docs => docs.filter(doc => doc.deviceId === parentId))
+        map(docs => docs.filter(doc => doc.parentType === parentType && doc.parentId === parentId))
       );
     }
   }
@@ -254,7 +282,7 @@ export class DocumentService {
   /**
    * Get a single document by ID
    */
-  getDocumentById(id: string): Observable<Document | undefined> {
+  getDocumentById(id: string): Observable<GenericDocument | undefined> {
     return this.documents$.pipe(
       map(docs => docs.find(doc => doc.id === id))
     );
@@ -265,13 +293,13 @@ export class DocumentService {
    */
   updateDocument(update: DocumentUpdateRequest): Observable<{
     success: boolean;
-    document?: Document;
+    document?: GenericDocument;
     error?: string;
   }> {
     if (this.useApi) {
       // API mode: Update document metadata via backend
       const { id, ...updateData } = update;
-      return this.apiService.put<ApiResponse<Document>>(`/documents/${id}`, updateData).pipe(
+      return this.apiService.put<ApiResponse<GenericDocument>>(`/documents/${id}`, updateData).pipe(
         map(response => {
           if (response.success && response.data) {
             // Update local state
@@ -302,7 +330,7 @@ export class DocumentService {
           return { success: false, error: 'Document not found' };
         }
 
-        const updatedDocument: Document = {
+        const updatedDocument: GenericDocument = {
           ...currentDocs[index],
           ...(update.name && { name: update.name }),
           ...(update.type && { type: update.type }),

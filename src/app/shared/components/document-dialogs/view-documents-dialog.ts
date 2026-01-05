@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../modal/modal';
 import { ButtonComponent } from '../button/button';
-import { DocumentService, Document } from '../../../core/services/document.service';
+import { DocumentService, GenericDocument } from '../../../core/services/document.service';
 
 @Component({
   selector: 'gc-view-documents-dialog',
@@ -16,10 +16,10 @@ export class ViewDocumentsDialogComponent implements OnChanges {
   @Input() deviceId?: string;
   @Input() deviceName?: string;
   @Output() close = new EventEmitter<void>();
-  @Output() deleteDocument = new EventEmitter<Document>();
+  @Output() deleteDocument = new EventEmitter<GenericDocument>();
   @Output() uploadNew = new EventEmitter<void>();
 
-  documents: Document[] = [];
+  documents: GenericDocument[] = [];
   isLoading = true;
   error = '';
 
@@ -57,7 +57,7 @@ export class ViewDocumentsDialogComponent implements OnChanges {
     });
   }
 
-  onDownload(doc: Document): void {
+  onDownload(doc: GenericDocument): void {
     this.documentService.downloadDocument(doc.id).subscribe({
       next: (result) => {
         if (result.success && result.fileData) {
@@ -77,7 +77,7 @@ export class ViewDocumentsDialogComponent implements OnChanges {
     });
   }
 
-  onDelete(doc: Document): void {
+  onDelete(doc: GenericDocument): void {
     this.deleteDocument.emit(doc);
   }
 

@@ -9,11 +9,12 @@ import { RbacService, FieldConfig } from '../../core/services/rbac.service';
 import { AuthService, User } from '../../core/services/auth.service';
 import { ServiceTicketService } from '../../core/services/service-ticket.service';
 import { BreadcrumbService } from '../../core/services/breadcrumb.service';
+import { DocumentsManagerComponent } from '../../shared/components/documents-manager/documents-manager.component';
 
 @Component({
   selector: 'gc-service-ticket-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DocumentsManagerComponent],
   templateUrl: './service-ticket-detail.html',
   styleUrl: './service-ticket-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

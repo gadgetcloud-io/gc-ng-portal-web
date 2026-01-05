@@ -36,9 +36,47 @@
 
 // Page Layout
 .ticket-detail-page {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: var(--space-6);
+}
+
+// 2-Column Layout
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: var(--space-6);
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+
+    .right-column {
+      order: -1; // Show info column first on mobile
+    }
+  }
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  position: sticky;
+  top: var(--space-6);
+  max-height: calc(100vh - var(--space-12));
+  overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    position: static;
+    max-height: none;
+  }
 }
 
 .page-header {

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../modal/modal';
 import { ButtonComponent } from '../button/button';
-import { DocumentService, Document } from '../../../core/services/document.service';
+import { DocumentService, GenericDocument } from '../../../core/services/document.service';
 
 @Component({
   selector: 'gc-delete-document-dialog',
@@ -13,7 +13,7 @@ import { DocumentService, Document } from '../../../core/services/document.servi
 })
 export class DeleteDocumentDialogComponent {
   @Input() isOpen = false;
-  @Input() document: Document | null = null;
+  @Input() document: GenericDocument | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() documentDeleted = new EventEmitter<void>();
 

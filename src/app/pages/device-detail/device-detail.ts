@@ -7,7 +7,7 @@ import { BreadcrumbService } from '../../core/services/breadcrumb.service';
 import { TabsComponent, Tab } from '../../shared/components/tabs/tabs.component';
 import { DetailsTabComponent } from './tabs/details-tab.component';
 import { WarrantyTabComponent } from './tabs/warranty-tab.component';
-import { DocumentsTabComponent } from './tabs/documents-tab.component';
+import { DocumentsManagerComponent } from '../../shared/components/documents-manager/documents-manager.component';
 import { NotesTabComponent } from './tabs/notes-tab.component';
 import { ServiceTicketsTabComponent } from './tabs/service-tickets-tab/service-tickets-tab.component';
 import { forkJoin } from 'rxjs';
@@ -21,7 +21,7 @@ import { forkJoin } from 'rxjs';
     TabsComponent,
     DetailsTabComponent,
     WarrantyTabComponent,
-    DocumentsTabComponent,
+    DocumentsManagerComponent,
     NotesTabComponent,
     ServiceTicketsTabComponent
   ],

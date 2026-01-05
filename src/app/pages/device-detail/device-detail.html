@@ -90,11 +90,13 @@
       </app-warranty-tab>
 
       <!-- Documents Tab -->
-      <app-documents-tab
+      <app-documents-manager
         *ngIf="activeTabId === 'documents'"
-        [deviceId]="deviceId"
-        [deviceName]="device.name">
-      </app-documents-tab>
+        parentType="item"
+        [parentId]="deviceId"
+        [parentName]="device.name"
+        [allowedDocumentTypes]="['receipt', 'invoice', 'warranty', 'photo', 'manual', 'other']">
+      </app-documents-manager>
 
       <!-- Notes Tab -->
       <app-notes-tab

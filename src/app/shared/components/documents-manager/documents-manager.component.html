@@ -1,7 +1,9 @@
-<div class="documents-tab">
+<div class="documents-manager">
   <!-- Upload Zone -->
   <app-document-upload-zone
-    [deviceId]="deviceId"
+    [parentType]="parentType"
+    [parentId]="parentId"
+    [allowedDocumentTypes]="allowedDocumentTypes"
     (filesSelected)="onFilesSelected($event)">
   </app-document-upload-zone>
 
@@ -49,7 +51,7 @@
     <div class="empty-icon">📁</div>
     <p class="empty-title">No Documents Yet</p>
     <p class="empty-description">
-      Upload documents like receipts, warranties, photos, and manuals to keep everything organized in one place.
+      Upload documents like receipts, warranties, photos, and reports to keep everything organized in one place.
     </p>
   </div>
 

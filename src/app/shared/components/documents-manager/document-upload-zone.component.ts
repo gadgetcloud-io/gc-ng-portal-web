@@ -22,7 +22,9 @@ export interface UploadFile {
   styleUrl: './document-upload-zone.component.scss'
 })
 export class DocumentUploadZoneComponent {
-  @Input() deviceId: string = '';
+  @Input() parentType: 'item' | 'service_ticket' | 'user' = 'item';
+  @Input() parentId: string = '';
+  @Input() allowedDocumentTypes?: string[];
   @Output() filesSelected = new EventEmitter<UploadFile[]>();
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -43,7 +45,7 @@ export class DocumentUploadZoneComponent {
   readonly ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
   readonly ALLOWED_EXTENSIONS = ['.pdf', '.png', '.jpg', '.jpeg'];
 
-  documentTypes = [
+  private allDocumentTypes = [
     { value: 'receipt', label: 'Receipt' },
     { value: 'invoice', label: 'Invoice' },
     { value: 'warranty', label: 'Warranty' },
@@ -54,6 +56,13 @@ export class DocumentUploadZoneComponent {
     { value: 'id', label: 'ID Document' },
     { value: 'other', label: 'Other' }
   ];
+
+  get documentTypes() {
+    if (this.allowedDocumentTypes && this.allowedDocumentTypes.length > 0) {
+      return this.allDocumentTypes.filter(type => this.allowedDocumentTypes!.includes(type.value));
+    }
+    return this.allDocumentTypes;
+  }
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();

@@ -10,7 +10,7 @@ import { DeleteDeviceDialogComponent } from '../../shared/components/device-dial
 import { UploadDocumentDialogComponent } from '../../shared/components/document-dialogs/upload-document-dialog';
 import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
 import { DeleteDocumentDialogComponent } from '../../shared/components/document-dialogs/delete-document-dialog';
-import { DocumentService, Document } from '../../core/services/document.service';
+import { DocumentService, GenericDocument } from '../../core/services/document.service';
 import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/bulk-action-bar';
 import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../shared/components/service-request-dialogs/create-service-request-dialog';
 import { BulkImportDialogComponent } from '../../shared/components/device-dialogs/bulk-import-dialog';
@@ -52,7 +52,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
   isUploadDocumentDialogOpen = false;
   isViewDocumentsDialogOpen = false;
   isDeleteDocumentDialogOpen = false;
-  selectedDocument: Document | null = null;
+  selectedDocument: GenericDocument | null = null;
   selectedDeviceForDocs: Device | null = null;
 
   // Service request dialog state
@@ -340,7 +340,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.isViewDocumentsDialogOpen = true;
   }
 
-  openDeleteDocumentDialog(document: Document): void {
+  openDeleteDocumentDialog(document: GenericDocument): void {
     this.selectedDocument = document;
     this.isDeleteDocumentDialogOpen = true;
   }
