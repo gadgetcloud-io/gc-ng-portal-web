@@ -504,6 +504,19 @@ $gradient-primary: linear-gradient(135deg, $ocean-blue 0%, $soft-blue 100%);
   }
 }
 
+.urgency-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: capitalize;
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-300);
+}
+
 .field-display {
   display: flex;
   align-items: center;
