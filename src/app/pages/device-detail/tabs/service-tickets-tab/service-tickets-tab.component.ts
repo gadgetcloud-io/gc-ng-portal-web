@@ -82,7 +82,6 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
       data: {
         requestType: requestData.requestType as RequestType,
         deviceId: requestData.deviceId,
-        urgency: this.mapPriorityToUrgency(requestData.priority),
         issueDescription: requestData.description,
         additionalNotes: requestData.subject
       },
@@ -105,16 +104,6 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
 
   viewTicketDetails(ticket: ServiceTicket): void {
     this.router.navigate(['/service-requests', ticket.id]);
-  }
-
-  private mapPriorityToUrgency(priority: string): 'low' | 'normal' | 'high' | 'critical' {
-    const map: Record<string, 'low' | 'normal' | 'high' | 'critical'> = {
-      'low': 'low',
-      'medium': 'normal',
-      'high': 'high',
-      'urgent': 'critical'
-    };
-    return map[priority] || 'normal';
   }
 
   getStatusColor(status: ServiceTicketStatus): string {

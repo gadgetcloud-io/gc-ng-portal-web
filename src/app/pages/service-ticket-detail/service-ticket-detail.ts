@@ -223,9 +223,9 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    // Customers can only edit status, priority, and urgency on their own tickets
+    // Customers can only edit status and priority on their own tickets
     if (this.canEditOwnTicket && !this.canEditFields) {
-      if (field !== 'status' && field !== 'priority' && field !== 'urgency') {
+      if (field !== 'status' && field !== 'priority') {
         return false;
       }
     }

@@ -23,9 +23,6 @@ export type RequestType =
   | 'warranty_claim'
   | 'replacement';
 
-// Urgency levels
-export type UrgencyLevel = 'low' | 'normal' | 'high' | 'critical';
-
 // Full ticket detail (matches backend ServiceTicketDetail)
 export interface ServiceTicket {
   id: string;
@@ -33,12 +30,10 @@ export interface ServiceTicket {
   userId: string | null;
   status: ServiceTicketStatus;
   priority: TicketPriority;
-  urgency?: UrgencyLevel;
   assignedTo?: string;
   data: {
     requestType: RequestType;
     deviceId?: string;
-    urgency?: string;
     issueDescription: string;
     additionalNotes?: string;
     preferredContactMethod?: string;
@@ -66,7 +61,6 @@ export interface CreateTicketRequest {
   data: {
     requestType: RequestType;
     deviceId: string;
-    urgency: 'low' | 'normal' | 'high' | 'critical';
     issueDescription: string;
     additionalNotes?: string;
     preferredContactMethod?: 'email' | 'phone' | 'both';
