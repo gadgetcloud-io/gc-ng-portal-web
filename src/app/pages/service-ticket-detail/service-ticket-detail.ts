@@ -11,6 +11,8 @@ import { ServiceTicketService } from '../../core/services/service-ticket.service
 import { BreadcrumbService } from '../../core/services/breadcrumb.service';
 import { DocumentsManagerComponent } from '../../shared/components/documents-manager/documents-manager.component';
 
+type TabId = 'overview' | 'messages' | 'documents' | 'activity';
+
 @Component({
   selector: 'gc-service-ticket-detail',
   standalone: true,
@@ -27,6 +29,9 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
   // Page state
   loading = false;
   error: string | null = null;
+
+  // Tab state
+  activeTab: TabId = 'overview';
 
   // User & permissions
   currentUser: User | null = null;
@@ -184,6 +189,13 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
 
   navigateBack(): void {
     this.router.navigate(['/service-requests']);
+  }
+
+  // Tab Navigation
+  switchTab(tabId: TabId): void {
+    this.activeTab = tabId;
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   isFieldEditable(field: string): boolean {
