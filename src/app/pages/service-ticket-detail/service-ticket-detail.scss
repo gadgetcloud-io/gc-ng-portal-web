@@ -150,24 +150,56 @@ $gradient-primary: linear-gradient(135deg, $ocean-blue 0%, $soft-blue 100%);
   box-shadow: 0 4px 20px rgba($ocean-blue, 0.08);
 }
 
+// Mobile Dropdown (visible on < 768px)
+.tab-select-mobile {
+  display: none;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: $gradient-primary;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+  background-image: $gradient-primary, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, right 1rem center;
+  background-size: auto, 12px;
+  box-shadow: 0 4px 12px rgba($ocean-blue, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($ocean-blue, 0.35);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba($ocean-blue, 0.2);
+  }
+
+  option {
+    background: white;
+    color: var(--neutral-900);
+    padding: var(--space-2);
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+// Desktop Pill Tabs (hidden on < 768px)
 .tab-pills {
   display: flex;
   gap: var(--space-2);
   position: relative;
 
   @media (max-width: 768px) {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-
-    &::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: $soft-blue;
-      border-radius: 2px;
-    }
+    display: none;
   }
 }
 

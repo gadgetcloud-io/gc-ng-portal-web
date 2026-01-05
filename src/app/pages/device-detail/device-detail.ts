@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { RbacService, FieldConfig, FieldUpdateRequest } from '../../core/services/rbac.service';
@@ -17,6 +18,7 @@ import { forkJoin } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterLink,
     TabsComponent,
     DetailsTabComponent,

@@ -36,6 +36,15 @@
 
   <!-- Tab Navigation -->
   <div class="tab-navigation">
+    <!-- Mobile Dropdown (< 768px) -->
+    <select class="tab-select-mobile" [(ngModel)]="activeTab" (change)="switchTab(activeTab)">
+      <option value="profile">📋 Profile</option>
+      <option value="preferences">⚙️ Preferences</option>
+      <option value="security">🔒 Security</option>
+      <option value="account">👤 Account</option>
+    </select>
+
+    <!-- Desktop Pills (≥ 768px) -->
     <div class="tab-pills">
       <button
         class="tab-pill"
