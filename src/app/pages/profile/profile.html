@@ -1,44 +1,85 @@
+<!-- Success/Error Popovers -->
+<div class="popover-container">
+  <div *ngIf="successMessage" class="popover popover-success">
+    <div class="popover-icon">✓</div>
+    <div class="popover-message">{{ successMessage }}</div>
+  </div>
+
+  <div *ngIf="errorMessage" class="popover popover-error">
+    <div class="popover-icon">✕</div>
+    <div class="popover-message">{{ errorMessage }}</div>
+  </div>
+</div>
+
 <!-- Profile Page -->
-<div class="profile-page">
-  <!-- Header Section -->
-  <section class="profile-header">
-    <div class="container">
-      <div class="header-content">
-        <div class="user-avatar-large">{{ userInfo.avatar }}</div>
-        <div class="user-info">
-          <h1 class="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
-          <p class="user-email">{{ userInfo.email }}</p>
-          <div class="user-badges">
-            <span class="badge badge-primary">{{ userInfo.role }}</span>
-          </div>
+<div class="profile-page" *ngIf="user">
+  <!-- Compact Header -->
+  <div class="page-header">
+    <a routerLink="/dashboard" class="btn-back-minimal">
+      <span class="back-icon">←</span>
+    </a>
+    <div class="header-profile-info">
+      <div class="profile-avatar-badge">
+        <span class="profile-avatar-large">{{ userInfo.avatar }}</span>
+      </div>
+      <div class="profile-title-group">
+        <h1 class="profile-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
+        <div class="profile-meta">
+          <span class="meta-item">{{ userInfo.email }}</span>
         </div>
       </div>
+      <div class="header-badges">
+        <span class="role-pill">{{ userInfo.role }}</span>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Profile Content -->
-  <div class="container">
-    <!-- Alert Messages -->
-    <div *ngIf="successMessage" class="alert alert-success">
-      <span class="alert-icon">✓</span>
-      <span class="alert-message">{{ successMessage }}</span>
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <div class="tab-pills">
+      <button
+        class="tab-pill"
+        [class.active]="activeTab === 'profile'"
+        (click)="switchTab('profile')">
+        <span class="tab-icon">📋</span>
+        <span class="tab-label">Profile</span>
+      </button>
+      <button
+        class="tab-pill"
+        [class.active]="activeTab === 'preferences'"
+        (click)="switchTab('preferences')">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Preferences</span>
+      </button>
+      <button
+        class="tab-pill"
+        [class.active]="activeTab === 'security'"
+        (click)="switchTab('security')">
+        <span class="tab-icon">🔒</span>
+        <span class="tab-label">Security</span>
+      </button>
+      <button
+        class="tab-pill"
+        [class.active]="activeTab === 'account'"
+        (click)="switchTab('account')">
+        <span class="tab-icon">👤</span>
+        <span class="tab-label">Account</span>
+      </button>
     </div>
+  </div>
 
-    <div *ngIf="errorMessage" class="alert alert-error">
-      <span class="alert-icon">✗</span>
-      <span class="alert-message">{{ errorMessage }}</span>
-    </div>
+  <!-- Tab Content -->
+  <div class="tab-content">
 
-    <div class="profile-grid">
-      <!-- Personal Information -->
-      <div class="profile-section">
-        <div class="section-card">
-          <div class="section-header">
-            <h2 class="section-title">Personal Information</h2>
-            <p class="section-description">Update your personal details and contact information</p>
+    <!-- PROFILE TAB -->
+    <div class="tab-pane" *ngIf="activeTab === 'profile'">
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="card-header">
+            <h3>Personal Information</h3>
+            <span class="card-icon">📝</span>
           </div>
-
-          <div class="section-content">
+          <div class="card-content">
             <!-- First Name Field -->
             <div class="form-group">
               <label class="form-label">First Name</label>
@@ -188,19 +229,20 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Account Settings -->
-      <div class="profile-section">
-        <div class="section-card">
-          <div class="section-header">
-            <h2 class="section-title">Account Settings</h2>
-            <p class="section-description">Manage your account preferences and settings</p>
+    <!-- PREFERENCES TAB -->
+    <div class="tab-pane" *ngIf="activeTab === 'preferences'">
+      <div class="preferences-container">
+        <div class="preferences-card">
+          <div class="card-header">
+            <h3>Notification Settings</h3>
+            <span class="card-icon">🔔</span>
           </div>
-
-          <div class="section-content">
+          <div class="card-content">
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="setting-title">Email Notifications</h3>
+                <h4 class="setting-title">Email Notifications</h4>
                 <p class="setting-description">Receive email updates about your gadgets and services</p>
               </div>
               <label class="toggle-switch">
@@ -211,7 +253,7 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="setting-title">Marketing Communications</h3>
+                <h4 class="setting-title">Marketing Communications</h4>
                 <p class="setting-description">Receive news, tips, and special offers</p>
               </div>
               <label class="toggle-switch">
@@ -222,7 +264,7 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="setting-title">Weekly Reports</h3>
+                <h4 class="setting-title">Weekly Reports</h4>
                 <p class="setting-description">Get weekly summaries of your device activity</p>
               </div>
               <label class="toggle-switch">
@@ -233,16 +275,17 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Security Settings -->
-      <div class="profile-section">
-        <div class="section-card">
-          <div class="section-header">
-            <h2 class="section-title">Security</h2>
-            <p class="section-description">Manage your password and security settings</p>
+    <!-- SECURITY TAB -->
+    <div class="tab-pane" *ngIf="activeTab === 'security'">
+      <div class="security-container">
+        <div class="security-card">
+          <div class="card-header">
+            <h3>Password & Authentication</h3>
+            <span class="card-icon">🔐</span>
           </div>
-
-          <div class="section-content">
+          <div class="card-content">
             <!-- Password Change -->
             <div class="form-group">
               <label class="form-label">Password</label>
@@ -320,36 +363,37 @@
 
             <div class="security-item">
               <div class="security-info">
-                <h3 class="security-title">Two-Factor Authentication</h3>
+                <h4 class="security-title">Two-Factor Authentication</h4>
                 <p class="security-status">Not enabled</p>
               </div>
-              <gc-button variant="secondary" size="sm" (onClick)="toggleTwoFactor()">
+              <button class="btn-secondary-small" (click)="toggleTwoFactor()">
                 Enable 2FA
-              </gc-button>
+              </button>
             </div>
 
             <div class="security-item">
               <div class="security-info">
-                <h3 class="security-title">Active Sessions</h3>
+                <h4 class="security-title">Active Sessions</h4>
                 <p class="security-status">2 active sessions</p>
               </div>
-              <gc-button variant="ghost" size="sm">
+              <button class="btn-ghost-small">
                 View Sessions
-              </gc-button>
+              </button>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Account Info -->
-      <div class="profile-section">
-        <div class="section-card">
-          <div class="section-header">
-            <h2 class="section-title">Account Information</h2>
-            <p class="section-description">Your account details and membership information</p>
+    <!-- ACCOUNT TAB -->
+    <div class="tab-pane" *ngIf="activeTab === 'account'">
+      <div class="account-container">
+        <div class="account-card">
+          <div class="card-header">
+            <h3>Account Information</h3>
+            <span class="card-icon">ℹ️</span>
           </div>
-
-          <div class="section-content">
+          <div class="card-content">
             <div class="info-item">
               <span class="info-label">Member Since</span>
               <span class="info-value">{{ userInfo.joinDate }}</span>
@@ -361,22 +405,15 @@
             </div>
 
             <div class="danger-zone">
-              <h3 class="danger-title">Danger Zone</h3>
+              <h4 class="danger-title">Danger Zone</h4>
               <p class="danger-description">Permanently delete your account and all associated data</p>
-              <gc-button variant="danger" size="sm">
+              <button class="btn-danger">
                 Delete Account
-              </gc-button>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Back to Home -->
-  <div class="profile-footer">
-    <gc-button variant="ghost" size="md" routerLink="/">
-      ← Back to Home
-    </gc-button>
   </div>
 </div>

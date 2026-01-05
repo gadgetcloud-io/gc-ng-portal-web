@@ -7,6 +7,8 @@ import { takeUntil } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
 
+type TabId = 'profile' | 'preferences' | 'security' | 'account';
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -22,6 +24,9 @@ import { AuthService, User } from '../../core/services/auth.service';
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   user: User | null = null;
+
+  // Tab state
+  activeTab: TabId = 'profile';
 
   // Inline edit state management (following device-detail pattern)
   editMode: { [key: string]: boolean } = {};
@@ -82,6 +87,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  // Tab Navigation
+  switchTab(tabId: TabId): void {
+    this.activeTab = tabId;
+    this.cdr.markForCheck();
   }
 
   toggleTwoFactor(): void {
