@@ -7,13 +7,15 @@ import { Device } from '../../../../core/services/device.service';
 import { ServiceTicket, ServiceTicketStatus, TicketPriority, CreateTicketRequest, RequestType } from '../../../../core/models/service-ticket.model';
 import { ServiceTicketService } from '../../../../core/services/service-ticket.service';
 import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../../../shared/components/service-request-dialogs/create-service-request-dialog';
+import { TicketDetailModalComponent } from './ticket-detail-modal.component';
 
 @Component({
   selector: 'app-service-tickets-tab',
   standalone: true,
   imports: [
     CommonModule,
-    CreateServiceRequestDialogComponent
+    CreateServiceRequestDialogComponent,
+    TicketDetailModalComponent
   ],
   templateUrl: './service-tickets-tab.component.html',
   styleUrl: './service-tickets-tab.component.scss'
@@ -27,6 +29,8 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
 
   // Dialog states
   isCreateDialogOpen = false;
+  isDetailModalOpen = false;
+  selectedTicket: ServiceTicket | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -104,10 +108,22 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
   }
 
   viewTicketDetails(ticket: ServiceTicket): void {
-    // Navigate to service requests page
-    this.router.navigate(['/service-requests'], {
-      queryParams: { ticketId: ticket.id }
-    });
+    this.selectedTicket = ticket;
+    this.isDetailModalOpen = true;
+  }
+
+  closeDetailModal(): void {
+    this.isDetailModalOpen = false;
+    this.selectedTicket = null;
+  }
+
+  onTicketUpdated(updatedTicket: ServiceTicket): void {
+    const index = this.tickets.findIndex(t => t.id === updatedTicket.id);
+    if (index !== -1) {
+      this.tickets[index] = updatedTicket;
+      this.selectedTicket = updatedTicket;
+      this.cdr.detectChanges();
+    }
   }
 
   private mapPriorityToUrgency(priority: string): 'low' | 'normal' | 'high' | 'critical' {

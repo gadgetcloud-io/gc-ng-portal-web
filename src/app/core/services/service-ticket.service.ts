@@ -61,11 +61,12 @@ export class ServiceTicketService {
    * Add a message to a ticket
    * @param ticketId Ticket ID
    * @param message Message text
+   * @param isInternal Whether this is an internal note (visible only to support/admin/partner)
    */
-  addMessage(ticketId: string, message: string): Observable<void> {
+  addMessage(ticketId: string, message: string, isInternal: boolean = false): Observable<void> {
     return this.api.post<void>(
       `/service-tickets/${ticketId}/messages`,
-      { message }
+      { message, isInternal }
     );
   }
 }

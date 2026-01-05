@@ -90,6 +90,7 @@ export interface TicketMessage {
   senderName: string;
   senderId: string;
   createdAt: string;
+  isInternal?: boolean; // For internal notes visible only to support/admin/partner
 }
 
 // Add message request
