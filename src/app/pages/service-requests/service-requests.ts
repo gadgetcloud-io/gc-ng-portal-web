@@ -7,12 +7,11 @@ import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
 import { ServiceTicketService } from '../../core/services/service-ticket.service';
 import { ServiceTicket } from '../../core/models/service-ticket.model';
-import { TicketDetailModalComponent } from '../device-detail/tabs/service-tickets-tab/ticket-detail-modal.component';
 
 @Component({
   selector: 'app-service-requests',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, TicketDetailModalComponent],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './service-requests.html',
   styleUrl: './service-requests.scss'
 })
@@ -23,11 +22,6 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedStatus = 'all';
   selectedType = 'all';
-  highlightedTicketId: string | null = null;
-
-  // Modal state
-  isDetailModalOpen = false;
-  selectedTicket: ServiceTicket | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -69,8 +63,12 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Read ticketId query parameter once (using snapshot for better performance)
-    this.highlightedTicketId = this.route.snapshot.queryParams['ticketId'] || null;
+    // Redirect old URL format to new format (backward compatibility)
+    const ticketId = this.route.snapshot.queryParams['ticketId'];
+    if (ticketId) {
+      this.router.navigate(['/service-requests', ticketId], { replaceUrl: true });
+      return;
+    }
 
     this.loadServiceRequests();
   }
@@ -92,27 +90,6 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
           this.applyFilters();
           this.isLoading = false;
           this.cdr.detectChanges();
-
-          // Auto-open modal for specific ticket if ticketId is present
-          if (this.highlightedTicketId) {
-            const ticket = tickets.find(t => t.id === this.highlightedTicketId);
-            if (ticket) {
-              // Open modal immediately
-              this.selectedTicket = ticket;
-              this.isDetailModalOpen = true;
-              this.cdr.detectChanges();
-
-              // Scroll to ticket card after modal opens (for context)
-              requestAnimationFrame(() => {
-                setTimeout(() => {
-                  const element = document.getElementById(`ticket-${this.highlightedTicketId}`);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }, 300); // Increased timeout to ensure DOM is ready
-              });
-            }
-          }
         },
         error: (err) => {
           console.error('Error loading service tickets:', err);
@@ -238,23 +215,6 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
   }
 
   viewRequestDetails(ticket: ServiceTicket): void {
-    this.selectedTicket = ticket;
-    this.isDetailModalOpen = true;
-    this.cdr.detectChanges();
-  }
-
-  closeDetailModal(): void {
-    this.isDetailModalOpen = false;
-    this.selectedTicket = null;
-    this.highlightedTicketId = null;
-
-    // Clear query params when closing modal
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {},
-      replaceUrl: true
-    });
-
-    this.cdr.detectChanges();
+    this.router.navigate(['/service-requests', ticket.id]);
   }
 }

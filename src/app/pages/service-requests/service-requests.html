@@ -68,7 +68,6 @@
         *ngFor="let ticket of filteredRequests"
         [id]="'ticket-' + ticket.id"
         class="request-card"
-        [class.highlighted]="ticket.id === highlightedTicketId"
         (click)="viewRequestDetails(ticket)"
       >
         <div class="request-header">
@@ -116,10 +115,3 @@
     </div>
   </div>
 </section>
-
-<!-- Ticket Detail Modal -->
-<app-ticket-detail-modal
-  [ticket]="selectedTicket"
-  [isOpen]="isDetailModalOpen"
-  (close)="closeDetailModal()"
-></app-ticket-detail-modal>

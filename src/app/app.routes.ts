@@ -92,6 +92,18 @@ export const routes: Routes = [
       }
     }
   },
+  {
+    path: 'service-requests/:id',
+    loadComponent: () => import('./pages/service-ticket-detail/service-ticket-detail').then(m => m.ServiceTicketDetailComponent),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: (snapshot: any) => {
+          return snapshot.data['ticketId'] || 'Ticket Details';
+        }
+      }
+    }
+  },
 
   // Blog routes (public)
   {
