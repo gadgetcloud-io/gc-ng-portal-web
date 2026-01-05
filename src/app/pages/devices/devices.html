@@ -136,7 +136,7 @@
 
     <!-- Devices Grid -->
     <div *ngIf="!isLoading && filteredDevices.length > 0" class="devices-grid">
-      <div *ngFor="let device of filteredDevices" class="device-card" [class.selected]="isDeviceSelected(device.id)">
+      <div *ngFor="let device of filteredDevices" class="device-card" [class.selected]="isDeviceSelected(device.id)" (click)="viewDevice(device)">
         <div class="device-select">
           <input
             type="checkbox"
@@ -150,7 +150,7 @@
         <div class="device-icon">{{ getCategoryIcon(device.category) }}</div>
 
         <div class="device-header">
-          <h3 class="device-name clickable" (click)="viewDevice(device)" title="Click to view details">
+          <h3 class="device-name" title="Click to view details">
             {{ device.name }}
           </h3>
           <span class="device-status" [class]="getStatusColor(device.status)">
@@ -186,19 +186,19 @@
         </div>
 
         <div class="device-actions">
-          <button class="action-btn action-btn-primary" (click)="viewDevice(device)" title="View details">
+          <button class="action-btn action-btn-primary" (click)="viewDevice(device); $event.stopPropagation()" title="View details">
             <span class="btn-icon">👁️</span>
             <span class="btn-text">View</span>
           </button>
-          <button class="action-btn action-btn-secondary" (click)="openDocumentsDialog(device)" title="Manage documents">
+          <button class="action-btn action-btn-secondary" (click)="openDocumentsDialog(device); $event.stopPropagation()" title="Manage documents">
             <span class="btn-icon">📁</span>
             <span class="btn-text">Documents</span>
           </button>
-          <button class="action-btn action-btn-repair" (click)="raiseRepairRequest(device)" title="Raise a repair request">
+          <button class="action-btn action-btn-repair" (click)="raiseRepairRequest(device); $event.stopPropagation()" title="Raise a repair request">
             <span class="btn-icon">🔧</span>
             <span class="btn-text">Repair Request</span>
           </button>
-          <button class="action-btn action-btn-danger" (click)="openDeleteDialog(device)" title="Delete gadget">
+          <button class="action-btn action-btn-danger" (click)="openDeleteDialog(device); $event.stopPropagation()" title="Delete gadget">
             <span class="btn-icon">🗑️</span>
             <span class="btn-text">Delete</span>
           </button>
