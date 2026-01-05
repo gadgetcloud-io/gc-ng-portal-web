@@ -88,7 +88,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: {
-        label: 'Service Requests'
+        label: 'My Tickets'
       }
     }
   },

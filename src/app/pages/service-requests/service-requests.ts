@@ -98,7 +98,7 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('Error loading service tickets:', err);
+          console.error('Error loading tickets:', err);
           this.isLoading = false;
           this.cdr.detectChanges();
         }
@@ -216,8 +216,8 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
   }
 
   openNewRequestDialog(): void {
-    // TODO: Implement new service request dialog
-    alert('New service request dialog will be implemented. This will allow users to create new service tickets.');
+    // TODO: Implement new ticket dialog
+    alert('New ticket dialog will be implemented. This will allow users to create new support tickets.');
   }
 
   viewRequestDetails(ticket: ServiceTicket): void {

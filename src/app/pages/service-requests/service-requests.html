@@ -3,8 +3,8 @@
   <div class="container">
     <div class="header-content">
       <div class="header-text">
-        <h1 class="page-title">My Service Requests</h1>
-        <p class="page-subtitle">Track and manage your gadget service requests</p>
+        <h1 class="page-title">My Tickets</h1>
+        <p class="page-subtitle">Track and manage your support tickets</p>
       </div>
       <gc-button variant="primary" size="md" (click)="openNewRequestDialog()">
         ➕ New Request
@@ -48,23 +48,23 @@
     <!-- Loading State -->
     <div *ngIf="isLoading && !isRedirecting" class="loading-state">
       <div class="spinner"></div>
-      <p>Loading service requests...</p>
+      <p>Loading tickets...</p>
     </div>
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && !isRedirecting && filteredRequests.length === 0 && serviceRequests.length === 0" class="empty-state">
       <div class="empty-icon">📋</div>
-      <h2 class="empty-title">No service requests yet</h2>
-      <p class="empty-text">Create your first service request to get support for your gadgets</p>
+      <h2 class="empty-title">No tickets yet</h2>
+      <p class="empty-text">Create your first ticket to get support for your gadgets</p>
       <gc-button variant="primary" size="lg" (click)="openNewRequestDialog()">
-        ➕ Create Service Request
+        ➕ Create Ticket
       </gc-button>
     </div>
 
     <!-- No Results State -->
     <div *ngIf="!isLoading && !isRedirecting && filteredRequests.length === 0 && serviceRequests.length > 0" class="empty-state">
       <div class="empty-icon">🔍</div>
-      <h2 class="empty-title">No requests match your filters</h2>
+      <h2 class="empty-title">No tickets match your filters</h2>
       <p class="empty-text">Try adjusting your filters</p>
     </div>
 
