@@ -150,18 +150,34 @@ gc-ng-www-web/
 ├── src/
 │   ├── app/
 │   │   ├── pages/
-│   │   │   ├── home/             ✅ Complete
-│   │   │   └── profile/          ⏳ Pending
+│   │   │   ├── home/                      ✅ Complete
+│   │   │   ├── profile/                   ✅ Complete
+│   │   │   ├── devices/                   ✅ Complete (My Gadgets)
+│   │   │   ├── device-detail/             ✅ Complete
+│   │   │   ├── service-requests/          ✅ Complete
+│   │   │   └── service-ticket-detail/     ✅ Complete (NEW)
 │   │   ├── shared/
 │   │   │   └── components/
-│   │   │       └── button/       ✅ Complete
+│   │   │       ├── button/                ✅ Complete
+│   │   │       ├── breadcrumbs/           ✅ Complete
+│   │   │       ├── device-card/           ✅ Complete
+│   │   │       ├── device-list/           ✅ Complete
+│   │   │       ├── device-dialogs/        ✅ Complete
+│   │   │       ├── tabs/                  ✅ Complete
+│   │   │       └── modal/                 ✅ Complete
+│   │   ├── core/
+│   │   │   ├── services/                  ✅ Complete
+│   │   │   ├── guards/                    ✅ Complete
+│   │   │   └── interceptors/              ✅ Complete
 │   │   ├── app.ts
 │   │   ├── app.html
 │   │   ├── app.scss
 │   │   └── app.routes.ts
 │   ├── styles/
-│   │   ├── _design-tokens.scss   ✅ Complete
-│   │   ├── _base.scss            ✅ Complete
+│   │   ├── _design-tokens.scss            ✅ Complete
+│   │   ├── _base.scss                     ✅ Complete
+│   │   ├── _dialog-forms.scss             ✅ Complete
+│   │   ├── _stepper.scss                  ✅ Complete
 │   │   └── (main) styles.scss
 │   ├── index.html
 │   └── main.ts
@@ -175,7 +191,11 @@ gc-ng-www-web/
 | Path | Component | Status |
 |------|-----------|--------|
 | `/` | HomeComponent | ✅ Working |
-| `/profile` | ProfileComponent | ⏳ To implement |
+| `/profile` | ProfileComponent | ✅ Working |
+| `/my-gadgets` | DevicesComponent | ✅ Working |
+| `/my-gadgets/:id` | DeviceDetailComponent | ✅ Working |
+| `/service-requests` | ServiceRequestsComponent | ✅ Working |
+| `/service-requests/:id` | ServiceTicketDetailComponent | ✅ Working (NEW) |
 
 ---
 
@@ -243,17 +263,18 @@ npm test
 ## 📊 Metrics
 
 ### Code Statistics
-- **SCSS Reduction**: N/A (new project)
-- **Components Created**: 5 (Button, FloatingHelpButton, HelpDialog, Modal, Tabs, Home)
-- **Services Created**: 2 (HelpService, ApiService)
-- **Pages Created**: 1 (Homepage)
+- **Pages Created**: 6 (Home, Profile, Devices, DeviceDetail, ServiceRequests, ServiceTicketDetail)
+- **Components Created**: 15+ (Button, Breadcrumbs, Tabs, Modal, DeviceCard, DeviceList, DeviceDialogs, etc.)
+- **Services Created**: 10+ (Auth, Device, Document, ServiceTicket, RBAC, Activity, Help, SEO, etc.)
 - **Design Tokens**: 100+ variables
 - **Utility Classes**: 30+
+- **Modal Removed**: 1,096 lines converted to page component (December 2025)
 
 ### Performance (Estimated)
-- **Bundle Size**: ~200KB (initial, will grow)
-- **First Load**: < 2s (local dev)
-- **Lighthouse Score**: Not yet measured
+- **Bundle Size**: ~400KB (production build)
+- **First Load**: < 2s
+- **Change Detection**: OnPush for optimal performance
+- **Lazy Loading**: All pages lazy-loaded
 
 ---
 
@@ -281,8 +302,8 @@ npm test
 ## 🌐 Live URLs
 
 - **Development**: http://localhost:4200
-- **Staging**: TBD
-- **Production**: TBD (will be www.gadgetcloud.io)
+- **Staging**: https://gadgetcloud-stg.web.app
+- **Production**: https://www.gadgetcloud.io ✅
 
 ---
 
@@ -301,6 +322,12 @@ npm test
 3. **SCSS** with design tokens for maintainability
 4. **No UI library** (custom components for full control)
 5. **Mobile-first** responsive approach
+6. **Modal → Page Migration** (January 2026)
+   - Converted 1,096-line service ticket modal to standalone page
+   - RESTful routing with deep linking support (`/service-requests/:id`)
+   - Preserved all features: field editing, messaging, internal notes, auto-refresh
+   - Improved UX: Bookmarkable URLs, browser navigation, more screen space
+   - Backend fix: Resolved Firestore timestamp parsing bug
 
 ---
 
@@ -351,13 +378,55 @@ npm test
   - Integration with device creation flow
 
 - ✅ **Device Detail Page** (`src/app/pages/device-detail/`)
-  - Tabbed interface (Details, Warranty, Documents, Notes)
+  - Tabbed interface (Details, Warranty, Documents, Notes, Service Tickets)
   - RBAC field-level permissions
   - Inline editing with optimistic updates
   - Document upload/management
   - Breadcrumb integration with parent "My Gadgets"
+  - Service tickets tab with navigation to detail page
+
+### 9. Service Ticket Management
+- ✅ **Service Requests Page** (`src/app/pages/service-requests/`)
+  - List view of all user service tickets
+  - Filter by status and request type
+  - Status badges with color coding
+  - Priority indicators
+  - Click to navigate to detail page
+  - Backward compatibility redirect (query param → route param)
+  - Empty states for no tickets / no results
+  - Responsive card layout
+
+- ✅ **Service Ticket Detail Page** (`src/app/pages/service-ticket-detail/`)
+  - **Architecture**: Standalone page with RESTful routing (`/service-requests/:id`)
+  - **Replaced**: 1,096-line modal component with full page (December 2025)
+  - **Features Preserved**:
+    - Field editing with RBAC (support/admin only)
+    - Real-time messaging thread
+    - Internal notes (visible to support/admin/partner)
+    - Auto-refresh every 30 seconds
+    - Optimistic UI updates with error rollback
+    - Ctrl+Enter to send messages
+  - **Page Sections**:
+    - Ticket overview (ID, status, priority, request type)
+    - Editable fields (status, priority, assignedTo)
+    - Request details (description, urgency, timestamps)
+    - Message thread with send/receive
+  - **Navigation**:
+    - Deep linking support (bookmarkable URLs)
+    - Browser back/forward navigation
+    - Breadcrumb integration: Home > Service Requests > {Ticket ID}
+    - Back button to service requests list
+  - **Data Loading**: forkJoin pattern (ticket + messages + field configs in parallel)
+  - **Change Detection**: OnPush with manual detectChanges for performance
+  - **Backend Fix**: Resolved timestamp parsing bug in `form_service.py`
+
+- ✅ **Service Tickets Tab** (`device-detail/tabs/service-tickets-tab/`)
+  - View service tickets for specific device
+  - Create new service request
+  - Navigate to detail page (modal removed)
+  - Integration with RBAC field configs
 
 ---
 
-**Last Updated**: January 2, 2026
-**Status**: Phase 2 Complete - AI Device Creation + Navigation - Production Ready
+**Last Updated**: January 5, 2026
+**Status**: Phase 3 Complete - Service Ticket Management - Production Ready ✅
