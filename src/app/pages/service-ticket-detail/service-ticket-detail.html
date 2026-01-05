@@ -33,15 +33,6 @@
 
   <!-- Tab Navigation -->
   <div class="tab-navigation">
-    <!-- Mobile Dropdown (< 768px) -->
-    <select class="tab-select-mobile" [(ngModel)]="activeTab" (change)="switchTab(activeTab)">
-      <option value="overview">📊 Overview</option>
-      <option value="messages">💬 Messages<span *ngIf="visibleMessages.length > 0"> ({{ visibleMessages.length }})</span></option>
-      <option value="documents">📎 Documents</option>
-      <option value="activity">📅 Activity</option>
-    </select>
-
-    <!-- Desktop Pills (≥ 768px) -->
     <div class="tab-pills">
       <button
         class="tab-pill"
