@@ -1,8 +1,9 @@
-// ===== VARIABLES =====
-$ocean-blue: #0080C0;
-$soft-blue: #67D4F6;
-$deep-blue: #005A8C;
-$light-blue: #E5F4FB;
+// Use design tokens for consistency across the application
+// SCSS variables for rgba() compatibility (match design tokens)
+$ocean-blue: #0080C0;  // --brand-primary-700
+$soft-blue: #67D4F6;   // --brand-secondary-700
+$deep-blue: #005A8C;   // --brand-primary-900
+$light-blue: #E5F4FB;  // Light ocean blue tint
 $gradient-primary: linear-gradient(135deg, $ocean-blue 0%, $soft-blue 100%);
 
 // ===== LOADING & ERROR STATES =====
