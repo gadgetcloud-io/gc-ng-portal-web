@@ -480,6 +480,30 @@ $gradient-primary: linear-gradient(135deg, $ocean-blue 0%, $soft-blue 100%);
   }
 }
 
+.update-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: linear-gradient(135deg, rgba($ocean-blue, 0.05), rgba($soft-blue, 0.05));
+  border-radius: 12px;
+  border-left: 3px solid $soft-blue;
+  margin-top: var(--space-2);
+
+  .hint-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    line-height: 1.5;
+  }
+}
+
 .field-display {
   display: flex;
   align-items: center;

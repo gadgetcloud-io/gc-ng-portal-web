@@ -118,6 +118,70 @@
           </div>
         </div>
 
+        <!-- Customer Update Card -->
+        <div class="info-card customer-update-card" *ngIf="canEditOwnTicket && !canEditFields">
+          <div class="card-header">
+            <h3>Update Ticket</h3>
+            <span class="card-icon">✏️</span>
+          </div>
+          <div class="card-content">
+            <!-- Status -->
+            <div class="editable-field">
+              <label>Status</label>
+              <div class="field-display" *ngIf="!editMode['status']">
+                <span class="status-pill small" [style.background-color]="getStatusColor(ticket.status)">
+                  {{ formatStatus(ticket.status) }}
+                </span>
+                <button class="edit-btn" (click)="enterEditMode('status')"
+                        [disabled]="!isFieldEditable('status')">
+                  <span class="edit-icon">✏️</span>
+                </button>
+              </div>
+              <div class="field-edit" *ngIf="editMode['status']">
+                <select [(ngModel)]="editValues['status']" class="form-select">
+                  <option *ngFor="let val of fieldConfigs['status']?.allowedValues" [value]="val">
+                    {{ formatStatus(val) }}
+                  </option>
+                </select>
+                <div class="edit-actions">
+                  <button class="btn-save" (click)="saveField('status')">Save</button>
+                  <button class="btn-cancel" (click)="cancelEdit('status')">Cancel</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Priority -->
+            <div class="editable-field">
+              <label>Priority</label>
+              <div class="field-display" *ngIf="!editMode['priority']">
+                <span class="priority-pill small" [style.background-color]="getPriorityColor(ticket.priority)">
+                  {{ ticket.priority }}
+                </span>
+                <button class="edit-btn" (click)="enterEditMode('priority')"
+                        [disabled]="!isFieldEditable('priority')">
+                  <span class="edit-icon">✏️</span>
+                </button>
+              </div>
+              <div class="field-edit" *ngIf="editMode['priority']">
+                <select [(ngModel)]="editValues['priority']" class="form-select">
+                  <option *ngFor="let val of fieldConfigs['priority']?.allowedValues" [value]="val">
+                    {{ val }}
+                  </option>
+                </select>
+                <div class="edit-actions">
+                  <button class="btn-save" (click)="saveField('priority')">Save</button>
+                  <button class="btn-cancel" (click)="cancelEdit('priority')">Cancel</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="update-hint">
+              <span class="hint-icon">💡</span>
+              <p>Update the status or priority to help us better manage your request</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Management Card (Support/Admin Only) -->
         <div class="info-card management-card" *ngIf="canEditFields">
           <div class="card-header">

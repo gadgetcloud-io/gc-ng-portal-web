@@ -36,6 +36,7 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
   // User & permissions
   currentUser: User | null = null;
   canEditFields = false;
+  canEditOwnTicket = false;
   canSeeInternalNotes = false;
 
   // RBAC state
@@ -131,8 +132,8 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Load field configs in background (if needed)
-    if (this.canEditFields) {
+    // Load field configs in background (if customer or support needs to edit)
+    if (this.canEditFields || this.canEditOwnTicket) {
       this.rbacService.getFieldConfig('gc-service-tickets').subscribe({
         next: (configs) => {
           this.fieldConfigs = configs;
@@ -155,6 +156,7 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
   private updatePermissions(): void {
     const role = this.currentUser?.role;
     this.canEditFields = role === 'support' || role === 'admin';
+    this.canEditOwnTicket = role === 'customer' || role === 'partner';
     this.canSeeInternalNotes = role === 'support' || role === 'admin' || role === 'partner';
     this.cdr.markForCheck();
       this.cdr.detectChanges();
@@ -217,9 +219,22 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
   }
 
   isFieldEditable(field: string): boolean {
-    if (!this.canEditFields || this.loadingFieldConfigs || this.isUpdating) {
+    if (this.loadingFieldConfigs || this.isUpdating) {
       return false;
     }
+
+    // Customers can only edit status and priority on their own tickets
+    if (this.canEditOwnTicket && !this.canEditFields) {
+      if (field !== 'status' && field !== 'priority') {
+        return false;
+      }
+    }
+
+    // Support/admin can edit any field based on RBAC config
+    if (!this.canEditFields && !this.canEditOwnTicket) {
+      return false;
+    }
+
     const config = this.fieldConfigs[field];
     return config?.type === 'enum' ? !!(config.allowedValues?.length) : !!config;
   }
