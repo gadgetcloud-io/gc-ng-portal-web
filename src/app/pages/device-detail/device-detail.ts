@@ -148,11 +148,11 @@ export class DeviceDetailComponent implements OnInit {
         // Show brief success message
         this.updateSuccess = `${this.formatFieldName(field)} updated`;
 
-        // Auto-hide success message after 1.5 seconds
+        // Auto-hide success message after 1 second
         setTimeout(() => {
           this.updateSuccess = null;
           this.cdr.detectChanges();
-        }, 1500);
+        }, 1000);
 
         this.cdr.detectChanges();
       },
@@ -164,11 +164,11 @@ export class DeviceDetailComponent implements OnInit {
 
         this.updateError = err.message || 'Failed to update field';
 
-        // Auto-hide error message after 5 seconds
+        // Auto-hide error message after 3 seconds
         setTimeout(() => {
           this.updateError = null;
           this.cdr.detectChanges();
-        }, 5000);
+        }, 3000);
 
         this.cdr.detectChanges();
       }
@@ -176,38 +176,47 @@ export class DeviceDetailComponent implements OnInit {
   }
 
   /**
-   * Load device details and field configs in parallel
+   * Load device details and field configs (optimized for speed)
+   * Device loads first to show UI immediately, configs load in background
    */
   private loadDeviceAndConfigs(): void {
     this.loading = true;
     this.loadingFieldConfigs = true;
     this.error = null;
 
-    forkJoin({
-      device: this.deviceService.getDeviceById(this.deviceId),
-      configs: this.rbacService.getFieldConfig('gc-items')
-    }).subscribe({
-      next: (results) => {
-        // Handle device result
-        if (results.device) {
-          this.device = results.device;
+    // Load device first for immediate UI display
+    this.deviceService.getDeviceById(this.deviceId).subscribe({
+      next: (device) => {
+        if (device) {
+          this.device = device;
           // Update breadcrumb with device name
-          this.breadcrumbService.setLabel(`/my-gadgets/${this.deviceId}`, results.device.name);
+          this.breadcrumbService.setLabel(`/my-gadgets/${this.deviceId}`, device.name);
+          // Hide loading screen immediately when device is loaded
+          this.loading = false;
+          this.cdr.detectChanges();
         } else {
           this.error = 'Device not found';
+          this.loading = false;
+          this.cdr.detectChanges();
         }
-
-        // Handle field configs result
-        this.fieldConfigs = results.configs;
-
+      },
+      error: (err) => {
+        console.error('Error loading device:', err);
+        this.error = 'Failed to load device details';
         this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+
+    // Load field configs in background (non-blocking)
+    this.rbacService.getFieldConfig('gc-items').subscribe({
+      next: (configs) => {
+        this.fieldConfigs = configs;
         this.loadingFieldConfigs = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading device data:', err);
-        this.error = 'Failed to load device details';
-        this.loading = false;
+        console.error('Error loading field configs:', err);
         this.loadingFieldConfigs = false;
         this.cdr.detectChanges();
       }

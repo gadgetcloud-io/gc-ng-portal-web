@@ -94,38 +94,56 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
     // 3. Update permissions
     this.updatePermissions();
 
-    // 4. Load ticket data (forkJoin pattern like device-detail)
+    // 4. Load ticket data (optimized for speed)
     this.loading = true;
-    forkJoin({
-      ticket: this.serviceTicketService.getTicket(this.ticketId),
-      messages: this.serviceTicketService.getMessages(this.ticketId),
-      configs: this.canEditFields
-        ? this.rbacService.getFieldConfig('gc-service-tickets')
-        : of({})
-    }).subscribe({
-      next: (results) => {
-        this.ticket = results.ticket;
-        this.messages = results.messages;
-        this.fieldConfigs = results.configs;
-        this.breadcrumbService.setLabel(`/service-requests/${this.ticketId}`, this.ticket.id);
+
+    // Load ticket first for immediate UI display
+    this.serviceTicketService.getTicket(this.ticketId).subscribe({
+      next: (ticket) => {
+        this.ticket = ticket;
+        this.breadcrumbService.setLabel(`/service-requests/${this.ticketId}`, ticket.id);
         this.loading = false;
         this.cdr.markForCheck();
-      this.cdr.detectChanges();
-
-        // Start auto-refresh after successful load
-        this.startAutoRefresh();
-
-        // Scroll to bottom of messages
-        setTimeout(() => this.scrollToBottom(), 100);
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading ticket details:', err);
+        console.error('Error loading ticket:', err);
         this.error = err.message || 'Failed to load ticket details';
         this.loading = false;
         this.cdr.markForCheck();
-      this.cdr.detectChanges();
+        this.cdr.detectChanges();
       }
     });
+
+    // Load messages in background
+    this.serviceTicketService.getMessages(this.ticketId).subscribe({
+      next: (messages) => {
+        this.messages = messages;
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+
+        // Start auto-refresh and scroll after messages load
+        this.startAutoRefresh();
+        setTimeout(() => this.scrollToBottom(), 50);
+      },
+      error: (err) => {
+        console.error('Error loading messages:', err);
+      }
+    });
+
+    // Load field configs in background (if needed)
+    if (this.canEditFields) {
+      this.rbacService.getFieldConfig('gc-service-tickets').subscribe({
+        next: (configs) => {
+          this.fieldConfigs = configs;
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error loading field configs:', err);
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {
