@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -13,13 +13,15 @@ import { ServiceTicket } from '../../core/models/service-ticket.model';
   standalone: true,
   imports: [CommonModule, ButtonComponent],
   templateUrl: './service-requests.html',
-  styleUrl: './service-requests.scss'
+  styleUrl: './service-requests.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ServiceRequestsComponent implements OnInit, OnDestroy {
   user: User | null = null;
   serviceRequests: ServiceTicket[] = [];
   filteredRequests: ServiceTicket[] = [];
   isLoading = false;
+  isRedirecting = false;
   selectedStatus = 'all';
   selectedType = 'all';
 
@@ -66,7 +68,12 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
     // Redirect old URL format to new format (backward compatibility)
     const ticketId = this.route.snapshot.queryParams['ticketId'];
     if (ticketId) {
-      this.router.navigate(['/service-requests', ticketId], { replaceUrl: true });
+      this.isRedirecting = true;
+      this.cdr.detectChanges();
+      // Use setTimeout to ensure UI updates before navigation
+      setTimeout(() => {
+        this.router.navigate(['/service-requests', ticketId], { replaceUrl: true });
+      }, 0);
       return;
     }
 
