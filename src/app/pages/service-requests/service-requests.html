@@ -16,6 +16,14 @@
 <!-- Filters Section -->
 <section class="filters-section">
   <div class="container">
+    <!-- Search Bar (Support only) -->
+    <div class="search-bar" *ngIf="isSupportRole">
+      <input type="text" class="search-input"
+        placeholder="Search by ticket ID, customer name/email, or description..."
+        [value]="searchTerm" (input)="onSearchChange($event)" />
+      <span class="search-icon">🔍</span>
+    </div>
+
     <div class="filter-controls">
       <select class="filter-select" [value]="selectedStatus" (change)="onStatusChange($event)">
         <option *ngFor="let status of statuses" [value]="status.value">
@@ -27,6 +35,14 @@
         <option *ngFor="let type of types" [value]="type.value">
           {{ type.label }}
         </option>
+      </select>
+
+      <!-- Assignment Filter (Support only) -->
+      <select class="filter-select filter-assignment" *ngIf="isSupportRole"
+        [value]="selectedAssignment" (change)="onAssignmentChange($event)">
+        <option value="all">All Tickets</option>
+        <option value="assigned-to-me">Assigned to Me</option>
+        <option value="unassigned">Unassigned</option>
       </select>
     </div>
 
@@ -95,7 +111,27 @@
           <div class="request-id">#{{ ticket.id }}</div>
           <h3 class="request-subject">{{ ticket.data.additionalNotes || 'Service Request' }}</h3>
           <p class="request-description">{{ ticket.data.issueDescription }}</p>
-          <div class="request-device" *ngIf="ticket.data.deviceId">
+
+          <!-- Customer Info (Support only) -->
+          <div class="request-customer-info" *ngIf="isSupportRole && ticket.customer">
+            <div class="info-row">
+              <span class="info-icon">👤</span>
+              <span class="info-label">Customer:</span>
+              <span class="info-value">{{ ticket.customer.name }} ({{ ticket.customer.email }})</span>
+            </div>
+            <div class="info-row" *ngIf="ticket.customer.mobile">
+              <span class="info-icon">📞</span>
+              <span class="info-label">Mobile:</span>
+              <span class="info-value">{{ ticket.customer.mobile }}</span>
+            </div>
+          </div>
+
+          <!-- Enhanced Device Info -->
+          <div class="request-device" *ngIf="ticket.device">
+            <span class="device-icon">📱</span>
+            <span>{{ ticket.device.brand }} {{ ticket.device.name }} ({{ ticket.device.category }})</span>
+          </div>
+          <div class="request-device" *ngIf="!ticket.device && ticket.data.deviceId">
             <span class="device-icon">📱</span>
             <span>Device ID: {{ ticket.data.deviceId }}</span>
           </div>
@@ -112,7 +148,46 @@
               <span class="date-value">{{ formatDate(ticket.updatedAt) }}</span>
             </div>
           </div>
-          <div class="request-assigned" *ngIf="ticket.assignedTo">
+
+          <!-- Assignment Controls (Support only) -->
+          <div class="assignment-container" *ngIf="isSupportRole">
+            <!-- Current assignment display button -->
+            <button class="assignment-button"
+              [class.assigned]="ticket.assignedTo"
+              (click)="toggleAssignmentDropdown(ticket.id, $event)">
+              <span class="assigned-icon">👤</span>
+              <span>{{ getAssignedStaffName(ticket.assignedTo) }}</span>
+              <span class="dropdown-arrow">▼</span>
+            </button>
+
+            <!-- Quick "Assign to Me" button -->
+            <button class="assign-to-me-btn"
+              *ngIf="!ticket.assignedTo || ticket.assignedTo !== user?.id"
+              (click)="assignToMe(ticket, $event)"
+              [disabled]="assigningTicket[ticket.id]">
+              ✋ Assign to Me
+            </button>
+
+            <!-- Assignment dropdown -->
+            <div class="assignment-dropdown" *ngIf="assignmentDropdownOpen[ticket.id]">
+              <div class="dropdown-header">Assign to:</div>
+              <button *ngFor="let staff of supportStaff"
+                class="dropdown-item"
+                (click)="assignToStaff(ticket, staff.id, $event)"
+                [disabled]="assigningTicket[ticket.id]">
+                <span class="staff-name">{{ staff.name }}</span>
+                <span class="staff-email">{{ staff.email }}</span>
+              </button>
+              <button class="dropdown-item unassign-item" *ngIf="ticket.assignedTo"
+                (click)="unassignTicket(ticket, $event)"
+                [disabled]="assigningTicket[ticket.id]">
+                🚫 Unassign
+              </button>
+            </div>
+          </div>
+
+          <!-- Customer view: Simple assigned display -->
+          <div class="request-assigned" *ngIf="!isSupportRole && ticket.assignedTo">
             <span class="assigned-icon">👤</span>
             <span>{{ ticket.assignedTo }}</span>
           </div>

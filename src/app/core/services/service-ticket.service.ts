@@ -6,7 +6,9 @@ import {
   ServiceTicket,
   CreateTicketRequest,
   CreateTicketResponse,
-  TicketMessage
+  TicketMessage,
+  EnrichedServiceTicket,
+  SupportStaff
 } from '../models/service-ticket.model';
 
 @Injectable({
@@ -68,5 +70,32 @@ export class ServiceTicketService {
       `/service-tickets/${ticketId}/messages`,
       { message, isInternal }
     );
+  }
+
+  /**
+   * List enriched tickets with customer and device data (Support/Admin only)
+   * @param limit Maximum number of tickets to return
+   */
+  listEnrichedTickets(limit: number = 100): Observable<EnrichedServiceTicket[]> {
+    return this.api.get<EnrichedServiceTicket[]>(
+      `/service-tickets/enriched?form_type=service_request&limit=${limit}`
+    );
+  }
+
+  /**
+   * Get list of support staff members (for ticket assignment)
+   * Available to Support and Admin roles only
+   */
+  getSupportStaff(): Observable<SupportStaff[]> {
+    return this.api.get<SupportStaff[]>('/service-tickets/support-staff');
+  }
+
+  /**
+   * Update ticket assignment
+   * @param ticketId Ticket ID
+   * @param assignedTo User ID to assign (or null to unassign)
+   */
+  updateAssignment(ticketId: string, assignedTo: string | null): Observable<void> {
+    return this.api.patch<void>(`/service-tickets/${ticketId}`, { assignedTo });
   }
 }

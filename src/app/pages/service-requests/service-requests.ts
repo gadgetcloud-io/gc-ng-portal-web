@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
 import { ServiceTicketService } from '../../core/services/service-ticket.service';
-import { ServiceTicket } from '../../core/models/service-ticket.model';
+import { ServiceTicket, EnrichedServiceTicket, SupportStaff, AssignmentFilter } from '../../core/models/service-ticket.model';
 
 @Component({
   selector: 'app-service-requests',
@@ -17,12 +17,20 @@ import { ServiceTicket } from '../../core/models/service-ticket.model';
 })
 export class ServiceRequestsComponent implements OnInit, OnDestroy {
   user: User | null = null;
-  serviceRequests: ServiceTicket[] = [];
-  filteredRequests: ServiceTicket[] = [];
+  serviceRequests: EnrichedServiceTicket[] = [];
+  filteredRequests: EnrichedServiceTicket[] = [];
   isLoading = false;
   isRedirecting = false;
   selectedStatus = 'all';
   selectedType = 'all';
+
+  // Support role features
+  isSupportRole = false;
+  supportStaff: SupportStaff[] = [];
+  selectedAssignment: AssignmentFilter = 'all';
+  searchTerm = '';
+  assignmentDropdownOpen: { [ticketId: string]: boolean } = {};
+  assigningTicket: { [ticketId: string]: boolean } = {};
 
   private destroy$ = new Subject<void>();
 
@@ -64,6 +72,9 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Check if user is support or admin
+    this.isSupportRole = this.user.role === 'support' || this.user.role === 'admin';
+
     // Redirect old URL format to new format (backward compatibility)
     const ticketId = this.route.snapshot.queryParams['ticketId'];
     if (ticketId) {
@@ -88,28 +99,77 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.cdr.detectChanges();
 
-    this.serviceTicketService.listTickets()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (tickets) => {
-          this.serviceRequests = tickets;
-          this.applyFilters();
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error loading tickets:', err);
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+    // Support/admin: Load enriched tickets + support staff in parallel
+    if (this.isSupportRole) {
+      forkJoin({
+        tickets: this.serviceTicketService.listEnrichedTickets(),
+        staff: this.serviceTicketService.getSupportStaff()
+      })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (results) => {
+            this.serviceRequests = results.tickets;
+            this.supportStaff = results.staff;
+            this.applyFilters();
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error loading tickets:', err);
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          }
+        });
+    } else {
+      // Customer: Load regular tickets
+      this.serviceTicketService.listTickets()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (tickets) => {
+            this.serviceRequests = tickets as EnrichedServiceTicket[];
+            this.applyFilters();
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error loading tickets:', err);
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          }
+        });
+    }
   }
 
   applyFilters(): void {
     this.filteredRequests = this.serviceRequests.filter(ticket => {
       const matchesStatus = this.selectedStatus === 'all' || ticket.status === this.selectedStatus;
       const matchesType = this.selectedType === 'all' || ticket.data.requestType === this.selectedType;
-      return matchesStatus && matchesType;
+
+      // Assignment filter (support only)
+      let matchesAssignment = true;
+      if (this.isSupportRole) {
+        if (this.selectedAssignment === 'assigned-to-me') {
+          matchesAssignment = ticket.assignedTo === this.user?.id;
+        } else if (this.selectedAssignment === 'unassigned') {
+          matchesAssignment = !ticket.assignedTo;
+        }
+      }
+
+      // Search filter (support only)
+      let matchesSearch = true;
+      if (this.isSupportRole && this.searchTerm.trim()) {
+        const term = this.searchTerm.toLowerCase();
+        matchesSearch = !!(
+          ticket.id.toLowerCase().includes(term) ||
+          ticket.data.issueDescription?.toLowerCase().includes(term) ||
+          ticket.customer?.name?.toLowerCase().includes(term) ||
+          ticket.customer?.email?.toLowerCase().includes(term) ||
+          ticket.device?.name?.toLowerCase().includes(term) ||
+          ticket.device?.brand?.toLowerCase().includes(term)
+        );
+      }
+
+      return matchesStatus && matchesType && matchesAssignment && matchesSearch;
     });
     this.cdr.detectChanges();
   }
@@ -218,6 +278,81 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
   openNewRequestDialog(): void {
     // TODO: Implement new ticket dialog
     alert('New ticket dialog will be implemented. This will allow users to create new support tickets.');
+  }
+
+  onAssignmentChange(event: Event): void {
+    this.selectedAssignment = (event.target as HTMLSelectElement).value as AssignmentFilter;
+    this.applyFilters();
+  }
+
+  onSearchChange(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    this.applyFilters();
+  }
+
+  toggleAssignmentDropdown(ticketId: string, event: Event): void {
+    event.stopPropagation();
+    // Close all other dropdowns
+    Object.keys(this.assignmentDropdownOpen).forEach(id => {
+      if (id !== ticketId) {
+        this.assignmentDropdownOpen[id] = false;
+      }
+    });
+    // Toggle current dropdown
+    this.assignmentDropdownOpen[ticketId] = !this.assignmentDropdownOpen[ticketId];
+  }
+
+  assignToStaff(ticket: EnrichedServiceTicket, staffId: string, event: Event): void {
+    event.stopPropagation();
+    this.assignmentDropdownOpen[ticket.id] = false;
+    this.performAssignment(ticket, staffId);
+  }
+
+  assignToMe(ticket: EnrichedServiceTicket, event: Event): void {
+    event.stopPropagation();
+    if (this.user?.id) {
+      this.performAssignment(ticket, this.user.id);
+    }
+  }
+
+  unassignTicket(ticket: EnrichedServiceTicket, event: Event): void {
+    event.stopPropagation();
+    this.assignmentDropdownOpen[ticket.id] = false;
+    this.performAssignment(ticket, null);
+  }
+
+  private performAssignment(ticket: EnrichedServiceTicket, assignedTo: string | null): void {
+    if (this.assigningTicket[ticket.id]) return; // Prevent duplicate requests
+
+    const previousValue = ticket.assignedTo;
+
+    // Optimistic update
+    ticket.assignedTo = assignedTo || undefined;
+    this.applyFilters(); // Re-filter in case assignment filter is active
+    this.assigningTicket[ticket.id] = true;
+
+    this.serviceTicketService.updateAssignment(ticket.id, assignedTo)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.assigningTicket[ticket.id] = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error updating assignment:', err);
+          // Revert optimistic update
+          ticket.assignedTo = previousValue;
+          this.applyFilters();
+          this.assigningTicket[ticket.id] = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  getAssignedStaffName(assignedTo: string | undefined): string {
+    if (!assignedTo) return 'Unassigned';
+    const staff = this.supportStaff.find(s => s.id === assignedTo);
+    return staff ? staff.name : assignedTo;
   }
 
   viewRequestDetails(ticket: ServiceTicket): void {

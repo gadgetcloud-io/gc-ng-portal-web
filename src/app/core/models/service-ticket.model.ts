@@ -97,3 +97,38 @@ export interface TicketMessage {
 export interface AddMessageRequest {
   message: string;
 }
+
+// Support staff member (for ticket assignment)
+export interface SupportStaff {
+  id: string;
+  name: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+}
+
+// Customer info embedded in enriched ticket
+export interface TicketCustomer {
+  id: string;
+  name: string;
+  email: string;
+  mobile?: string;
+}
+
+// Device info embedded in enriched ticket
+export interface TicketDevice {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+}
+
+// Enriched ticket with customer and device data (for support/admin)
+export interface EnrichedServiceTicket extends ServiceTicket {
+  customer: TicketCustomer | null;
+  device: TicketDevice | null;
+}
+
+// Assignment filter options
+export type AssignmentFilter = 'all' | 'assigned-to-me' | 'unassigned';
