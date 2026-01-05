@@ -80,6 +80,7 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
     this.ticketId = this.route.snapshot.paramMap.get('id') || '';
     if (!this.ticketId) {
       this.error = 'No ticket ID provided';
+      this.cdr.markForCheck();
       this.cdr.detectChanges();
       return;
     }
@@ -102,7 +103,8 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
         this.fieldConfigs = results.configs;
         this.breadcrumbService.setLabel(`/service-requests/${this.ticketId}`, this.ticket.id);
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      this.cdr.detectChanges();
 
         // Start auto-refresh after successful load
         this.startAutoRefresh();
@@ -114,7 +116,8 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
         console.error('Error loading ticket details:', err);
         this.error = err.message || 'Failed to load ticket details';
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      this.cdr.detectChanges();
       }
     });
   }
@@ -129,7 +132,8 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
     const role = this.currentUser?.role;
     this.canEditFields = role === 'support' || role === 'admin';
     this.canSeeInternalNotes = role === 'support' || role === 'admin' || role === 'partner';
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+      this.cdr.detectChanges();
   }
 
   private startAutoRefresh(): void {
@@ -157,13 +161,15 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
         next: (messages) => {
           this.messages = messages;
           this.loadingMessages = false;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+      this.cdr.detectChanges();
           setTimeout(() => this.scrollToBottom(), 100);
         },
         error: (err) => {
           console.error('Error loading messages:', err);
           this.loadingMessages = false;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+      this.cdr.detectChanges();
         }
       });
   }
@@ -191,13 +197,15 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
     if (!this.ticket || !this.isFieldEditable(field)) return;
     this.editValues[field] = this.ticket[field as keyof ServiceTicket];
     this.editMode[field] = true;
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+      this.cdr.detectChanges();
   }
 
   cancelEdit(field: string): void {
     delete this.editMode[field];
     delete this.editValues[field];
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+      this.cdr.detectChanges();
   }
 
   saveField(field: string): void {
@@ -221,7 +229,8 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
 
     this.updateError = null;
     this.updateSuccess = null;
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+      this.cdr.detectChanges();
 
     // API call
     this.rbacService.updateField({
@@ -242,10 +251,12 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
 
         setTimeout(() => {
           this.updateSuccess = null;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+      this.cdr.detectChanges();
         }, 1500);
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      this.cdr.detectChanges();
       },
       error: (err) => {
         // Revert optimistic update
@@ -257,10 +268,12 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
 
         setTimeout(() => {
           this.updateError = null;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+      this.cdr.detectChanges();
         }, 5000);
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      this.cdr.detectChanges();
       }
     });
   }
@@ -292,7 +305,8 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
         next: () => {
           this.loadMessages();
           this.sendingMessage = false;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+      this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error sending message:', err);
@@ -302,9 +316,11 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
           this.sendingMessage = false;
           setTimeout(() => {
             this.updateError = null;
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
+      this.cdr.detectChanges();
           }, 3000);
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+      this.cdr.detectChanges();
         }
       });
   }

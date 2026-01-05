@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -13,8 +13,7 @@ import { ServiceTicket } from '../../core/models/service-ticket.model';
   standalone: true,
   imports: [CommonModule, ButtonComponent],
   templateUrl: './service-requests.html',
-  styleUrl: './service-requests.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './service-requests.scss'
 })
 export class ServiceRequestsComponent implements OnInit, OnDestroy {
   user: User | null = null;
