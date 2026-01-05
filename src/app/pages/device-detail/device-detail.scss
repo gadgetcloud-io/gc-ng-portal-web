@@ -154,7 +154,8 @@
   animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (max-width: 768px) {
-    padding: var(--space-4);
+    padding: var(--space-3);
+    position: relative;
   }
 }
 
@@ -182,6 +183,12 @@
   @media (max-width: 968px) {
     flex-wrap: wrap;
     gap: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    gap: var(--space-3);
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
   }
 }
 
@@ -219,6 +226,15 @@
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 24px rgba(0, 128, 192, 0.35);
   }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+
+    .back-icon {
+      font-size: 1.25rem;
+    }
+  }
 }
 
 .header-device-info {
@@ -231,6 +247,12 @@
   @media (max-width: 968px) {
     flex-wrap: wrap;
     width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    gap: var(--space-3);
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -250,12 +272,14 @@
     font-size: 3rem;
   }
 
-  @media (max-width: 640px) {
-    width: 64px;
-    height: 64px;
+  @media (max-width: 768px) {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border-width: 2px;
 
     .device-icon-large {
-      font-size: 2.5rem;
+      font-size: 2rem;
     }
   }
 }
@@ -263,6 +287,10 @@
 .device-title-group {
   flex: 1;
   min-width: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .device-name {
@@ -276,8 +304,9 @@
   margin: 0 0 var(--space-2);
   line-height: 1.2;
 
-  @media (max-width: 640px) {
-    font-size: 1.5rem;
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-1);
   }
 }
 
@@ -297,9 +326,9 @@
     opacity: 0.5;
   }
 
-  @media (max-width: 640px) {
-    font-size: 0.875rem;
-    flex-wrap: wrap;
+  @media (max-width: 768px) {
+    font-size: 0.8125rem;
+    gap: var(--space-1);
   }
 }
 
@@ -311,6 +340,11 @@
 
   @media (max-width: 968px) {
     flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    gap: var(--space-2);
+    width: 100%;
   }
 }
 
@@ -347,6 +381,12 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
+
+  @media (max-width: 768px) {
+    padding: var(--space-1) var(--space-3);
+    font-size: 0.75rem;
+    border-radius: 12px;
+  }
 }
 
 .price-pill {
@@ -364,12 +404,24 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 128, 192, 0.2);
   }
+
+  @media (max-width: 768px) {
+    padding: var(--space-1) var(--space-3);
+    font-size: 0.875rem;
+    border-radius: 12px;
+  }
 }
 
 .header-actions {
   display: flex;
   gap: var(--space-3);
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
 }
 
 .action-btn {
@@ -394,6 +446,15 @@
     border-color: #dc2626;
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+
+    .action-icon {
+      font-size: 1.125rem;
+    }
   }
 }
 
