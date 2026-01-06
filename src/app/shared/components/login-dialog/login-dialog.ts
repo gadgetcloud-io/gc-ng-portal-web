@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ModalComponent } from '../modal/modal';
 import { ButtonComponent } from '../button/button';
 import { AuthService } from '../../../core/services/auth.service';
@@ -30,7 +31,8 @@ export class LoginDialogComponent {
 
   constructor(
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   onClose(): void {
@@ -69,7 +71,8 @@ export class LoginDialogComponent {
   }
 
   onForgotPassword(): void {
-    alert('Password reset functionality will be implemented.');
+    this.close.emit();
+    this.router.navigate(['/forgot-password']);
   }
 
   private resetForm(): void {

@@ -318,6 +318,82 @@ export class AuthService {
   }
 
   /**
+   * Request password reset email
+   */
+  forgotPassword(email: string): Observable<{ success: boolean; message?: string; error?: string }> {
+    return this.apiService.post<{ message: string }>('/auth/forgot-password', {
+      email
+    }).pipe(
+      map(response => {
+        console.log('Password reset email requested');
+        return {
+          success: true,
+          message: response.message || 'If an account with that email exists, you will receive password reset instructions.'
+        };
+      }),
+      catchError(error => {
+        console.error('Forgot password error:', error);
+        // Even on error, return generic success message (security best practice)
+        return of({
+          success: true,
+          message: 'If an account with that email exists, you will receive password reset instructions.'
+        });
+      })
+    );
+  }
+
+  /**
+   * Validate password reset token
+   */
+  validateResetToken(token: string): Observable<{ valid: boolean; email?: string; error?: string }> {
+    return this.apiService.post<{ valid: boolean; email: string }>('/auth/validate-reset-token', {
+      token
+    }).pipe(
+      map(response => {
+        console.log('Reset token validated successfully');
+        return {
+          valid: true,
+          email: response.email
+        };
+      }),
+      catchError(error => {
+        console.error('Token validation error:', error);
+        const errorMessage = error.error?.detail || error.message || 'Invalid or expired reset token';
+        return of({
+          valid: false,
+          error: errorMessage
+        });
+      })
+    );
+  }
+
+  /**
+   * Reset password with token
+   */
+  resetPassword(token: string, newPassword: string): Observable<{ success: boolean; message?: string; error?: string }> {
+    return this.apiService.post<{ message: string }>('/auth/reset-password', {
+      token,
+      new_password: newPassword
+    }).pipe(
+      map(response => {
+        console.log('Password reset successful');
+        return {
+          success: true,
+          message: response.message || 'Password reset successfully'
+        };
+      }),
+      catchError(error => {
+        console.error('Reset password error:', error);
+        const errorMessage = error.error?.detail || error.message || 'Failed to reset password';
+        return of({
+          success: false,
+          error: errorMessage
+        });
+      })
+    );
+  }
+
+  /**
    * Redirect after successful login
    * Uses stored redirect URL or defaults to dashboard
    */
