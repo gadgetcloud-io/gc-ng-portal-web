@@ -1,0 +1,87 @@
+<gc-modal [isOpen]="isOpen" [title]="'⚡ Quick Add Gadget'" [maxWidth]="'md'" (close)="onClose()">
+  <!-- Info Banner -->
+  <div class="quick-add-info">
+    <span class="info-icon">💡</span>
+    <p>Just enter the essentials - we'll fill in smart defaults. You can add more details later!</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Quick Add Form -->
+  <form [formGroup]="quickForm" (ngSubmit)="onSubmit()" class="quick-form">
+    <!-- Device Name -->
+    <div class="form-group">
+      <label for="name" class="required">Device Name</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="e.g., iPhone 15 Pro, MacBook Air, Samsung TV"
+        class="form-control"
+        [class.invalid]="quickForm.get('name')?.invalid && quickForm.get('name')?.touched"
+      />
+      <div *ngIf="quickForm.get('name')?.invalid && quickForm.get('name')?.touched" class="field-error">
+        <span *ngIf="quickForm.get('name')?.errors?.['required']">Device name is required</span>
+        <span *ngIf="quickForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</span>
+      </div>
+      <div class="field-hint">Give your device a memorable name</div>
+    </div>
+
+    <!-- Category -->
+    <div class="form-group">
+      <label for="category" class="required">Category</label>
+      <select
+        id="category"
+        formControlName="category"
+        class="form-control"
+        [class.invalid]="quickForm.get('category')?.invalid && quickForm.get('category')?.touched"
+      >
+        <option value="">Select category...</option>
+        <option *ngFor="let cat of categories" [value]="cat.value">
+          {{ cat.emoji }} {{ cat.label }}
+        </option>
+      </select>
+      <div *ngIf="quickForm.get('category')?.invalid && quickForm.get('category')?.touched" class="field-error">
+        Category is required
+      </div>
+      <div class="field-hint">What type of device is this?</div>
+    </div>
+
+    <!-- Smart Defaults Preview -->
+    <div class="defaults-preview">
+      <h4>Smart Defaults Applied:</h4>
+      <ul>
+        <li>📅 <strong>Purchase Date:</strong> Today</li>
+        <li>🛡️ <strong>Warranty:</strong> 1 year from today</li>
+        <li>✅ <strong>Status:</strong> Active</li>
+        <li>🏭 <strong>Manufacturer:</strong> Unknown (edit later)</li>
+      </ul>
+      <p class="edit-hint">💡 You can edit all details from the device detail page after creation</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <gc-button
+        type="button"
+        variant="ghost"
+        size="md"
+        (onClick)="onClose()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </gc-button>
+      <gc-button
+        type="submit"
+        variant="primary"
+        size="md"
+        [disabled]="quickForm.invalid || isSubmitting"
+      >
+        <span *ngIf="!isSubmitting">⚡ Quick Add</span>
+        <span *ngIf="isSubmitting">Adding...</span>
+      </gc-button>
+    </div>
+  </form>
+</gc-modal>

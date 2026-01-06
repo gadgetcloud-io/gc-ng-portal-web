@@ -10,6 +10,9 @@
         <gc-button variant="secondary" size="md" (click)="openBulkImportDialog()">
           📤 Bulk Import
         </gc-button>
+        <gc-button variant="secondary" size="md" (click)="openQuickAddDialog()">
+          ⚡ Quick Add
+        </gc-button>
         <gc-button variant="primary" size="md" (click)="openAddDialog()">
           ➕ Add Gadget
         </gc-button>
@@ -214,6 +217,12 @@
   (close)="closeAddDialog()"
   (deviceAdded)="onDeviceAdded()"
 ></gc-add-device-dialog>
+
+<gc-quick-add-device-dialog
+  [isOpen]="isQuickAddDialogOpen"
+  (close)="closeQuickAddDialog()"
+  (deviceAdded)="onQuickDeviceAdded()"
+></gc-quick-add-device-dialog>
 
 <gc-delete-device-dialog
   [isOpen]="isDeleteDialogOpen"

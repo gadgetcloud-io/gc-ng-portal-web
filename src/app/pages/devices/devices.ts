@@ -6,6 +6,7 @@ import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { AddDeviceDialogComponent } from '../../shared/components/device-dialogs/add-device-dialog';
+import { QuickAddDeviceDialogComponent } from '../../shared/components/device-dialogs/quick-add-device-dialog';
 import { DeleteDeviceDialogComponent } from '../../shared/components/device-dialogs/delete-device-dialog';
 import { UploadDocumentDialogComponent } from '../../shared/components/document-dialogs/upload-document-dialog';
 import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
@@ -23,6 +24,7 @@ import { BulkImportResult } from '../../core/services/bulk-import.service';
     CommonModule,
     ButtonComponent,
     AddDeviceDialogComponent,
+    QuickAddDeviceDialogComponent,
     DeleteDeviceDialogComponent,
     UploadDocumentDialogComponent,
     ViewDocumentsDialogComponent,
@@ -45,6 +47,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   // Dialog states
   isAddDialogOpen = false;
+  isQuickAddDialogOpen = false;
   isDeleteDialogOpen = false;
   selectedDevice: Device | null = null;
 
@@ -299,6 +302,10 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.isAddDialogOpen = true;
   }
 
+  openQuickAddDialog(): void {
+    this.isQuickAddDialogOpen = true;
+  }
+
   openDeleteDialog(device: Device): void {
     this.selectedDevice = device;
     this.isDeleteDialogOpen = true;
@@ -308,6 +315,10 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.isAddDialogOpen = false;
   }
 
+  closeQuickAddDialog(): void {
+    this.isQuickAddDialogOpen = false;
+  }
+
   closeDeleteDialog(): void {
     this.isDeleteDialogOpen = false;
     this.selectedDevice = null;
@@ -315,6 +326,11 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   onDeviceAdded(): void {
     console.log('Device added successfully');
+    this.cdr.detectChanges();
+  }
+
+  onQuickDeviceAdded(): void {
+    console.log('Device added via quick add successfully');
     this.cdr.detectChanges();
   }
 
