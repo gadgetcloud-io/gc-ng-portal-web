@@ -1,0 +1,126 @@
+/**
+ * Alert Component - GadgetCloud Design System
+ * Feedback messages and notifications
+ */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+  animation: slideDown var(--transition-base) ease-out;
+
+  // Success variant
+  &.alert-success {
+    background: var(--color-success-bg);
+    border-color: var(--color-success-border);
+    color: var(--color-success-dark);
+
+    .alert-icon {
+      color: var(--color-success);
+    }
+  }
+
+  // Warning variant
+  &.alert-warning {
+    background: var(--color-warning-bg);
+    border-color: var(--color-warning-border);
+    color: var(--color-warning-dark);
+
+    .alert-icon {
+      color: var(--color-warning);
+    }
+  }
+
+  // Error variant
+  &.alert-error {
+    background: var(--color-error-bg);
+    border-color: var(--color-error-border);
+    color: var(--color-error-dark);
+
+    .alert-icon {
+      color: var(--color-error);
+    }
+  }
+
+  // Info variant
+  &.alert-info {
+    background: var(--color-info-bg);
+    border-color: var(--color-info-border);
+    color: var(--color-info-dark);
+
+    .alert-icon {
+      color: var(--color-info);
+    }
+  }
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  line-height: 1;
+}
+
+.alert-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-1);
+  color: inherit;
+}
+
+.alert-message {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: inherit;
+  opacity: 0.9;
+}
+
+.alert-close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--text-lg);
+  color: currentColor;
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    opacity: 1;
+    background: var(--neutral-bg-medium);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

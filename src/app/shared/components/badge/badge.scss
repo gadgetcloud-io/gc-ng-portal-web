@@ -1,0 +1,115 @@
+/**
+ * Badge Component - GadgetCloud Design System
+ * Small status indicators and labels
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+
+  // Size variants
+  &.badge-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: var(--text-xs);
+  }
+
+  &.badge-md {
+    padding: 0.375rem 0.75rem;
+    font-size: var(--text-sm);
+  }
+
+  &.badge-lg {
+    padding: 0.5rem 1rem;
+    font-size: var(--text-base);
+  }
+
+  // Rounded variant
+  &.badge-rounded {
+    border-radius: var(--radius-full);
+  }
+
+  // Color variants - Filled
+  &.badge-default:not(.badge-outlined) {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+  }
+
+  &.badge-primary:not(.badge-outlined) {
+    background: var(--brand-primary-700);
+    color: white;
+  }
+
+  &.badge-secondary:not(.badge-outlined) {
+    background: var(--brand-secondary-700);
+    color: white;
+  }
+
+  &.badge-success:not(.badge-outlined) {
+    background: var(--color-success);
+    color: white;
+  }
+
+  &.badge-warning:not(.badge-outlined) {
+    background: var(--color-warning);
+    color: var(--neutral-900);
+  }
+
+  &.badge-error:not(.badge-outlined) {
+    background: var(--color-error);
+    color: white;
+  }
+
+  &.badge-info:not(.badge-outlined) {
+    background: var(--color-info);
+    color: white;
+  }
+
+  // Outlined variants
+  &.badge-default.badge-outlined {
+    background: transparent;
+    border: 1.5px solid var(--neutral-300);
+    color: var(--neutral-700);
+  }
+
+  &.badge-primary.badge-outlined {
+    background: var(--brand-primary-bg-light);
+    border: 1.5px solid var(--brand-primary-700);
+    color: var(--brand-primary-700);
+  }
+
+  &.badge-secondary.badge-outlined {
+    background: var(--brand-secondary-bg-light);
+    border: 1.5px solid var(--brand-secondary-700);
+    color: var(--brand-secondary-700);
+  }
+
+  &.badge-success.badge-outlined {
+    background: var(--color-success-bg);
+    border: 1.5px solid var(--color-success);
+    color: var(--color-success-dark);
+  }
+
+  &.badge-warning.badge-outlined {
+    background: var(--color-warning-bg);
+    border: 1.5px solid var(--color-warning);
+    color: var(--color-warning-dark);
+  }
+
+  &.badge-error.badge-outlined {
+    background: var(--color-error-bg);
+    border: 1.5px solid var(--color-error);
+    color: var(--color-error-dark);
+  }
+
+  &.badge-info.badge-outlined {
+    background: var(--color-info-bg);
+    border: 1.5px solid var(--color-info);
+    color: var(--color-info-dark);
+  }
+}

@@ -1,0 +1,6 @@
+<div [class]="containerClasses">
+  <div [class]="spinnerClasses" role="status" aria-label="Loading">
+    <div class="spinner-circle"></div>
+  </div>
+  <span *ngIf="label" class="spinner-label">{{ label }}</span>
+</div>
