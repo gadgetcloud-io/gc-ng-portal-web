@@ -33,30 +33,73 @@ ng generate component shared/components/new-component
 
 ## Deployment
 
+The frontend is hosted on **AWS S3 + CloudFront** for both staging and production environments.
+
 ### Staging
 ```bash
-# Build for staging (uses environment.stg.ts)
+# Deploy to staging (builds + uploads to S3 + invalidates CloudFront)
+npm run deploy:stg
+```
+
+**What it does:**
+1. Builds Angular app with staging configuration (uses `environment.stg.ts`)
+2. Syncs files to S3 bucket: `www-stg.gadgetcloud.io`
+3. Sets cache headers:
+   - HTML: `no-cache, no-store, must-revalidate`
+   - JS/CSS: `public, max-age=300, immutable` (5 minutes)
+   - Other files: `public, max-age=300` (5 minutes)
+4. Creates CloudFront invalidation for `/*`
+5. Waits for invalidation to complete
+
+**Manual deployment (if needed):**
+```bash
+# Step-by-step
 npm run build -- --configuration=staging
-
-# Deploy to Firebase Hosting (target: web)
-firebase deploy --only hosting:web --project gadgetcloud-stg
-
-# Or deploy to both targets
-firebase deploy --only hosting --project gadgetcloud-stg
+./deploy-to-s3.sh stg
 ```
 
 ### Production
 ```bash
-# Build for production (uses environment.prd.ts)
-npm run build -- --configuration=production
-
-# Deploy to Firebase Hosting (target: www)
-firebase deploy --only hosting:www --project gadgetcloud-prd
+# Deploy to production (builds + uploads to S3 + invalidates CloudFront)
+npm run deploy:prd
 ```
 
-### Firebase Targets
-- **Staging**: `web` target → gadgetcloud-stg.web.app
-- **Production**: `www` target → gadgetcloud-web-prd.web.app (maps to www.gadgetcloud.io)
+**What it does:**
+1. Builds Angular app with production configuration (uses `environment.prd.ts`)
+2. Syncs files to S3 bucket: `www.gadgetcloud.io`
+3. Sets cache headers (same as staging)
+4. Creates CloudFront invalidation
+5. Waits for invalidation to complete
+
+**Manual deployment (if needed):**
+```bash
+# Step-by-step
+npm run build -- --configuration=production
+./deploy-to-s3.sh prd
+```
+
+### Deployment Details
+
+**S3 Buckets:**
+- **Staging**: `www-stg.gadgetcloud.io` → https://www-stg.gadgetcloud.io
+- **Production**: `www.gadgetcloud.io` → https://www.gadgetcloud.io
+- **Apex Redirect**: `gadgetcloud.io` → https://gadgetcloud.io → redirects to https://www.gadgetcloud.io
+
+**CloudFront Distributions:**
+- Minimal caching enabled (5-minute TTL) for easier debugging
+- Custom error responses: 404/403 → 200 /index.html (SPA routing support)
+- SSL certificates: AWS ACM (us-east-1 region)
+- Price class: PriceClass_100 (North America + Europe)
+
+**Cache Invalidation:**
+- Automatically triggered after each deployment
+- Invalidates all paths (`/*`)
+- Takes ~30-60 seconds to complete
+- Script waits for completion before reporting success
+
+**Prerequisites:**
+- AWS CLI installed and configured with `gc` profile
+- CloudFront distribution IDs set in `deploy-to-s3.sh` (updated by Terraform outputs)
 
 ## Architecture
 
@@ -217,32 +260,200 @@ Always use CSS variables from `_design-tokens.scss`:
 - Spacing (use `--space-*` variables)
 - Font sizes (use existing typography scale)
 
-### Button Component
+### Design System Components
 
+All pages use a comprehensive set of reusable design system components. **Always prefer these components over custom HTML/CSS.**
+
+#### Button Component
 Located: `src/app/shared/components/button/`
 
-**4 Variants**:
-1. **Primary**: Ocean blue gradient with hover lift
-2. **Secondary**: White with neutral border
-3. **Ghost**: Transparent with neutral text
-4. **Danger**: Red gradient for destructive actions
+**4 Variants**: primary, secondary, ghost, danger
+**3 Sizes**: sm, md, lg
+**Props**: variant, size, disabled, fullWidth
 
-**3 Sizes**: `sm`, `md`, `lg`
-
-**Usage**:
 ```html
-<app-button variant="primary" size="lg" (click)="handleClick()">
+<gc-button variant="primary" size="lg" (click)="handleClick()">
   Get Started
-</app-button>
-
-<app-button variant="secondary" size="md">
-  Learn More
-</app-button>
-
-<app-button variant="ghost" size="sm" [fullWidth]="true">
-  Cancel
-</app-button>
+</gc-button>
+<gc-button variant="secondary" [fullWidth]="true">Learn More</gc-button>
+<gc-button variant="danger" size="sm">Delete</gc-button>
 ```
+
+#### Card Component
+Located: `src/app/shared/components/card/`
+
+**4 Variants**: default, elevated, bordered, flat
+**Padding**: none, sm, md, lg
+**Props**: variant, padding, hoverable, clickable
+
+```html
+<gc-card variant="elevated" padding="md" [hoverable]="true">
+  <h3>Card Title</h3>
+  <p>Card content goes here</p>
+</gc-card>
+```
+
+**Usage Pattern**: Wrap all card-like containers with `<gc-card>` instead of custom divs.
+
+#### Badge Component
+Located: `src/app/shared/components/badge/`
+
+**7 Variants**: default, primary, secondary, success, warning, error, info
+**3 Sizes**: sm, md, lg
+**Props**: variant, size, rounded, outlined
+
+```html
+<gc-badge variant="success" size="sm">Active</gc-badge>
+<gc-badge variant="warning" size="md">Expiring Soon</gc-badge>
+<gc-badge variant="error" [outlined]="true">Expired</gc-badge>
+```
+
+**Conditional Variants** (for device status):
+```html
+<gc-badge
+  [variant]="device.status === 'active' ? 'success' : device.status === 'expiring-soon' ? 'warning' : 'error'"
+  size="sm"
+>
+  {{ statusLabel }}
+</gc-badge>
+```
+
+#### Alert Component
+Located: `src/app/shared/components/alert/`
+
+**4 Variants**: success, warning, error, info
+**Props**: variant, title, dismissible
+**Events**: (onDismiss)
+
+```html
+<gc-alert variant="success" title="Success!" [dismissible]="true" (onDismiss)="handleDismiss()">
+  Your changes have been saved successfully.
+</gc-alert>
+
+<gc-alert variant="error" [dismissible]="false">
+  {{ errorMessage }}
+</gc-alert>
+```
+
+**Usage Pattern**: Replace custom success/error popovers with `<gc-alert>`.
+
+#### Loading Spinner Component
+Located: `src/app/shared/components/loading-spinner/`
+
+**3 Variants**: primary, secondary, white
+**4 Sizes**: sm, md, lg, xl
+**Props**: variant, size, label, centered
+
+```html
+<gc-loading-spinner
+  variant="primary"
+  size="lg"
+  label="Loading gadgets..."
+  [centered]="true"
+></gc-loading-spinner>
+```
+
+**Usage Pattern**: Replace custom loading spinners with `<gc-loading-spinner>`.
+
+#### Empty State Component
+Located: `src/app/shared/components/empty-state/`
+
+**4 Variants**: no-data, no-results, error, success
+**3 Sizes**: sm, md, lg
+**Props**: variant, icon, title, description, actionText, actionIcon, size
+**Events**: (onAction)
+
+```html
+<gc-empty-state
+  variant="no-data"
+  icon="📱"
+  title="No gadgets yet"
+  description="Start adding gadgets to keep track of warranties"
+  actionText="➕ Add Your First Gadget"
+  (onAction)="openAddDialog()"
+  size="lg"
+></gc-empty-state>
+```
+
+**Usage Pattern**: Replace custom empty states and error messages with `<gc-empty-state>`.
+
+#### Skeleton Component
+Located: `src/app/shared/components/skeleton/`
+
+**4 Variants**: circle, text, rect, rounded
+**Props**: variant, width, height
+
+```html
+<gc-skeleton variant="circle" width="60px" height="60px"></gc-skeleton>
+<gc-skeleton variant="text" width="80%"></gc-skeleton>
+<gc-skeleton variant="rect" width="100%" height="150px"></gc-skeleton>
+```
+
+**Usage Pattern**: Use for loading placeholders in lists and cards.
+
+#### Input Component
+Located: `src/app/shared/components/input/`
+
+**Props**: type, label, placeholder, prefixIcon, suffixIcon, required, disabled, state, helperText, errorText
+**States**: default, success, error
+
+```html
+<gc-input
+  type="email"
+  label="Email Address"
+  placeholder="you@example.com"
+  prefixIcon="✉"
+  [required]="true"
+  helperText="We'll never share your email"
+  [(ngModel)]="emailInput"
+></gc-input>
+```
+
+#### Checkbox Component
+Located: `src/app/shared/components/checkbox/`
+
+**Props**: label, disabled, indeterminate, size (sm, md, lg)
+
+```html
+<gc-checkbox label="Accept terms" [(ngModel)]="accepted"></gc-checkbox>
+<gc-checkbox label="Select all" [indeterminate]="isSomeSelected()"></gc-checkbox>
+```
+
+#### Tooltip Component
+Located: `src/app/shared/components/tooltip/`
+
+**4 Positions**: top, right, bottom, left
+**Props**: text, position
+
+```html
+<gc-tooltip text="Click to edit" position="top">
+  <button>Edit</button>
+</gc-tooltip>
+```
+
+#### Dropdown Component
+Located: `src/app/shared/components/dropdown/`
+
+**Props**: items, triggerText, position
+**Events**: (onSelect)
+
+```html
+<gc-dropdown
+  [items]="dropdownItems"
+  triggerText="Actions"
+  position="bottom-left"
+  (onSelect)="handleSelect($event)"
+></gc-dropdown>
+```
+
+### Integration Status
+
+✅ **Dashboard** - All components integrated (cards, badges, skeleton, empty states)
+✅ **Devices (My Gadgets)** - All components integrated (cards, badges, loading, empty states)
+✅ **Profile** - All components integrated (cards, badges, alerts)
+✅ **Device Detail** - All components integrated (cards, badges, alerts, loading, empty states)
+
+**Pattern**: All new pages and features should use design system components exclusively.
 
 ## API Integration
 
@@ -471,18 +682,27 @@ getUserDevices(): Observable<Device[]> {
 ### Deployment Flow
 1. Make changes in local branch
 2. Test locally (`npm test` + manual testing)
-3. Build for staging (`npm run build -- --configuration=staging`)
-4. Deploy to staging (`firebase deploy --only hosting:web --project gadgetcloud-stg`)
-5. Test staging site thoroughly
-6. Build for production (`npm run build -- --configuration=production`)
-7. Deploy to production (`firebase deploy --only hosting:www --project gadgetcloud-prd`)
+3. Deploy to staging (`npm run deploy:stg`)
+   - Builds Angular app with staging configuration
+   - Syncs to S3 (www-stg.gadgetcloud.io)
+   - Invalidates CloudFront cache
+4. Test staging site thoroughly: https://www-stg.gadgetcloud.io
+5. Deploy to production (`npm run deploy:prd`)
+   - Builds Angular app with production configuration
+   - Syncs to S3 (www.gadgetcloud.io)
+   - Invalidates CloudFront cache
+6. Verify production:
+   - https://www.gadgetcloud.io
+   - https://gadgetcloud.io (should redirect to www)
 
 ## Gotchas
 
 - **Testing framework**: Vitest, not Karma/Jasmine
 - **Environment files**: Build replaces `environment.ts` - never import `.stg.ts` or `.prd.ts` directly
 - **Design tokens**: Always use CSS variables, never hardcode colors/spacing
-- **Firebase targets**: Staging uses `web`, production uses `www`
+- **S3+CloudFront deployment**: Use `npm run deploy:stg` or `npm run deploy:prd` (not direct S3 sync)
+- **CloudFront caching**: 5-minute TTL for debugging - invalidation required after deployment
+- **Distribution IDs**: Must be updated in `deploy-to-s3.sh` after Terraform apply (see TODO comments)
 - **API URLs**: Different for local/staging/production - managed by environment files
 - **Component architecture**: Standalone only (no NgModules)
 - **Lazy loading**: All pages must be lazy-loaded for optimal performance

@@ -1,59 +1,153 @@
-# GcNgWwwWeb
+# GadgetCloud Marketing Website
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+Angular 21 marketing website and customer portal for GadgetCloud - a modern platform for managing gadgets, warranties, and service requests.
 
-## Development server
+**🌐 Live Sites:**
+- **Production**: https://www.gadgetcloud.io
+- **Staging**: https://www-stg.gadgetcloud.io
 
-To start a local development server, run:
+**Tech Stack**: Angular 21 • TypeScript 5.9 • Vitest • SCSS • AWS S3 + CloudFront
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Quick Start
 
-## Code scaffolding
+### Development Server
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Start the local development server:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+The application will run at `http://localhost:4200/` and automatically reload on file changes.
 
-To build the project run:
+### Testing
+
+Run unit tests with Vitest:
 
 ```bash
-ng build
+npm test              # Watch mode
+npm test -- --run     # Single run
+npm test -- --coverage # With coverage report
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Building
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Build for different environments:
 
 ```bash
-ng test
+npm run build                                    # Development
+npm run build -- --configuration=staging         # Staging
+npm run build -- --configuration=production      # Production
 ```
 
-## Running end-to-end tests
+Artifacts are stored in `dist/gc-ng-www-web/browser/`.
 
-For end-to-end (e2e) testing, run:
+### Deployment
+
+Deploy to AWS S3 + CloudFront:
 
 ```bash
-ng e2e
+npm run deploy:stg    # Deploy to staging
+npm run deploy:prd    # Deploy to production
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+**What happens:**
+1. Builds Angular app with environment-specific configuration
+2. Syncs files to S3 bucket
+3. Sets appropriate cache headers
+4. Invalidates CloudFront cache
+5. Waits for cache invalidation to complete
+
+---
+
+## Design System
+
+### Components
+
+The app uses a comprehensive design system with reusable components:
+
+**Core Components:**
+- `<gc-button>` - 4 variants (primary, secondary, ghost, danger), 3 sizes
+- `<gc-card>` - 4 variants (default, elevated, bordered, flat), hoverable/clickable
+- `<gc-badge>` - 7 variants (default, primary, secondary, success, warning, error, info)
+- `<gc-alert>` - 4 variants (success, warning, error, info), dismissible
+- `<gc-loading-spinner>` - 4 sizes with customizable labels
+- `<gc-empty-state>` - 4 variants (no-data, no-results, error, success)
+- `<gc-input>` - Form inputs with prefix/suffix icons, validation states
+- `<gc-checkbox>` - Checkbox with indeterminate state
+- `<gc-tooltip>` - 4 positions (top, right, bottom, left)
+- `<gc-dropdown>` - Dropdown menu with custom triggers
+- `<gc-skeleton>` - Loading placeholders (circle, text, rect, rounded)
+
+**Usage Example:**
+```html
+<gc-card variant="elevated" padding="md" [hoverable]="true">
+  <gc-badge variant="success" size="sm">Active</gc-badge>
+  <gc-loading-spinner variant="primary" size="lg"></gc-loading-spinner>
+  <gc-empty-state variant="no-data" icon="📱"></gc-empty-state>
+</gc-card>
+```
+
+### Design Tokens
+
+All styling uses CSS variables from `src/styles/_design-tokens.scss`:
+
+**Colors:** Ocean Blue (#0080C0), Soft Blue (#67D4F6), Purple (#A78BFA)
+**Spacing:** 8px-based scale (`--space-1` through `--space-20`)
+**Typography:** Inter font with display/body variants
+**Shadows:** 6 levels (xs to 2xl)
+
+See `CLAUDE.md` for complete design system documentation.
+
+---
+
+## Project Structure
+
+```
+src/app/
+├── pages/              # Lazy-loaded page components
+│   ├── home/           # Public marketing homepage
+│   ├── dashboard/      # Protected user dashboard
+│   ├── devices/        # Protected device management (My Gadgets)
+│   ├── device-detail/  # Protected device detail view
+│   ├── profile/        # Protected user profile
+│   └── design-system/  # Design system showcase
+├── shared/
+│   └── components/     # Reusable design system components
+├── core/
+│   ├── services/       # Business logic & API integration
+│   ├── guards/         # Route protection
+│   └── interceptors/   # HTTP interceptors
+└── styles/
+    ├── _design-tokens.scss  # Design system variables
+    ├── _base.scss           # Global styles & utilities
+    └── _dialog-forms.scss   # Modal styling
+```
+
+---
+
+## Code Scaffolding
+
+Generate new components:
+
+```bash
+# Page component (lazy-loaded)
+ng generate component pages/my-page
+
+# Shared component
+ng generate component shared/components/my-component
+```
+
+All components use **standalone architecture** (no NgModules).
+
+---
 
 ## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **CLAUDE.md** - Detailed development guide for Claude Code
+- **PROJECT_STATUS.md** - Implementation status and roadmap
+- **API_INTEGRATION.md** - Backend API integration guide
+- [Angular CLI Documentation](https://angular.dev/tools/cli)
+- [Vitest Documentation](https://vitest.dev/)
