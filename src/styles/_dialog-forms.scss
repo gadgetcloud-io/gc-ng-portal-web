@@ -59,17 +59,17 @@
       &:focus {
         outline: none;
         background: white;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: var(--brand-primary-700);
+        box-shadow: 0 0 0 3px var(--state-focus-ring-info);
       }
 
       &::placeholder {
-        color: #9ca3af;
+        color: var(--neutral-500);
       }
 
       &.invalid {
-        border-color: #ef4444;
-        background: rgba(239, 68, 68, 0.05);
+        border-color: var(--color-error);
+        background: var(--color-error-bg);
       }
 
       &:disabled {

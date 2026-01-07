@@ -7,17 +7,17 @@
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--white-overlay-strong);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--neutral-border-light);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0);
+  box-shadow: 0 1px 0 transparent;
 
   // Scrolled state - add shadow
   &.scrolled {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-bottom-color: rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-md);
+    border-bottom-color: var(--neutral-border-medium);
   }
 }
 
@@ -239,7 +239,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--surface-overlay);
   z-index: calc(var(--z-sticky) + 1);
   opacity: 0;
   pointer-events: none;
@@ -276,7 +276,7 @@
   &.nav-menu-left {
     left: 0;
     transform: translateX(-100%);
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 0 24px var(--neutral-shadow-lg);
 
     &.open {
       transform: translateX(0);
@@ -287,7 +287,7 @@
   &.nav-menu-right {
     right: 0;
     transform: translateX(100%);
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+    box-shadow: -4px 0 24px var(--neutral-shadow-lg);
 
     &.open {
       transform: translateX(0);
@@ -460,9 +460,9 @@
     right: 0;
     min-width: 220px;
     background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--neutral-border-medium);
     border-radius: var(--radius-lg);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-xl);
     padding: var(--space-2);
     z-index: var(--z-dropdown);
     animation: slideDown 0.2s ease;
@@ -520,7 +520,7 @@
 
     .dropdown-divider {
       height: 1px;
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--neutral-border-medium);
       margin: var(--space-2) 0;
     }
   }

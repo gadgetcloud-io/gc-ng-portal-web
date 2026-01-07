@@ -10,10 +10,10 @@
 
 .success-message {
   padding: var(--space-3) var(--space-4);
-  background: rgba(34, 197, 94, 0.1);
-  border: 2px solid rgba(34, 197, 94, 0.3);
+  background: var(--color-success-bg);
+  border: 2px solid var(--color-success-border);
   border-radius: var(--radius-lg);
-  color: rgb(21, 128, 61);
+  color: var(--color-success-dark);
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
   text-align: center;
@@ -81,7 +81,7 @@
   &:focus {
     outline: none;
     border-color: var(--brand-cyan-700);
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring-info);
   }
 
   &::placeholder {

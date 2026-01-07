@@ -4,15 +4,15 @@
   gap: 1rem;
   padding: 1.5rem;
   background: white;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--neutral-border-light);
   border-radius: 16px; // Lemonade-style rounded corners
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 
   &:hover {
-    border-color: rgba(0, 128, 192, 0.3); // Teal accent
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); // Lemonade-style shadow
+    border-color: var(--brand-primary-border-medium);
+    box-shadow: var(--shadow-xl);
     transform: translateY(-4px); // Bigger lift on hover
 
     .device-actions {
@@ -138,20 +138,20 @@
     transition: all 0.2s;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--neutral-bg-medium);
       transform: scale(1.1);
     }
 
     &.docs-button:hover {
-      background: rgba(59, 130, 246, 0.1);
+      background: var(--color-info-bg);
     }
 
     &.edit-button:hover {
-      background: rgba(59, 130, 246, 0.1);
+      background: var(--color-info-bg);
     }
 
     &.delete-button:hover {
-      background: rgba(239, 68, 68, 0.1);
+      background: var(--color-error-bg);
     }
   }
 }

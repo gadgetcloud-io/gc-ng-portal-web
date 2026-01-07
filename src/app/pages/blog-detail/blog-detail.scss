@@ -12,8 +12,8 @@
     right: 0;
     height: 600px;
     background-image:
-      linear-gradient(0deg, rgba(0, 128, 192, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 128, 192, 0.03) 1px, transparent 1px);
+      linear-gradient(0deg, var(--brand-primary-bg-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--brand-primary-bg-subtle) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     opacity: 0.6;
@@ -95,7 +95,7 @@
     letter-spacing: 1.2px;
     margin-bottom: var(--space-8);
     border: 1px solid var(--brand-cyan-300);
-    box-shadow: 0 2px 8px rgba(0, 180, 166, 0.15);
+    box-shadow: 0 2px 8px var(--brand-secondary-shadow-sm);
     transition: all var(--transition-base);
 
     &::before {
@@ -106,7 +106,7 @@
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 180, 166, 0.25);
+      box-shadow: 0 4px 12px var(--brand-secondary-shadow-md);
     }
   }
 
@@ -246,18 +246,18 @@
     object-fit: cover;
     border-radius: var(--radius-lg);
     box-shadow:
-      0 4px 6px rgba(0, 0, 0, 0.05),
-      0 10px 20px rgba(0, 128, 192, 0.08),
-      0 0 0 1px rgba(0, 128, 192, 0.1);
+      0 4px 6px var(--neutral-shadow-sm),
+      0 10px 20px var(--brand-primary-bg-medium),
+      0 0 0 1px var(--brand-primary-bg-medium);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 
     &:hover {
       transform: translateY(-4px);
       box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.08),
-        0 16px 32px rgba(0, 128, 192, 0.12),
-        0 0 0 1px rgba(0, 128, 192, 0.2);
+        0 8px 16px var(--neutral-shadow-md),
+        0 16px 32px var(--brand-primary-bg-medium),
+        0 0 0 1px var(--brand-primary-border-light);
     }
 
     @media (max-width: 640px) {
@@ -311,7 +311,7 @@
         left: 0;
         width: 60px;
         height: 3px;
-        background: linear-gradient(90deg, var(--brand-cyan-700) 0%, transparent 100%);
+        background: linear-gradient(90deg, var(--brand-secondary-700) 0%, transparent 100%);
       }
 
       &:first-child {
@@ -419,17 +419,17 @@
       margin-bottom: var(--space-8);
       display: block;
       box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.05),
-        0 10px 20px rgba(0, 128, 192, 0.08),
-        0 0 0 1px rgba(0, 128, 192, 0.1);
+        0 4px 6px var(--neutral-shadow-sm),
+        0 10px 20px var(--brand-primary-bg-medium),
+        0 0 0 1px var(--brand-primary-bg-medium);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
       &:hover {
         transform: translateY(-4px);
         box-shadow:
-          0 8px 16px rgba(0, 0, 0, 0.08),
-          0 16px 32px rgba(0, 128, 192, 0.12),
-          0 0 0 1px rgba(0, 128, 192, 0.2);
+          0 8px 16px var(--neutral-shadow-md),
+          0 16px 32px var(--brand-primary-bg-medium),
+          0 0 0 1px var(--brand-primary-border-light);
       }
 
       @media (max-width: 768px) {
@@ -471,10 +471,10 @@
       border-radius: var(--radius-lg);
       overflow-x: auto;
       margin: var(--space-10) 0;
-      border: 1px solid rgba(0, 180, 166, 0.2);
+      border: 1px solid var(--brand-secondary-border-light);
       box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        0 4px 6px var(--neutral-shadow-lg),
+        inset 0 1px 0 var(--white-overlay-light);
       position: relative;
 
       &::before {
@@ -511,7 +511,7 @@
       &:hover {
         color: var(--brand-cyan-800);
         border-bottom-color: var(--brand-cyan-700);
-        background: linear-gradient(90deg, rgba(0, 180, 166, 0.05) 0%, transparent 100%);
+        background: linear-gradient(90deg, var(--brand-secondary-bg-light) 0%, transparent 100%);
       }
     }
 
@@ -564,7 +564,7 @@
         color: var(--brand-cyan-900);
         border-color: var(--brand-cyan-300);
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 128, 192, 0.15);
+        box-shadow: 0 4px 8px var(--brand-primary-shadow-sm);
       }
     }
   }
@@ -572,10 +572,10 @@
   .article-share {
     margin-top: var(--space-10);
     padding: var(--space-8);
-    background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--neutral-50) 0%, white 100%);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--color-gray-200);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-sm);
 
     .share-label {
       display: flex;
@@ -611,7 +611,7 @@
         cursor: pointer;
         transition: all var(--transition-base);
         font-size: 0.875rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-sm);
 
         svg {
           flex-shrink: 0;

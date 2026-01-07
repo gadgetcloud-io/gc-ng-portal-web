@@ -11,8 +11,8 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: linear-gradient(135deg, rgba(0, 180, 166, 0.05) 0%, rgba(0, 180, 166, 0.02) 100%);
-  border: 2px solid rgba(0, 180, 166, 0.2);
+  background: linear-gradient(135deg, var(--brand-secondary-bg-light) 0%, var(--brand-secondary-bg-subtle) 100%);
+  border: 2px solid var(--brand-secondary-border-light);
   border-radius: 12px;
 
   .device-icon {
@@ -56,14 +56,14 @@
   text-align: center;
 
   &:hover {
-    border-color: #00B4A6;
-    background: rgba(0, 180, 166, 0.02);
+    border-color: var(--brand-secondary-700);
+    background: var(--brand-secondary-bg-subtle);
   }
 
   &.selected {
-    border-color: #00B4A6;
-    background: rgba(0, 180, 166, 0.05);
-    box-shadow: 0 0 0 3px rgba(0, 180, 166, 0.1);
+    border-color: var(--brand-secondary-700);
+    background: var(--brand-secondary-bg-light);
+    box-shadow: 0 0 0 3px var(--state-focus-ring-secondary);
   }
 
   .type-icon {
@@ -106,13 +106,13 @@
 
   &:hover {
     border-color: var(--priority-color);
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--neutral-bg-subtle);
   }
 
   &.selected {
     border-color: var(--priority-color);
-    background: rgba(0, 0, 0, 0.03);
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    background: var(--neutral-bg-light);
+    box-shadow: 0 0 0 3px var(--neutral-bg-medium);
 
     .priority-label {
       color: var(--priority-color);

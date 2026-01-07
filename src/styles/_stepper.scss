@@ -64,9 +64,9 @@
 
     &.active {
       .step-circle {
-        background: linear-gradient(135deg, #06b6d4, #3b82f6);
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        background: linear-gradient(135deg, var(--brand-secondary-700), var(--brand-primary-700));
+        border-color: var(--brand-primary-700);
+        box-shadow: 0 0 0 4px var(--state-focus-ring-info);
 
         .step-number {
           color: white;
@@ -74,19 +74,19 @@
       }
 
       .step-label {
-        color: #1e3a8a;
+        color: var(--brand-primary-900);
         font-weight: 600;
       }
     }
 
     &.completed {
       .step-circle {
-        background: linear-gradient(135deg, #06b6d4, #3b82f6);
-        border-color: #3b82f6;
+        background: linear-gradient(135deg, var(--brand-secondary-700), var(--brand-primary-700));
+        border-color: var(--brand-primary-700);
       }
 
       .step-label {
-        color: #2563eb;
+        color: var(--brand-primary-700);
       }
     }
   }

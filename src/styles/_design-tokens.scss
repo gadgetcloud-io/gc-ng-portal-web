@@ -157,4 +157,101 @@
   --z-modal: 400;
   --z-popover: 500;
   --z-tooltip: 600;
+
+  // ===== SEMANTIC COLOR EXTENSIONS =====
+
+  // Success variants
+  --color-success-light: #D1FAE5;
+  --color-success-dark: #047857;
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+
+  // Warning variants
+  --color-warning-light: #FEF3C7;
+  --color-warning-dark: #B45309;
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-warning-border: rgba(245, 158, 11, 0.3);
+
+  // Error variants
+  --color-error-light: #FEE2E2;
+  --color-error-dark: #991B1B;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-error-border: rgba(239, 68, 68, 0.3);
+
+  // Info variants
+  --color-info-light: #DBEAFE;
+  --color-info-dark: #1E40AF;
+  --color-info-bg: rgba(59, 130, 246, 0.1);
+  --color-info-border: rgba(59, 130, 246, 0.3);
+
+  // ===== SURFACE COLORS =====
+
+  --surface-base: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-overlay: rgba(0, 0, 0, 0.5);
+  --surface-sunken: var(--neutral-100);
+
+  // ===== PRIMARY BRAND COLOR UTILITIES =====
+
+  // Ocean Blue rgba utilities (for shadows, overlays, backgrounds)
+  --brand-primary-rgb: 0, 128, 192;  // #0080C0
+  --brand-primary-shadow-sm: rgba(var(--brand-primary-rgb), 0.15);
+  --brand-primary-shadow-md: rgba(var(--brand-primary-rgb), 0.25);
+  --brand-primary-shadow-lg: rgba(var(--brand-primary-rgb), 0.4);
+  --brand-primary-bg-subtle: rgba(var(--brand-primary-rgb), 0.03);
+  --brand-primary-bg-light: rgba(var(--brand-primary-rgb), 0.08);
+  --brand-primary-bg-medium: rgba(var(--brand-primary-rgb), 0.12);
+  --brand-primary-border-light: rgba(var(--brand-primary-rgb), 0.2);
+  --brand-primary-border-medium: rgba(var(--brand-primary-rgb), 0.3);
+
+  // ===== SECONDARY BRAND COLOR UTILITIES =====
+
+  // Soft Blue (Teal) rgba utilities
+  --brand-secondary-rgb: 0, 180, 166;  // Teal color
+  --brand-secondary-shadow-sm: rgba(var(--brand-secondary-rgb), 0.15);
+  --brand-secondary-shadow-md: rgba(var(--brand-secondary-rgb), 0.25);
+  --brand-secondary-shadow-lg: rgba(var(--brand-secondary-rgb), 0.4);
+  --brand-secondary-bg-subtle: rgba(var(--brand-secondary-rgb), 0.02);
+  --brand-secondary-bg-light: rgba(var(--brand-secondary-rgb), 0.05);
+  --brand-secondary-bg-medium: rgba(var(--brand-secondary-rgb), 0.1);
+  --brand-secondary-border-light: rgba(var(--brand-secondary-rgb), 0.2);
+
+  // ===== NEUTRAL COLOR UTILITIES =====
+
+  --neutral-rgb: 0, 0, 0;
+  --neutral-shadow-xs: rgba(var(--neutral-rgb), 0.04);
+  --neutral-shadow-sm: rgba(var(--neutral-rgb), 0.05);
+  --neutral-shadow-md: rgba(var(--neutral-rgb), 0.08);
+  --neutral-shadow-lg: rgba(var(--neutral-rgb), 0.10);
+  --neutral-shadow-xl: rgba(var(--neutral-rgb), 0.12);
+  --neutral-bg-subtle: rgba(var(--neutral-rgb), 0.02);
+  --neutral-bg-light: rgba(var(--neutral-rgb), 0.03);
+  --neutral-bg-medium: rgba(var(--neutral-rgb), 0.05);
+  --neutral-border-light: rgba(var(--neutral-rgb), 0.08);
+  --neutral-border-medium: rgba(var(--neutral-rgb), 0.10);
+  --neutral-border-strong: rgba(var(--neutral-rgb), 0.12);
+
+  // ===== WHITE UTILITIES =====
+
+  --white-rgb: 255, 255, 255;
+  --white-overlay-light: rgba(var(--white-rgb), 0.05);
+  --white-overlay-medium: rgba(var(--white-rgb), 0.9);
+  --white-overlay-strong: rgba(var(--white-rgb), 0.95);
+
+  // ===== INTERACTIVE STATES =====
+
+  --state-hover-opacity: 0.08;
+  --state-active-opacity: 0.12;
+  --state-disabled-opacity: 0.38;
+  --state-focus-ring-primary: rgba(var(--brand-primary-rgb), 0.1);
+  --state-focus-ring-secondary: rgba(var(--brand-secondary-rgb), 0.1);
+  --state-focus-ring-info: rgba(59, 130, 246, 0.1);
+
+  // ===== ANIMATION EASINGS =====
+
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
