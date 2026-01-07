@@ -38,6 +38,10 @@ testem.log
 /typings
 __screenshots__/
 
+# Test artifacts and screenshots
+.playwright-mcp/
+.input/
+
 # System files
 .DS_Store
 Thumbs.db

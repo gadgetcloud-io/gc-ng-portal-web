@@ -1,0 +1,29 @@
+<div [class]="containerClasses">
+  <label *ngIf="label" class="input-label">
+    {{ label }}
+    <span *ngIf="required" class="input-required">*</span>
+  </label>
+
+  <div class="input-wrapper">
+    <span *ngIf="prefixIcon" class="input-icon input-prefix">{{ prefixIcon }}</span>
+
+    <input
+      [class]="inputClasses"
+      [type]="type"
+      [placeholder]="placeholder"
+      [value]="value"
+      [disabled]="disabled"
+      [readonly]="readonly"
+      [required]="required"
+      (input)="handleInput($event)"
+      (focus)="handleFocus($event)"
+      (blur)="handleBlur($event)"
+    />
+
+    <span *ngIf="suffixIcon" class="input-icon input-suffix">{{ suffixIcon }}</span>
+  </div>
+
+  <span *ngIf="displayHelperText" [class]="helperTextClass">
+    {{ displayHelperText }}
+  </span>
+</div>

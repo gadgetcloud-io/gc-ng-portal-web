@@ -1,0 +1,143 @@
+/**
+ * Checkbox Component - GadgetCloud Design System
+ * Custom styled checkbox with indeterminate state support
+ */
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+
+  &:hover:not(.checkbox-disabled) .checkbox-box {
+    border-color: var(--brand-primary-700);
+  }
+
+  &.checkbox-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid var(--neutral-300);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+
+  // Size variants
+  .checkbox-sm & {
+    width: 16px;
+    height: 16px;
+  }
+
+  .checkbox-md & {
+    width: 20px;
+    height: 20px;
+  }
+
+  .checkbox-lg & {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.checkbox-checkmark {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: var(--font-bold);
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0);
+  transition: all var(--transition-fast);
+
+  .checkbox-sm & {
+    font-size: 0.75rem;
+  }
+
+  .checkbox-lg & {
+    font-size: 1rem;
+  }
+}
+
+// Checked state
+.checkbox-checked .checkbox-box {
+  background: var(--brand-primary-700);
+  border-color: var(--brand-primary-700);
+
+  .checkbox-checkmark {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Indeterminate state
+.checkbox-indeterminate .checkbox-box {
+  background: var(--brand-primary-700);
+  border-color: var(--brand-primary-700);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 2px;
+    background: white;
+    border-radius: 1px;
+  }
+
+  .checkbox-checkmark {
+    opacity: 0;
+  }
+}
+
+// Focus state (keyboard navigation)
+.checkbox-input:focus-visible + .checkbox-box {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--state-focus-ring-primary);
+}
+
+.checkbox-label {
+  font-size: var(--text-base);
+  color: var(--neutral-900);
+  line-height: var(--leading-normal);
+
+  .checkbox-sm & {
+    font-size: var(--text-sm);
+  }
+
+  .checkbox-lg & {
+    font-size: var(--text-lg);
+  }
+
+  .checkbox-disabled & {
+    color: var(--neutral-500);
+  }
+}
+
+// Disabled state
+.checkbox-disabled .checkbox-box {
+  background: var(--neutral-100);
+  border-color: var(--neutral-300);
+}
+
+.checkbox-disabled.checkbox-checked .checkbox-box,
+.checkbox-disabled.checkbox-indeterminate .checkbox-box {
+  background: var(--neutral-400);
+  border-color: var(--neutral-400);
+}

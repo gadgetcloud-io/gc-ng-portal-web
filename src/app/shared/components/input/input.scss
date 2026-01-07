@@ -1,0 +1,167 @@
+/**
+ * Input Component - GadgetCloud Design System
+ * Form input with validation states and icons
+ */
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.input-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--neutral-700);
+  display: block;
+}
+
+.input-required {
+  color: var(--color-error);
+  margin-left: 2px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  font-family: var(--font-body);
+  color: var(--neutral-900);
+  background: white;
+  border: 2px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+
+  &::placeholder {
+    color: var(--neutral-500);
+  }
+
+  &:hover:not(:disabled):not(:readonly) {
+    border-color: var(--neutral-400);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--brand-primary-700);
+    box-shadow: 0 0 0 3px var(--state-focus-ring-primary);
+  }
+
+  &:disabled {
+    background: var(--neutral-100);
+    border-color: var(--neutral-300);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:readonly {
+    background: var(--neutral-50);
+    cursor: default;
+  }
+
+  // Size variants
+  &.input-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-sm);
+  }
+
+  &.input-md {
+    padding: 0.75rem 1rem;
+    font-size: var(--text-base);
+  }
+
+  &.input-lg {
+    padding: 1rem 1.25rem;
+    font-size: var(--text-lg);
+  }
+
+  // With prefix icon
+  &.input-has-prefix {
+    &.input-sm {
+      padding-left: 2.25rem;
+    }
+
+    &.input-md {
+      padding-left: 2.75rem;
+    }
+
+    &.input-lg {
+      padding-left: 3.25rem;
+    }
+  }
+
+  // With suffix icon
+  &.input-has-suffix {
+    &.input-sm {
+      padding-right: 2.25rem;
+    }
+
+    &.input-md {
+      padding-right: 2.75rem;
+    }
+
+    &.input-lg {
+      padding-right: 3.25rem;
+    }
+  }
+
+  // State variants
+  &.input-success {
+    border-color: var(--color-success);
+
+    &:focus {
+      box-shadow: 0 0 0 3px var(--color-success-bg);
+    }
+  }
+
+  &.input-warning {
+    border-color: var(--color-warning);
+
+    &:focus {
+      box-shadow: 0 0 0 3px var(--color-warning-bg);
+    }
+  }
+
+  &.input-error {
+    border-color: var(--color-error);
+
+    &:focus {
+      box-shadow: 0 0 0 3px var(--color-error-bg);
+    }
+  }
+}
+
+.input-icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-500);
+  pointer-events: none;
+  font-size: var(--text-lg);
+
+  &.input-prefix {
+    left: 0.75rem;
+  }
+
+  &.input-suffix {
+    right: 0.75rem;
+  }
+}
+
+.helper-text {
+  font-size: var(--text-xs);
+  color: var(--neutral-600);
+  line-height: var(--leading-relaxed);
+}
+
+.helper-text-error {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  line-height: var(--leading-relaxed);
+  font-weight: var(--font-medium);
+}

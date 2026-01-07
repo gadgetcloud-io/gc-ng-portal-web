@@ -1,0 +1,218 @@
+/**
+ * Dropdown Component - GadgetCloud Design System
+ * Dropdown menu with positioning and animations
+ */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  &.dropdown-fullwidth {
+    width: 100%;
+  }
+}
+
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  font-family: var(--font-body);
+  font-weight: var(--font-medium);
+  color: var(--neutral-900);
+  background: white;
+  border: 2px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+
+  &:hover:not(:disabled) {
+    border-color: var(--brand-primary-700);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--brand-primary-700);
+    box-shadow: 0 0 0 3px var(--state-focus-ring-primary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: var(--neutral-100);
+  }
+
+  // Size variants
+  &.dropdown-trigger-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-sm);
+  }
+
+  &.dropdown-trigger-md {
+    padding: 0.75rem 1rem;
+    font-size: var(--text-base);
+  }
+
+  &.dropdown-trigger-lg {
+    padding: 1rem 1.25rem;
+    font-size: var(--text-lg);
+  }
+
+  &.dropdown-trigger-open {
+    border-color: var(--brand-primary-700);
+  }
+}
+
+.dropdown-trigger-text {
+  flex: 1;
+  text-align: left;
+}
+
+.dropdown-trigger-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  transition: transform var(--transition-base);
+  color: var(--neutral-600);
+
+  &.dropdown-trigger-icon-open {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+  min-width: 200px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.95);
+  transition: opacity var(--transition-fast),
+              visibility var(--transition-fast),
+              transform var(--transition-fast);
+  overflow: hidden;
+
+  // Size variants
+  &.dropdown-menu-sm {
+    min-width: 150px;
+    font-size: var(--text-sm);
+  }
+
+  &.dropdown-menu-lg {
+    min-width: 250px;
+    font-size: var(--text-lg);
+  }
+
+  // Position variants
+  &.dropdown-menu-bottom-left {
+    top: calc(100% + 4px);
+    left: 0;
+  }
+
+  &.dropdown-menu-bottom-right {
+    top: calc(100% + 4px);
+    right: 0;
+  }
+
+  &.dropdown-menu-top-left {
+    bottom: calc(100% + 4px);
+    left: 0;
+    transform: translateY(8px) scale(0.95);
+
+    &.dropdown-menu-open {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  &.dropdown-menu-top-right {
+    bottom: calc(100% + 4px);
+    right: 0;
+    transform: translateY(8px) scale(0.95);
+
+    &.dropdown-menu-open {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  // Open state
+  &.dropdown-menu-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-body);
+  font-size: inherit;
+  color: var(--neutral-900);
+  background: white;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: var(--brand-primary-bg-light);
+    color: var(--brand-primary-700);
+  }
+
+  &:focus {
+    outline: none;
+    background: var(--brand-primary-bg-light);
+  }
+
+  &:disabled,
+  &.dropdown-item-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: white;
+  }
+
+  &:first-child {
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+  }
+
+  &:last-child {
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+  }
+}
+
+.dropdown-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25em;
+  color: var(--neutral-600);
+}
+
+.dropdown-item-label {
+  flex: 1;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: var(--space-2) 0;
+  background: var(--neutral-200);
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-menu,
+  .dropdown-trigger-icon {
+    transition: none;
+  }
+}

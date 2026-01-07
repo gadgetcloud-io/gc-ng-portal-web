@@ -1,0 +1,39 @@
+<div [class]="dropdownClasses">
+  <!-- Trigger button -->
+  <button
+    type="button"
+    [class]="triggerClasses"
+    [disabled]="disabled"
+    (click)="toggleDropdown()"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="true"
+  >
+    <span class="dropdown-trigger-text">{{ triggerText }}</span>
+    <span class="dropdown-trigger-icon" [class.dropdown-trigger-icon-open]="isOpen">
+      {{ triggerIcon }}
+    </span>
+  </button>
+
+  <!-- Dropdown menu -->
+  <div [class]="menuClasses" role="menu">
+    <ng-container *ngFor="let item of items; let i = index">
+      <!-- Divider -->
+      <div *ngIf="item.divider" class="dropdown-divider"></div>
+
+      <!-- Menu item -->
+      <button
+        *ngIf="!item.divider"
+        type="button"
+        class="dropdown-item"
+        [class.dropdown-item-disabled]="item.disabled"
+        [disabled]="item.disabled"
+        (click)="selectItem(item)"
+        role="menuitem"
+        [attr.tabindex]="isOpen ? 0 : -1"
+      >
+        <span *ngIf="item.icon" class="dropdown-item-icon">{{ item.icon }}</span>
+        <span class="dropdown-item-label">{{ item.label }}</span>
+      </button>
+    </ng-container>
+  </div>
+</div>

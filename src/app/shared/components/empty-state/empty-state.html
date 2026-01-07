@@ -1,0 +1,26 @@
+<div [class]="emptyStateClasses">
+  <!-- Icon/Illustration -->
+  <div class="empty-state-icon">{{ defaultIcon }}</div>
+
+  <!-- Title -->
+  <h3 class="empty-state-title">{{ title }}</h3>
+
+  <!-- Description -->
+  <p *ngIf="description" class="empty-state-description">{{ description }}</p>
+
+  <!-- Action button -->
+  <button
+    *ngIf="actionText"
+    type="button"
+    class="empty-state-action"
+    (click)="handleAction()"
+  >
+    <span *ngIf="actionIcon" class="empty-state-action-icon">{{ actionIcon }}</span>
+    <span>{{ actionText }}</span>
+  </button>
+
+  <!-- Optional projected content -->
+  <div class="empty-state-content">
+    <ng-content></ng-content>
+  </div>
+</div>

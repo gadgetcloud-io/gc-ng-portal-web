@@ -1,6 +1,0 @@
-name,category,brand,model,serialNumber,purchaseDate,purchasePrice,warrantyExpiry,status,notes
-MacBook Pro 16,laptop,Apple,MacBook Pro 16-inch,MBP16-2024-001,2024-01-15,2499.99,2027-01-15,active,Work laptop with AppleCare+
-Samsung Galaxy S24,phone,Samsung,Galaxy S24,SM-S921-789012,2024-03-20,899.99,2026-03-20,active,Personal phone
-iPad Air,tablet,Apple,iPad Air 5th Gen,IPAD-AIR-5-456,2023-11-10,599.99,2025-11-10,warranty_expired,Family tablet
-Sony WH-1000XM5,other,Sony,WH-1000XM5,SONY-WH-XM5-123,2024-02-28,399.99,2025-02-28,warranty_expired,Noise cancelling headphones
-Dell XPS 15,laptop,Dell,XPS 15 9530,DELL-XPS-9530-999,2023-06-15,1899.99,2024-06-15,warranty_expired,Development machine

@@ -1,0 +1,440 @@
+<div class="design-system-page">
+  <!-- Header -->
+  <header class="page-header">
+    <h1 class="page-title">GadgetCloud Design System</h1>
+    <p class="page-description">
+      A comprehensive showcase of all design system components, tokens, and patterns.
+    </p>
+  </header>
+
+  <!-- Color Palette Section -->
+  <section class="section">
+    <h2 class="section-title">Color Palette</h2>
+    <div class="color-grid">
+      <div class="color-item">
+        <div class="color-swatch color-primary"></div>
+        <span class="color-name">Ocean Blue</span>
+        <span class="color-value">#0080C0</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch color-secondary"></div>
+        <span class="color-name">Soft Blue</span>
+        <span class="color-value">#67D4F6</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch color-accent"></div>
+        <span class="color-name">Purple</span>
+        <span class="color-value">#A78BFA</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch color-success"></div>
+        <span class="color-name">Success</span>
+        <span class="color-value">#10B981</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch color-warning"></div>
+        <span class="color-name">Warning</span>
+        <span class="color-value">#F59E0B</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch color-error"></div>
+        <span class="color-name">Error</span>
+        <span class="color-value">#EF4444</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <h2 class="section-title">Buttons</h2>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Variants</h3>
+      <div class="button-group">
+        <gc-button variant="primary" (click)="handleButtonClick('primary')">
+          Primary Button
+        </gc-button>
+        <gc-button variant="secondary" (click)="handleButtonClick('secondary')">
+          Secondary Button
+        </gc-button>
+        <gc-button variant="ghost" (click)="handleButtonClick('ghost')">
+          Ghost Button
+        </gc-button>
+        <gc-button variant="danger" (click)="handleButtonClick('danger')">
+          Danger Button
+        </gc-button>
+      </div>
+    </div>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Sizes</h3>
+      <div class="button-group">
+        <gc-button variant="primary" size="sm">Small</gc-button>
+        <gc-button variant="primary" size="md">Medium</gc-button>
+        <gc-button variant="primary" size="lg">Large</gc-button>
+      </div>
+    </div>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">States</h3>
+      <div class="button-group">
+        <gc-button variant="primary" [disabled]="true">Disabled</gc-button>
+        <gc-button variant="primary" [fullWidth]="true">Full Width</gc-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <h2 class="section-title">Cards</h2>
+
+    <div class="card-grid">
+      <gc-card variant="default" padding="md">
+        <h3>Default Card</h3>
+        <p>This is a default card with medium padding.</p>
+      </gc-card>
+
+      <gc-card variant="elevated" padding="md">
+        <h3>Elevated Card</h3>
+        <p>This card has a shadow for elevation.</p>
+      </gc-card>
+
+      <gc-card variant="bordered" padding="md">
+        <h3>Bordered Card</h3>
+        <p>This card has a border instead of shadow.</p>
+      </gc-card>
+
+      <gc-card variant="flat" padding="md">
+        <h3>Flat Card</h3>
+        <p>This card has no shadow or border.</p>
+      </gc-card>
+
+      <gc-card variant="default" padding="md" [hoverable]="true">
+        <h3>Hoverable Card</h3>
+        <p>Hover over this card to see the effect.</p>
+      </gc-card>
+
+      <gc-card variant="default" padding="md" [clickable]="true">
+        <h3>Clickable Card</h3>
+        <p>This card has a cursor pointer and hover state.</p>
+      </gc-card>
+    </div>
+  </section>
+
+  <!-- Badges Section -->
+  <section class="section">
+    <h2 class="section-title">Badges</h2>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Variants</h3>
+      <div class="badge-group">
+        <gc-badge variant="default">Default</gc-badge>
+        <gc-badge variant="primary">Primary</gc-badge>
+        <gc-badge variant="secondary">Secondary</gc-badge>
+        <gc-badge variant="success">Success</gc-badge>
+        <gc-badge variant="warning">Warning</gc-badge>
+        <gc-badge variant="error">Error</gc-badge>
+        <gc-badge variant="info">Info</gc-badge>
+      </div>
+    </div>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Sizes</h3>
+      <div class="badge-group">
+        <gc-badge variant="primary" size="sm">Small</gc-badge>
+        <gc-badge variant="primary" size="md">Medium</gc-badge>
+        <gc-badge variant="primary" size="lg">Large</gc-badge>
+      </div>
+    </div>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Styles</h3>
+      <div class="badge-group">
+        <gc-badge variant="primary">Default</gc-badge>
+        <gc-badge variant="primary" [rounded]="true">Rounded</gc-badge>
+        <gc-badge variant="primary" [outlined]="true">Outlined</gc-badge>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alerts Section -->
+  <section class="section">
+    <h2 class="section-title">Alerts</h2>
+
+    <div class="alerts-container">
+      <gc-alert
+        *ngIf="showSuccessAlert"
+        variant="success"
+        title="Success!"
+        [dismissible]="true"
+        (onDismiss)="handleAlertDismiss('success')"
+      >
+        Your changes have been saved successfully.
+      </gc-alert>
+
+      <gc-alert
+        *ngIf="showWarningAlert"
+        variant="warning"
+        title="Warning"
+        [dismissible]="true"
+        (onDismiss)="handleAlertDismiss('warning')"
+      >
+        Please review your information before proceeding.
+      </gc-alert>
+
+      <gc-alert
+        *ngIf="showErrorAlert"
+        variant="error"
+        title="Error"
+        [dismissible]="true"
+        (onDismiss)="handleAlertDismiss('error')"
+      >
+        Something went wrong. Please try again.
+      </gc-alert>
+
+      <gc-alert
+        *ngIf="showInfoAlert"
+        variant="info"
+        title="Information"
+        [dismissible]="true"
+        (onDismiss)="handleAlertDismiss('info')"
+      >
+        This is an informational message.
+      </gc-alert>
+    </div>
+  </section>
+
+  <!-- Loading Spinners Section -->
+  <section class="section">
+    <h2 class="section-title">Loading Spinners</h2>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Variants</h3>
+      <div class="spinner-group">
+        <gc-loading-spinner variant="primary" label="Loading..."></gc-loading-spinner>
+        <gc-loading-spinner variant="secondary" label="Processing..."></gc-loading-spinner>
+        <gc-loading-spinner variant="white" label="Please wait..."></gc-loading-spinner>
+      </div>
+    </div>
+
+    <div class="component-demo">
+      <h3 class="demo-subtitle">Sizes</h3>
+      <div class="spinner-group">
+        <gc-loading-spinner variant="primary" size="sm"></gc-loading-spinner>
+        <gc-loading-spinner variant="primary" size="md"></gc-loading-spinner>
+        <gc-loading-spinner variant="primary" size="lg"></gc-loading-spinner>
+        <gc-loading-spinner variant="primary" size="xl"></gc-loading-spinner>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skeleton Loaders Section -->
+  <section class="section">
+    <h2 class="section-title">Skeleton Loaders</h2>
+
+    <div class="skeleton-demo">
+      <gc-card variant="default" padding="md">
+        <gc-skeleton variant="circle" width="60px" height="60px"></gc-skeleton>
+        <gc-skeleton variant="text" width="80%"></gc-skeleton>
+        <gc-skeleton variant="text" width="60%"></gc-skeleton>
+        <gc-skeleton variant="rect" width="100%" height="150px"></gc-skeleton>
+        <gc-skeleton variant="rounded" width="120px" height="40px"></gc-skeleton>
+      </gc-card>
+    </div>
+  </section>
+
+  <!-- Form Inputs Section -->
+  <section class="section">
+    <h2 class="section-title">Form Inputs</h2>
+
+    <div class="form-demo">
+      <gc-input
+        type="email"
+        label="Email Address"
+        placeholder="you@example.com"
+        prefixIcon="✉"
+        [required]="true"
+        helperText="We'll never share your email"
+        [(ngModel)]="emailInput"
+      ></gc-input>
+
+      <gc-input
+        type="password"
+        label="Password"
+        placeholder="Enter your password"
+        prefixIcon="🔒"
+        [required]="true"
+        [(ngModel)]="passwordInput"
+      ></gc-input>
+
+      <gc-input
+        type="text"
+        label="Success State"
+        value="Valid input"
+        state="success"
+        helperText="Looks good!"
+        suffixIcon="✓"
+      ></gc-input>
+
+      <gc-input
+        type="text"
+        label="Error State"
+        value="Invalid input"
+        state="error"
+        errorText="This field is required"
+        suffixIcon="✕"
+      ></gc-input>
+
+      <gc-input
+        type="text"
+        label="Disabled Input"
+        [disabled]="true"
+        [(ngModel)]="disabledInput"
+      ></gc-input>
+    </div>
+  </section>
+
+  <!-- Checkboxes Section -->
+  <section class="section">
+    <h2 class="section-title">Checkboxes</h2>
+
+    <div class="checkbox-demo">
+      <gc-checkbox
+        label="Unchecked checkbox"
+        [(ngModel)]="checkbox1"
+      ></gc-checkbox>
+
+      <gc-checkbox
+        label="Checked checkbox"
+        [(ngModel)]="checkbox2"
+      ></gc-checkbox>
+
+      <gc-checkbox
+        label="Indeterminate state"
+        [indeterminate]="indeterminateCheckbox"
+        [(ngModel)]="checkbox3"
+      ></gc-checkbox>
+
+      <gc-checkbox
+        label="Disabled checkbox"
+        [disabled]="true"
+      ></gc-checkbox>
+
+      <gc-checkbox
+        label="Small checkbox"
+        size="sm"
+      ></gc-checkbox>
+
+      <gc-checkbox
+        label="Large checkbox"
+        size="lg"
+      ></gc-checkbox>
+    </div>
+  </section>
+
+  <!-- Tooltips Section -->
+  <section class="section">
+    <h2 class="section-title">Tooltips</h2>
+
+    <div class="tooltip-demo">
+      <gc-tooltip text="This tooltip appears on top" position="top">
+        <gc-button variant="secondary">Hover me (Top)</gc-button>
+      </gc-tooltip>
+
+      <gc-tooltip text="This tooltip appears on the right" position="right">
+        <gc-button variant="secondary">Hover me (Right)</gc-button>
+      </gc-tooltip>
+
+      <gc-tooltip text="This tooltip appears on the bottom" position="bottom">
+        <gc-button variant="secondary">Hover me (Bottom)</gc-button>
+      </gc-tooltip>
+
+      <gc-tooltip text="This tooltip appears on the left" position="left">
+        <gc-button variant="secondary">Hover me (Left)</gc-button>
+      </gc-tooltip>
+    </div>
+  </section>
+
+  <!-- Dropdown Section -->
+  <section class="section">
+    <h2 class="section-title">Dropdown</h2>
+
+    <div class="dropdown-demo">
+      <gc-dropdown
+        [items]="dropdownItems"
+        triggerText="Actions"
+        position="bottom-left"
+        (onSelect)="handleDropdownSelect($event)"
+      ></gc-dropdown>
+
+      <p *ngIf="selectedDropdownItem" class="selected-item">
+        Selected: <strong>{{ selectedDropdownItem }}</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- Empty States Section -->
+  <section class="section">
+    <h2 class="section-title">Empty States</h2>
+
+    <div class="empty-state-grid">
+      <gc-card variant="bordered" padding="none">
+        <gc-empty-state
+          variant="no-data"
+          title="No data available"
+          description="There's nothing to display here yet"
+          actionText="Add your first item"
+          actionIcon="+"
+          (onAction)="handleEmptyStateAction()"
+        ></gc-empty-state>
+      </gc-card>
+
+      <gc-card variant="bordered" padding="none">
+        <gc-empty-state
+          variant="no-results"
+          title="No results found"
+          description="Try adjusting your search criteria"
+          actionText="Clear filters"
+          actionIcon="↺"
+          (onAction)="handleEmptyStateAction()"
+        ></gc-empty-state>
+      </gc-card>
+
+      <gc-card variant="bordered" padding="none">
+        <gc-empty-state
+          variant="error"
+          title="Something went wrong"
+          description="We couldn't load this content"
+          actionText="Try again"
+          actionIcon="↻"
+          (onAction)="handleEmptyStateAction()"
+        ></gc-empty-state>
+      </gc-card>
+
+      <gc-card variant="bordered" padding="none">
+        <gc-empty-state
+          variant="success"
+          title="All done!"
+          description="You've completed all tasks"
+          size="sm"
+        ></gc-empty-state>
+      </gc-card>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section">
+    <h2 class="section-title">Typography</h2>
+
+    <div class="typography-demo">
+      <h1 class="type-display">Display Heading</h1>
+      <h1>Heading 1</h1>
+      <h2>Heading 2</h2>
+      <h3>Heading 3</h3>
+      <h4>Heading 4</h4>
+      <p class="type-lead">Lead paragraph: This is a larger paragraph for introductory text.</p>
+      <p>Regular paragraph: This is standard body text used throughout the application.</p>
+      <p class="type-small">Small text: This is smaller text for captions and helper text.</p>
+    </div>
+  </section>
+</div>

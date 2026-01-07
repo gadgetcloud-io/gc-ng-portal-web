@@ -1,0 +1,17 @@
+<label [class]="checkboxClasses">
+  <input
+    type="checkbox"
+    class="checkbox-input"
+    [checked]="checked"
+    [indeterminate]="indeterminate"
+    [disabled]="disabled"
+    (change)="handleChange($event)"
+    (blur)="handleBlur()"
+  />
+
+  <span class="checkbox-box">
+    <span class="checkbox-checkmark">✓</span>
+  </span>
+
+  <span *ngIf="label" class="checkbox-label">{{ label }}</span>
+</label>
