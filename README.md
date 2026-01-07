@@ -46,19 +46,45 @@ Artifacts are stored in `dist/gc-ng-www-web/browser/`.
 
 ### Deployment
 
-Deploy to AWS S3 + CloudFront:
+**Platform**: AWS S3 + CloudFront (migrated from Firebase Hosting in January 2025)
+
+Deploy to staging or production with a single command:
 
 ```bash
-npm run deploy:stg    # Deploy to staging
-npm run deploy:prd    # Deploy to production
+npm run deploy:stg    # Deploy to staging (www-stg.gadgetcloud.io)
+npm run deploy:prd    # Deploy to production (www.gadgetcloud.io)
 ```
 
-**What happens:**
+**Deployment Process** (automated via `deploy-to-s3.sh`):
 1. Builds Angular app with environment-specific configuration
-2. Syncs files to S3 bucket
-3. Sets appropriate cache headers
-4. Invalidates CloudFront cache
-5. Waits for cache invalidation to complete
+2. Syncs files to S3 bucket with smart cache headers
+   - HTML: `no-cache, no-store, must-revalidate` (always fresh)
+   - JS/CSS: `public, max-age=300, immutable` (5-minute cache)
+   - Other: `public, max-age=300` (5-minute cache)
+3. Creates CloudFront cache invalidation for all paths (`/*`)
+4. Waits for invalidation to complete (~30-60 seconds)
+5. Displays deployment success with live URLs
+
+**Environment Details:**
+
+| Environment | S3 Bucket | CloudFront ID | URL |
+|------------|-----------|---------------|-----|
+| **Production** | `www.gadgetcloud.io` | `E1D6C4DNXVFZXX` | https://www.gadgetcloud.io |
+| **Staging** | `www-stg.gadgetcloud.io` | `E1LLF7FUWQJVQN` | https://www-stg.gadgetcloud.io |
+
+**Prerequisites:**
+- AWS CLI installed and configured
+- AWS profile `gc` with S3 and CloudFront permissions
+- CloudFront distribution IDs configured in `deploy-to-s3.sh`
+
+**Manual Deployment** (if needed):
+```bash
+# Build first
+npm run build -- --configuration=production
+
+# Deploy with script
+./deploy-to-s3.sh prd
+```
 
 ---
 

@@ -35,6 +35,8 @@ ng generate component shared/components/new-component
 
 The frontend is hosted on **AWS S3 + CloudFront** for both staging and production environments.
 
+**Migration Note**: Migrated from Firebase Hosting to AWS S3 + CloudFront in January 2025 for better integration with existing AWS infrastructure and reduced deployment complexity.
+
 ### Staging
 ```bash
 # Deploy to staging (builds + uploads to S3 + invalidates CloudFront)
@@ -86,6 +88,8 @@ npm run build -- --configuration=production
 - **Apex Redirect**: `gadgetcloud.io` → https://gadgetcloud.io → redirects to https://www.gadgetcloud.io
 
 **CloudFront Distributions:**
+- **Staging**: `E1LLF7FUWQJVQN`
+- **Production**: `E1D6C4DNXVFZXX`
 - Minimal caching enabled (5-minute TTL) for easier debugging
 - Custom error responses: 404/403 → 200 /index.html (SPA routing support)
 - SSL certificates: AWS ACM (us-east-1 region)
