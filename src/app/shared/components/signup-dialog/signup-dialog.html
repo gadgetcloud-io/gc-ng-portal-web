@@ -1,7 +1,14 @@
 <gc-modal [isOpen]="isOpen" [title]="'Create your account'" [maxWidth]="'sm'" (close)="onClose()">
   <form (ngSubmit)="onSubmit()" #signupForm="ngForm" class="signup-form">
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="success-message">
+      <div class="success-icon">✓</div>
+      <p>{{ successMessage }}</p>
+      <p class="success-hint">You can close this dialog and check your email.</p>
+    </div>
+
     <!-- Error Message -->
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage && !successMessage" class="error-message">
       {{ errorMessage }}
     </div>
 

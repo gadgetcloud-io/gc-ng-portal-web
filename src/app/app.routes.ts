@@ -20,6 +20,11 @@ export const routes: Routes = [
     canActivate: [publicGuard]
   },
   {
+    path: 'verify-email',
+    loadComponent: () => import('./pages/verify-email/verify-email').then(m => m.VerifyEmailComponent),
+    canActivate: [publicGuard]
+  },
+  {
     path: 'features',
     loadComponent: () => import('./pages/features/features').then(m => m.FeaturesComponent),
     data: {

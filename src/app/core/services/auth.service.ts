@@ -83,35 +83,26 @@ export class AuthService {
     }
   }
 
-  signup(firstName: string, lastName: string, email: string, password: string): Observable<{ success: boolean; error?: string }> {
+  signup(firstName: string, lastName: string, email: string, password: string): Observable<{ success: boolean; error?: string; message?: string; email?: string }> {
     if (this.useApi) {
       // API mode: Call backend
-      return this.apiService.post<SignupResponse>('/auth/signup', {
+      return this.apiService.post<{message: string; email: string; emailSent: boolean}>('/auth/signup', {
         firstName,
         lastName,
         email,
         password
       }).pipe(
         map(response => {
-          console.log('Raw signup response:', response);
-          if (response && response.access_token && response.user) {
-            // Store token and user
-            this.apiService.setToken(response.access_token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-
-            this.authState.next({
-              isAuthenticated: true,
-              user: response.user
-            });
-
-            this.redirectAfterLogin();
-            return { success: true };
-          }
-          return { success: false, error: 'Signup failed' };
+          console.log('Signup response:', response);
+          // No longer auto-logs in - user must verify email first
+          return {
+            success: true,
+            message: response.message,
+            email: response.email
+          };
         }),
         catchError(error => {
           console.error('Signup error:', error);
-          // Extract error message from FastAPI response (error.error.detail) or fallback
           const errorMessage = error.error?.detail || error.message || 'Signup failed';
           return of({ success: false, error: errorMessage });
         })
@@ -385,6 +376,57 @@ export class AuthService {
       catchError(error => {
         console.error('Reset password error:', error);
         const errorMessage = error.error?.detail || error.message || 'Failed to reset password';
+        return of({
+          success: false,
+          error: errorMessage
+        });
+      })
+    );
+  }
+
+  /**
+   * Verify email with token from email link
+   */
+  verifyEmail(token: string): Observable<{ success: boolean; email?: string; message?: string; error?: string }> {
+    return this.apiService.post<{ message: string; email: string }>('/auth/verify-email', {
+      token
+    }).pipe(
+      map(response => {
+        console.log('Email verified successfully');
+        return {
+          success: true,
+          email: response.email,
+          message: response.message
+        };
+      }),
+      catchError(error => {
+        console.error('Email verification error:', error);
+        const errorMessage = error.error?.detail || error.message || 'Invalid or expired verification link';
+        return of({
+          success: false,
+          error: errorMessage
+        });
+      })
+    );
+  }
+
+  /**
+   * Resend verification email
+   */
+  resendVerification(email: string): Observable<{ success: boolean; message?: string; error?: string }> {
+    return this.apiService.post<{ message: string }>('/auth/resend-verification', {
+      email
+    }).pipe(
+      map(response => {
+        console.log('Verification email resent');
+        return {
+          success: true,
+          message: response.message || 'Verification email sent. Please check your inbox.'
+        };
+      }),
+      catchError(error => {
+        console.error('Resend verification error:', error);
+        const errorMessage = error.error?.detail || error.message || 'Failed to resend verification email';
         return of({
           success: false,
           error: errorMessage

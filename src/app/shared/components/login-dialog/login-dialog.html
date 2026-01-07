@@ -1,8 +1,21 @@
 <gc-modal [isOpen]="isOpen" [title]="'Welcome back'" [maxWidth]="'sm'" (close)="onClose()">
   <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+
     <!-- Error Message -->
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage && !successMessage" class="error-message">
       {{ errorMessage }}
+      <button
+        *ngIf="showResendLink"
+        type="button"
+        class="resend-link"
+        (click)="onResendVerification()"
+      >
+        Resend verification email
+      </button>
     </div>
 
     <!-- Email Field -->

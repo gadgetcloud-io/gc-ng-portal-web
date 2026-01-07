@@ -30,6 +30,7 @@ export class SignupDialogComponent {
 
   isLoading = false;
   errorMessage = '';
+  successMessage = '';
 
   constructor(
     private authService: AuthService,
@@ -70,6 +71,7 @@ export class SignupDialogComponent {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
     this.cdr.markForCheck();
 
     this.authService.signup(
@@ -81,9 +83,14 @@ export class SignupDialogComponent {
       next: (result) => {
         this.isLoading = false;
         if (result.success) {
-          this.resetForm();
-          this.signupSuccess.emit();
-          // Don't call onClose() here - let parent component handle closing
+          // Show success message instead of closing
+          this.successMessage = result.message || 'Account created! Please check your email to verify your account.';
+          // Don't emit signupSuccess or close dialog yet
+          // User reads message, then clicks close or we auto-close after delay
+          setTimeout(() => {
+            this.resetForm();
+            this.signupSuccess.emit();  // This closes the dialog via parent
+          }, 5000);  // 5 seconds to read message
         } else {
           this.errorMessage = result.error || 'Signup failed. Please try again.';
         }

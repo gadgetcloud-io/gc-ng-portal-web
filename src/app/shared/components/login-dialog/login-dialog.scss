@@ -8,6 +8,17 @@
   gap: var(--space-5);
 }
 
+.success-message {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(34, 197, 94, 0.1);
+  border: 2px solid rgba(34, 197, 94, 0.3);
+  border-radius: var(--radius-lg);
+  color: rgb(21, 128, 61);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  text-align: center;
+}
+
 .error-message {
   padding: var(--space-3) var(--space-4);
   background: #fee;
@@ -16,6 +27,32 @@
   color: #c33;
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  .resend-link {
+    background: none;
+    border: none;
+    color: var(--brand-cyan-700);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    padding: var(--space-2) 0 0 0;
+    text-align: left;
+    font-size: var(--text-sm);
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--brand-blue-600);
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 2px solid var(--brand-cyan-700);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
 }
 
 .form-group {
