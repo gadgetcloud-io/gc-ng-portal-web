@@ -3,11 +3,10 @@ import { authGuard } from './core/guards/auth.guard';
 import { publicGuard } from './core/guards/public.guard';
 
 export const routes: Routes = [
-  // Public pages (redirect to dashboard if already logged in)
+  // Public pages (accessible to everyone)
   {
     path: '',
-    loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent),
-    canActivate: [publicGuard]
+    loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent)
   },
   {
     path: 'forgot-password',
@@ -48,6 +47,15 @@ export const routes: Routes = [
     data: {
       breadcrumb: {
         label: 'About Us'
+      }
+    }
+  },
+  {
+    path: 'design-system',
+    loadComponent: () => import('./pages/design-system/design-system').then(m => m.DesignSystemComponent),
+    data: {
+      breadcrumb: {
+        label: 'Design System'
       }
     }
   },
