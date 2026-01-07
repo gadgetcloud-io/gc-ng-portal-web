@@ -17,7 +17,6 @@ import { DeviceListComponent } from '../../shared/components/device-list/device-
 import { ActivityService, Activity } from '../../core/services/activity.service';
 import { CardComponent } from '../../shared/components/card/card';
 import { BadgeComponent } from '../../shared/components/badge/badge';
-import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 
@@ -37,7 +36,6 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
     DeviceListComponent,
     CardComponent,
     BadgeComponent,
-    LoadingSpinnerComponent,
     SkeletonComponent,
     EmptyStateComponent
   ],

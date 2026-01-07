@@ -5,14 +5,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DeviceService, Device } from '../../core/services/device.service';
 import { RbacService, FieldConfig, FieldUpdateRequest } from '../../core/services/rbac.service';
 import { BreadcrumbService } from '../../core/services/breadcrumb.service';
-import { TabsComponent, Tab } from '../../shared/components/tabs/tabs.component';
+import { Tab } from '../../shared/components/tabs/tabs.component';
 import { DetailsTabComponent } from './tabs/details-tab.component';
 import { WarrantyTabComponent } from './tabs/warranty-tab.component';
 import { DocumentsManagerComponent } from '../../shared/components/documents-manager/documents-manager.component';
 import { NotesTabComponent } from './tabs/notes-tab.component';
 import { ServiceTicketsTabComponent } from './tabs/service-tickets-tab/service-tickets-tab.component';
 import { forkJoin } from 'rxjs';
-import { CardComponent } from '../../shared/components/card/card';
 import { BadgeComponent } from '../../shared/components/badge/badge';
 import { AlertComponent } from '../../shared/components/alert/alert';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
@@ -25,13 +24,11 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
     CommonModule,
     FormsModule,
     RouterLink,
-    TabsComponent,
     DetailsTabComponent,
     WarrantyTabComponent,
     DocumentsManagerComponent,
     NotesTabComponent,
     ServiceTicketsTabComponent,
-    CardComponent,
     BadgeComponent,
     AlertComponent,
     LoadingSpinnerComponent,

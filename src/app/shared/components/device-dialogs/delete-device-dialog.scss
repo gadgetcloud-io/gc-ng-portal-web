@@ -4,7 +4,7 @@
  */
 
 // Import shared styles (only error message)
-@import '../../../../styles/dialog-forms';
+@use '../../../../styles/dialog-forms';
 
 .delete-dialog {
   display: flex;

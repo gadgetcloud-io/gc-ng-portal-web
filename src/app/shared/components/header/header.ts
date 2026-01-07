@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, NgZone, HostListener } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ButtonComponent } from '../button/button';
 import { LoginDialogComponent } from '../login-dialog/login-dialog';
 import { SignupDialogComponent } from '../signup-dialog/signup-dialog';
 import { AuthService, AuthState } from '../../../core/services/auth.service';
@@ -10,7 +9,7 @@ import { AuthService, AuthState } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ButtonComponent, LoginDialogComponent, SignupDialogComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LoginDialogComponent, SignupDialogComponent],
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })

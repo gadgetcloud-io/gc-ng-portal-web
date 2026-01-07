@@ -4,7 +4,6 @@ import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
 import { CardComponent } from '../../shared/components/card/card';
 import { BadgeComponent } from '../../shared/components/badge/badge';
@@ -19,7 +18,6 @@ type TabId = 'profile' | 'preferences' | 'security' | 'account';
     CommonModule,
     RouterLink,
     FormsModule,
-    ButtonComponent,
     CardComponent,
     BadgeComponent,
     AlertComponent

@@ -2,9 +2,9 @@
  * Global Styles - GadgetCloud WWW
  */
 
-// Import Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+// Import design system (must be before other rules)
+@use 'styles/design-tokens';
+@use 'styles/base';
 
-// Import design system
-@import 'styles/design-tokens';
-@import 'styles/base';
+// Import Google Fonts (after @use rules)
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
