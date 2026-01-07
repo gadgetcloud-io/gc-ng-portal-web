@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy:stg": "./deploy-to-s3.sh stg",
+    "deploy:prd": "./deploy-to-s3.sh prd"
   },
   "prettier": {
     "printWidth": 100,
