@@ -1,27 +1,43 @@
-<!-- Success/Error Popovers -->
-<div class="popover-container">
-  <div *ngIf="updateSuccess" class="popover popover-success">
-    <div class="popover-icon">✓</div>
-    <div class="popover-message">{{ updateSuccess }}</div>
-  </div>
+<!-- Success/Error Alerts -->
+<div class="alert-container">
+  <gc-alert
+    *ngIf="updateSuccess"
+    variant="success"
+    [dismissible]="false"
+  >
+    {{ updateSuccess }}
+  </gc-alert>
 
-  <div *ngIf="updateError" class="popover popover-error">
-    <div class="popover-icon">✕</div>
-    <div class="popover-message">{{ updateError }}</div>
-  </div>
+  <gc-alert
+    *ngIf="updateError"
+    variant="error"
+    [dismissible]="false"
+  >
+    {{ updateError }}
+  </gc-alert>
 </div>
 
 <!-- Loading State -->
 <div class="loading-container" *ngIf="loading">
-  <div class="loading-spinner"></div>
-  <p>Loading device details...</p>
+  <gc-loading-spinner
+    variant="primary"
+    size="lg"
+    label="Loading device details..."
+    [centered]="true"
+  ></gc-loading-spinner>
 </div>
 
 <!-- Error State -->
 <div class="error-container" *ngIf="error && !loading">
-  <div class="error-icon">⚠️</div>
-  <h2>{{ error }}</h2>
-  <a routerLink="/my-gadgets" class="btn-back">← Back to My Gadgets</a>
+  <gc-empty-state
+    variant="error"
+    icon="⚠️"
+    [title]="error"
+    description="Unable to load device details"
+    actionText="← Back to My Gadgets"
+    (onAction)="router.navigate(['/my-gadgets'])"
+    size="lg"
+  ></gc-empty-state>
 </div>
 
 <!-- Main Content -->
@@ -44,12 +60,20 @@
         </div>
       </div>
       <div class="header-badges">
-        <span class="status-pill" [ngClass]="getStatusClass()" *ngIf="device.status">
+        <gc-badge
+          *ngIf="device.status"
+          [variant]="device.status === 'active' ? 'success' : device.status === 'expiring-soon' ? 'warning' : device.status === 'expired' ? 'error' : 'default'"
+          size="md"
+        >
           {{ getStatusText() }}
-        </span>
-        <span class="price-pill" *ngIf="device.purchasePrice">
+        </gc-badge>
+        <gc-badge
+          *ngIf="device.purchasePrice"
+          variant="info"
+          size="md"
+        >
           {{ formatCurrency(device.purchasePrice) }}
-        </span>
+        </gc-badge>
       </div>
     </div>
     <div class="header-actions">

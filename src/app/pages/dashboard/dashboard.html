@@ -25,7 +25,7 @@
   <div class="container">
     <div class="content-grid">
       <!-- Recent Devices -->
-      <div class="content-card devices-card">
+      <gc-card variant="elevated" padding="md" class="devices-card">
         <gc-device-list
           [devices]="devices"
           [isLoading]="isLoading"
@@ -37,10 +37,10 @@
           (deleteDevice)="onDeleteDevice($event)"
           (viewDocuments)="openViewDocumentsDialog($event)"
         ></gc-device-list>
-      </div>
+      </gc-card>
 
       <!-- Recent Activity -->
-      <div class="content-card activity-card">
+      <gc-card variant="elevated" padding="md" class="activity-card">
         <div class="card-header">
           <h2 class="card-title">Recent Activity</h2>
         </div>
@@ -48,11 +48,13 @@
         <!-- Loading State -->
         <div class="loading-state" *ngIf="isLoadingActivity">
           <div class="loading-skeleton" *ngFor="let i of [1,2,3,4,5]">
-            <div class="skeleton-icon"></div>
-            <div class="skeleton-content">
-              <div class="skeleton-line skeleton-line-title"></div>
-              <div class="skeleton-line skeleton-line-description"></div>
-              <div class="skeleton-line skeleton-line-timestamp"></div>
+            <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4);">
+              <gc-skeleton variant="circle" width="40px" height="40px"></gc-skeleton>
+              <div style="flex: 1;">
+                <gc-skeleton variant="text" width="80%"></gc-skeleton>
+                <gc-skeleton variant="text" width="60%"></gc-skeleton>
+                <gc-skeleton variant="text" width="40%"></gc-skeleton>
+              </div>
             </div>
           </div>
         </div>
@@ -69,12 +71,15 @@
         </div>
 
         <!-- Empty State -->
-        <div class="empty-state" *ngIf="!isLoadingActivity && recentActivity.length === 0">
-          <div class="empty-icon">📋</div>
-          <p class="empty-text">No recent activity</p>
-          <p class="empty-subtext">Your activity will appear here once you start using the platform</p>
-        </div>
-      </div>
+        <gc-empty-state
+          *ngIf="!isLoadingActivity && recentActivity.length === 0"
+          variant="no-data"
+          icon="📋"
+          title="No recent activity"
+          description="Your activity will appear here once you start using the platform"
+          size="sm"
+        ></gc-empty-state>
+      </gc-card>
     </div>
   </div>
 </section>
@@ -84,7 +89,7 @@
   <div class="container">
     <div class="secondary-grid">
       <!-- Quick Actions -->
-      <div class="content-card actions-card">
+      <gc-card variant="elevated" padding="md" class="actions-card">
         <div class="card-header">
           <h2 class="card-title">Quick Actions</h2>
         </div>
@@ -99,10 +104,10 @@
             <span class="action-label">{{ action.label }}</span>
           </button>
         </div>
-      </div>
+      </gc-card>
 
       <!-- Upcoming Reminders -->
-      <div class="content-card reminders-card">
+      <gc-card variant="elevated" padding="md" class="reminders-card">
         <div class="card-header">
           <h2 class="card-title">Upcoming Reminders</h2>
         </div>
@@ -112,16 +117,24 @@
             <div class="reminder-content">
               <h3 class="reminder-title">{{ reminder.title }}</h3>
               <p class="reminder-date">{{ reminder.date }}</p>
-              <span class="reminder-days">{{ reminder.daysLeft }} days left</span>
+              <gc-badge
+                [variant]="reminder.priority === 'high' ? 'error' : reminder.priority === 'medium' ? 'warning' : 'info'"
+                size="sm"
+              >
+                {{ reminder.daysLeft }} days left
+              </gc-badge>
             </div>
           </div>
         </div>
-        <div class="empty-state" *ngIf="upcomingReminders.length === 0">
-          <div class="empty-icon">🔔</div>
-          <p class="empty-text">No upcoming reminders</p>
-          <p class="empty-subtext">Warranty expiration reminders will appear here</p>
-        </div>
-      </div>
+        <gc-empty-state
+          *ngIf="upcomingReminders.length === 0"
+          variant="no-data"
+          icon="🔔"
+          title="No upcoming reminders"
+          description="Warranty expiration reminders will appear here"
+          size="sm"
+        ></gc-empty-state>
+      </gc-card>
     </div>
   </div>
 </section>
@@ -129,7 +142,7 @@
 <!-- Warranty Coverage Chart -->
 <section class="chart-section" *ngIf="devices.length > 0">
   <div class="container">
-    <div class="content-card chart-card">
+    <gc-card variant="elevated" padding="md" class="chart-card">
       <div class="card-header">
         <h2 class="card-title">Warranty Coverage Overview</h2>
       </div>
@@ -141,7 +154,10 @@
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-active"></span>
-              <span>Active: {{ coverageData.active.count }} gadget{{ coverageData.active.count !== 1 ? 's' : '' }} ({{ coverageData.active.percentage }}%)</span>
+              <span>
+                Active: {{ coverageData.active.count }} gadget{{ coverageData.active.count !== 1 ? 's' : '' }}
+                <gc-badge variant="success" size="sm">{{ coverageData.active.percentage }}%</gc-badge>
+              </span>
             </div>
           </div>
           <div class="coverage-item">
@@ -150,7 +166,10 @@
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-expiring"></span>
-              <span>Expiring Soon: {{ coverageData.expiringSoon.count }} gadget{{ coverageData.expiringSoon.count !== 1 ? 's' : '' }} ({{ coverageData.expiringSoon.percentage }}%)</span>
+              <span>
+                Expiring Soon: {{ coverageData.expiringSoon.count }} gadget{{ coverageData.expiringSoon.count !== 1 ? 's' : '' }}
+                <gc-badge variant="warning" size="sm">{{ coverageData.expiringSoon.percentage }}%</gc-badge>
+              </span>
             </div>
           </div>
           <div class="coverage-item">
@@ -159,12 +178,15 @@
             </div>
             <div class="coverage-label">
               <span class="coverage-color coverage-expired"></span>
-              <span>Expired: {{ coverageData.expired.count }} gadget{{ coverageData.expired.count !== 1 ? 's' : '' }} ({{ coverageData.expired.percentage }}%)</span>
+              <span>
+                Expired: {{ coverageData.expired.count }} gadget{{ coverageData.expired.count !== 1 ? 's' : '' }}
+                <gc-badge variant="error" size="sm">{{ coverageData.expired.percentage }}%</gc-badge>
+              </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </gc-card>
   </div>
 </section>
 

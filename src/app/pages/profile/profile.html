@@ -1,14 +1,20 @@
-<!-- Success/Error Popovers -->
-<div class="popover-container">
-  <div *ngIf="successMessage" class="popover popover-success">
-    <div class="popover-icon">✓</div>
-    <div class="popover-message">{{ successMessage }}</div>
-  </div>
+<!-- Success/Error Alerts -->
+<div class="alert-container">
+  <gc-alert
+    *ngIf="successMessage"
+    variant="success"
+    [dismissible]="false"
+  >
+    {{ successMessage }}
+  </gc-alert>
 
-  <div *ngIf="errorMessage" class="popover popover-error">
-    <div class="popover-icon">✕</div>
-    <div class="popover-message">{{ errorMessage }}</div>
-  </div>
+  <gc-alert
+    *ngIf="errorMessage"
+    variant="error"
+    [dismissible]="false"
+  >
+    {{ errorMessage }}
+  </gc-alert>
 </div>
 
 <!-- Profile Page -->
@@ -29,7 +35,7 @@
         </div>
       </div>
       <div class="header-badges">
-        <span class="role-pill">{{ userInfo.role }}</span>
+        <gc-badge variant="primary" size="md">{{ userInfo.role }}</gc-badge>
       </div>
     </div>
   </div>
@@ -74,7 +80,7 @@
     <!-- PROFILE TAB -->
     <div class="tab-pane" *ngIf="activeTab === 'profile'">
       <div class="profile-container">
-        <div class="profile-card">
+        <gc-card variant="elevated" padding="lg">
           <div class="card-header">
             <h3>Personal Information</h3>
             <span class="card-icon">📝</span>
@@ -227,14 +233,14 @@
               <span *ngIf="fieldErrors['mobile']" class="field-error">{{ fieldErrors['mobile'] }}</span>
             </div>
           </div>
-        </div>
+        </gc-card>
       </div>
     </div>
 
     <!-- PREFERENCES TAB -->
     <div class="tab-pane" *ngIf="activeTab === 'preferences'">
       <div class="preferences-container">
-        <div class="preferences-card">
+        <gc-card variant="elevated" padding="lg">
           <div class="card-header">
             <h3>Notification Settings</h3>
             <span class="card-icon">🔔</span>
@@ -273,14 +279,14 @@
               </label>
             </div>
           </div>
-        </div>
+        </gc-card>
       </div>
     </div>
 
     <!-- SECURITY TAB -->
     <div class="tab-pane" *ngIf="activeTab === 'security'">
       <div class="security-container">
-        <div class="security-card">
+        <gc-card variant="elevated" padding="lg">
           <div class="card-header">
             <h3>Password & Authentication</h3>
             <span class="card-icon">🔐</span>
@@ -381,14 +387,14 @@
               </button>
             </div>
           </div>
-        </div>
+        </gc-card>
       </div>
     </div>
 
     <!-- ACCOUNT TAB -->
     <div class="tab-pane" *ngIf="activeTab === 'account'">
       <div class="account-container">
-        <div class="account-card">
+        <gc-card variant="elevated" padding="lg">
           <div class="card-header">
             <h3>Account Information</h3>
             <span class="card-icon">ℹ️</span>
@@ -412,7 +418,7 @@
               </button>
             </div>
           </div>
-        </div>
+        </gc-card>
       </div>
     </div>
   </div>

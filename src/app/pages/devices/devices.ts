@@ -16,6 +16,10 @@ import { BulkActionBarComponent } from '../../shared/components/bulk-action-bar/
 import { CreateServiceRequestDialogComponent, ServiceRequestData } from '../../shared/components/service-request-dialogs/create-service-request-dialog';
 import { BulkImportDialogComponent } from '../../shared/components/device-dialogs/bulk-import-dialog';
 import { BulkImportResult } from '../../core/services/bulk-import.service';
+import { CardComponent } from '../../shared/components/card/card';
+import { BadgeComponent } from '../../shared/components/badge/badge';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 
 @Component({
   selector: 'app-devices',
@@ -31,7 +35,11 @@ import { BulkImportResult } from '../../core/services/bulk-import.service';
     DeleteDocumentDialogComponent,
     BulkActionBarComponent,
     CreateServiceRequestDialogComponent,
-    BulkImportDialogComponent
+    BulkImportDialogComponent,
+    CardComponent,
+    BadgeComponent,
+    LoadingSpinnerComponent,
+    EmptyStateComponent
   ],
   templateUrl: './devices.html',
   styleUrl: './devices.scss'

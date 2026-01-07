@@ -6,6 +6,9 @@ import { Subscription, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
+import { CardComponent } from '../../shared/components/card/card';
+import { BadgeComponent } from '../../shared/components/badge/badge';
+import { AlertComponent } from '../../shared/components/alert/alert';
 
 type TabId = 'profile' | 'preferences' | 'security' | 'account';
 
@@ -16,7 +19,10 @@ type TabId = 'profile' | 'preferences' | 'security' | 'account';
     CommonModule,
     RouterLink,
     FormsModule,
-    ButtonComponent
+    ButtonComponent,
+    CardComponent,
+    BadgeComponent,
+    AlertComponent
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',

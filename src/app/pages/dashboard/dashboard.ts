@@ -15,6 +15,11 @@ import { DocumentService, GenericDocument } from '../../core/services/document.s
 import { DeviceStatsComponent, DeviceStat } from '../../shared/components/device-stats/device-stats';
 import { DeviceListComponent } from '../../shared/components/device-list/device-list';
 import { ActivityService, Activity } from '../../core/services/activity.service';
+import { CardComponent } from '../../shared/components/card/card';
+import { BadgeComponent } from '../../shared/components/badge/badge';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
+import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +34,12 @@ import { ActivityService, Activity } from '../../core/services/activity.service'
     ViewDocumentsDialogComponent,
     DeleteDocumentDialogComponent,
     DeviceStatsComponent,
-    DeviceListComponent
+    DeviceListComponent,
+    CardComponent,
+    BadgeComponent,
+    LoadingSpinnerComponent,
+    SkeletonComponent,
+    EmptyStateComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'

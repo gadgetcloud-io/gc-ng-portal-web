@@ -12,6 +12,11 @@ import { DocumentsManagerComponent } from '../../shared/components/documents-man
 import { NotesTabComponent } from './tabs/notes-tab.component';
 import { ServiceTicketsTabComponent } from './tabs/service-tickets-tab/service-tickets-tab.component';
 import { forkJoin } from 'rxjs';
+import { CardComponent } from '../../shared/components/card/card';
+import { BadgeComponent } from '../../shared/components/badge/badge';
+import { AlertComponent } from '../../shared/components/alert/alert';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 
 @Component({
   selector: 'gc-device-detail',
@@ -25,7 +30,12 @@ import { forkJoin } from 'rxjs';
     WarrantyTabComponent,
     DocumentsManagerComponent,
     NotesTabComponent,
-    ServiceTicketsTabComponent
+    ServiceTicketsTabComponent,
+    CardComponent,
+    BadgeComponent,
+    AlertComponent,
+    LoadingSpinnerComponent,
+    EmptyStateComponent
   ],
   templateUrl: './device-detail.html',
   styleUrls: ['./device-detail.scss'],
@@ -56,7 +66,7 @@ export class DeviceDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    public router: Router,
     private deviceService: DeviceService,
     private rbacService: RbacService,
     private breadcrumbService: BreadcrumbService,
