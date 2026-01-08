@@ -190,7 +190,7 @@
       </div>
 
       <!-- AI Analysis Button -->
-      <div class="ai-actions" *ngIf="photoPreview && !isAnalyzing">
+      <div class="ai-actions" *ngIf="photoPreview && !isAnalyzing && !analysisResult && !analysisError">
         <button
           type="button"
           class="btn btn-primary"
@@ -204,6 +204,78 @@
       <div class="analyzing-state" *ngIf="isAnalyzing">
         <div class="spinner"></div>
         <p>Analyzing photo...</p>
+      </div>
+
+      <!-- Analysis Results -->
+      <div class="analysis-results" *ngIf="analysisResult && !isAnalyzing">
+        <div class="results-header">
+          <h4>✅ AI Analysis Complete</h4>
+        </div>
+
+        <div class="results-content">
+          <!-- Brand -->
+          <div class="result-item" *ngIf="analysisResult.brand">
+            <span class="result-label">Brand:</span>
+            <span class="result-value">{{ analysisResult.brand }}</span>
+            <span class="confidence-badge" *ngIf="analysisResult.confidence?.brand != null">
+              {{ (analysisResult.confidence.brand! * 100) | number:'1.0-0' }}% confidence
+            </span>
+          </div>
+
+          <!-- Model -->
+          <div class="result-item" *ngIf="analysisResult.model">
+            <span class="result-label">Model:</span>
+            <span class="result-value">{{ analysisResult.model }}</span>
+            <span class="confidence-badge" *ngIf="analysisResult.confidence?.model != null">
+              {{ (analysisResult.confidence.model! * 100) | number:'1.0-0' }}% confidence
+            </span>
+          </div>
+
+          <!-- Serial Number -->
+          <div class="result-item" *ngIf="analysisResult.serialNumber">
+            <span class="result-label">Serial Number:</span>
+            <span class="result-value">{{ analysisResult.serialNumber }}</span>
+            <span class="confidence-badge" *ngIf="analysisResult.confidence?.serialNumber != null">
+              {{ (analysisResult.confidence.serialNumber! * 100) | number:'1.0-0' }}% confidence
+            </span>
+          </div>
+
+          <!-- No data extracted -->
+          <div class="result-item" *ngIf="!analysisResult.brand && !analysisResult.model && !analysisResult.serialNumber">
+            <span class="result-value">No device information could be extracted. Please enter details manually.</span>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="applyAnalysisToForm()"
+            *ngIf="analysisResult.brand || analysisResult.model"
+          >
+            ✅ Apply to Form
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="analyzePhoto()"
+          >
+            🔄 Re-analyze
+          </button>
+        </div>
+      </div>
+
+      <!-- Analysis Error -->
+      <div class="analysis-error" *ngIf="analysisError && !isAnalyzing">
+        <div class="error-icon">⚠️</div>
+        <p class="error-message">{{ analysisError }}</p>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="analyzePhoto()"
+        >
+          🔄 Try Again
+        </button>
       </div>
     </div>
 

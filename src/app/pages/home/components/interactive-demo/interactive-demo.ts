@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { HomeDemoService, DemoDevice } from '../../services/home-demo.service';
+import { PhotoAnalysisService, PhotoAnalysisResponse, ExtractedGadgetInfo } from '../../../../core/services/photo-analysis.service';
 
 type DemoStep = 'info' | 'photo' | 'results';
 
@@ -42,6 +43,8 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
   selectedPhoto: File | null = null;
   photoPreview: string | null = null;
   isAnalyzing = false;
+  analysisResult: ExtractedGadgetInfo | null = null;
+  analysisError: string | null = null;
 
   // Results
   addedDevices: DemoDevice[] = [];
@@ -51,7 +54,9 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private homeDemoService: HomeDemoService
+    private homeDemoService: HomeDemoService,
+    private photoAnalysisService: PhotoAnalysisService,
+    private cdr: ChangeDetectorRef
   ) {
     // Initialize form
     this.deviceForm = this.fb.group({
@@ -124,6 +129,8 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
       });
       this.selectedPhoto = null;
       this.photoPreview = null;
+      this.analysisResult = null;
+      this.analysisError = null;
 
       // Go to results
       this.currentStep = 'results';
@@ -166,36 +173,73 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
   removePhoto(): void {
     this.selectedPhoto = null;
     this.photoPreview = null;
+    this.analysisResult = null;
+    this.analysisError = null;
   }
 
-  // === AI Analysis (Simulated) ===
+  // === AI Analysis ===
 
   analyzePhoto(): void {
     if (!this.selectedPhoto) return;
 
     this.isAnalyzing = true;
+    this.analysisError = null;
+    this.analysisResult = null;
 
-    // Simulate AI analysis delay
-    setTimeout(() => {
-      // Simulated AI extraction
-      const mockResults = {
-        brand: 'Apple',
-        model: 'MacBook Pro',
-        confidence: 0.85
-      };
+    const currentCategory = this.deviceForm.get('category')?.value;
 
-      // Pre-fill form with AI results
-      this.deviceForm.patchValue({
-        name: mockResults.model,
-        brand: mockResults.brand,
-        category: 'laptop'
-      });
+    this.photoAnalysisService.analyzePhoto(this.selectedPhoto, currentCategory).subscribe({
+      next: (response: PhotoAnalysisResponse) => {
+        this.isAnalyzing = false;
+        this.analysisResult = response.extractedData;
 
-      this.isAnalyzing = false;
+        // Track engagement
+        this.homeDemoService.trackEngagement('uploadPhoto');
 
-      // Show confidence message
-      alert(`AI detected: ${mockResults.brand} ${mockResults.model} (${Math.round(mockResults.confidence * 100)}% confidence)`);
-    }, 1500);
+        // Trigger change detection
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isAnalyzing = false;
+        this.analysisError = error.message || 'Failed to analyze photo. Please try again.';
+        console.error('Photo analysis failed:', error);
+
+        // Trigger change detection
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  /**
+   * Apply AI-extracted data to the form
+   */
+  applyAnalysisToForm(): void {
+    if (!this.analysisResult) return;
+
+    const updates: any = {};
+
+    if (this.analysisResult.brand) {
+      updates.brand = this.analysisResult.brand;
+    }
+
+    if (this.analysisResult.model) {
+      // Combine brand and model for name if both exist
+      if (this.analysisResult.brand && this.analysisResult.model) {
+        updates.name = `${this.analysisResult.brand} ${this.analysisResult.model}`;
+      } else {
+        updates.name = this.analysisResult.model;
+      }
+    }
+
+    if (this.analysisResult.suggestedCategory) {
+      updates.category = this.analysisResult.suggestedCategory;
+    }
+
+    // Apply updates to form
+    this.deviceForm.patchValue(updates);
+
+    // Go back to info step to review/edit
+    this.currentStep = 'info';
   }
 
   // === Results Actions ===

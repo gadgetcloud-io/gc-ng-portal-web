@@ -165,11 +165,11 @@
           <div
             *ngIf="analysisResult?.extractedData?.brand"
             class="field-hint"
-            [class.confidence-high]="analysisResult && hasHighConfidence(analysisResult.extractedData.confidence.brand)"
-            [class.confidence-medium]="analysisResult && getConfidenceLabel(analysisResult.extractedData.confidence.brand) === 'medium'"
+            [class.confidence-high]="analysisResult && analysisResult.extractedData.confidence.brand && hasHighConfidence(analysisResult.extractedData.confidence.brand)"
+            [class.confidence-medium]="analysisResult && analysisResult.extractedData.confidence.brand && getConfidenceLabel(analysisResult.extractedData.confidence.brand) === 'medium'"
           >
             <span class="hint-icon">🤖</span>
-            AI extracted ({{ analysisResult ? getConfidenceLabel(analysisResult.extractedData.confidence.brand) : '' }} confidence)
+            AI extracted ({{ analysisResult && analysisResult.extractedData.confidence.brand ? getConfidenceLabel(analysisResult.extractedData.confidence.brand) : '' }} confidence)
           </div>
         </div>
 
@@ -184,11 +184,11 @@
           <div
             *ngIf="analysisResult?.extractedData?.model"
             class="field-hint"
-            [class.confidence-high]="analysisResult && hasHighConfidence(analysisResult.extractedData.confidence.model)"
-            [class.confidence-medium]="analysisResult && getConfidenceLabel(analysisResult.extractedData.confidence.model) === 'medium'"
+            [class.confidence-high]="analysisResult && analysisResult.extractedData.confidence.model && hasHighConfidence(analysisResult.extractedData.confidence.model)"
+            [class.confidence-medium]="analysisResult && analysisResult.extractedData.confidence.model && getConfidenceLabel(analysisResult.extractedData.confidence.model) === 'medium'"
           >
             <span class="hint-icon">🤖</span>
-            AI extracted ({{ analysisResult ? getConfidenceLabel(analysisResult.extractedData.confidence.model) : '' }} confidence)
+            AI extracted ({{ analysisResult && analysisResult.extractedData.confidence.model ? getConfidenceLabel(analysisResult.extractedData.confidence.model) : '' }} confidence)
           </div>
         </div>
       </div>
@@ -271,11 +271,11 @@
         <div
           *ngIf="analysisResult?.extractedData?.serialNumber"
           class="field-hint"
-          [class.confidence-high]="analysisResult && hasHighConfidence(analysisResult.extractedData.confidence.serialNumber)"
-          [class.confidence-medium]="analysisResult && getConfidenceLabel(analysisResult.extractedData.confidence.serialNumber) === 'medium'"
+          [class.confidence-high]="analysisResult && analysisResult.extractedData.confidence.serialNumber && hasHighConfidence(analysisResult.extractedData.confidence.serialNumber)"
+          [class.confidence-medium]="analysisResult && analysisResult.extractedData.confidence.serialNumber && getConfidenceLabel(analysisResult.extractedData.confidence.serialNumber) === 'medium'"
         >
           <span class="hint-icon">🤖</span>
-          AI extracted ({{ analysisResult ? getConfidenceLabel(analysisResult.extractedData.confidence.serialNumber) : '' }} confidence)
+          AI extracted ({{ analysisResult && analysisResult.extractedData.confidence.serialNumber ? getConfidenceLabel(analysisResult.extractedData.confidence.serialNumber) : '' }} confidence)
         </div>
       </div>
 

@@ -264,17 +264,17 @@ export class AddDeviceDialogComponent implements OnDestroy {
     const { extractedData } = result;
 
     // Pre-fill manufacturer (brand)
-    if (extractedData.brand && this.hasHighConfidence(extractedData.confidence.brand)) {
+    if (extractedData.brand && extractedData.confidence.brand && this.hasHighConfidence(extractedData.confidence.brand)) {
       this.deviceForm.patchValue({ manufacturer: extractedData.brand });
     }
 
     // Pre-fill model
-    if (extractedData.model && this.hasHighConfidence(extractedData.confidence.model)) {
+    if (extractedData.model && extractedData.confidence.model && this.hasHighConfidence(extractedData.confidence.model)) {
       this.deviceForm.patchValue({ model: extractedData.model });
     }
 
     // Pre-fill serial number
-    if (extractedData.serialNumber && this.hasHighConfidence(extractedData.confidence.serialNumber)) {
+    if (extractedData.serialNumber && extractedData.confidence.serialNumber && this.hasHighConfidence(extractedData.confidence.serialNumber)) {
       this.deviceForm.patchValue({ serialNumber: extractedData.serialNumber });
     }
 
