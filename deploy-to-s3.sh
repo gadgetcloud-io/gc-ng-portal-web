@@ -11,7 +11,7 @@
 #
 # Prerequisites:
 #   - AWS CLI configured with 'gc' profile
-#   - Angular app built in dist/gc-ng-www-web/browser
+#   - Angular app built in dist/gc-ng-portal-web/browser
 #   - CloudFront distribution IDs configured
 #
 # ========================================
@@ -32,13 +32,13 @@ NC='\033[0m' # No Color
 ENVIRONMENT=${1:-stg}
 
 if [ "$ENVIRONMENT" = "prd" ]; then
-  BUCKET_NAME="www.gadgetcloud.io"
-  DISTRIBUTION_ID="E1D6C4DNXVFZXX"
+  BUCKET_NAME="my.gadgetcloud.io"
+  DISTRIBUTION_ID="E2C6CN3UB2T4L2"
   AWS_PROFILE="gc"
   BUILD_CONFIG="production"
 elif [ "$ENVIRONMENT" = "stg" ]; then
-  BUCKET_NAME="www-stg.gadgetcloud.io"
-  DISTRIBUTION_ID="EWZK41ROMBQH2"
+  BUCKET_NAME="my-stg.gadgetcloud.io"
+  DISTRIBUTION_ID="E14WTLCWV7VL2Z"
   AWS_PROFILE="gc"
   BUILD_CONFIG="staging"
 else
@@ -47,7 +47,7 @@ else
   exit 1
 fi
 
-BUILD_DIR="dist/gc-ng-www-web/browser"
+BUILD_DIR="dist/gc-ng-portal-web/browser"
 
 # ========================================
 # Header
@@ -166,12 +166,11 @@ echo "=========================================="
 echo ""
 
 if [ "$ENVIRONMENT" = "prd" ]; then
-  echo -e "${BLUE}Production URLs:${NC}"
-  echo "  🌐 https://www.gadgetcloud.io"
-  echo "  🔀 https://gadgetcloud.io (redirects to www)"
+  echo -e "${BLUE}Production Portal URL:${NC}"
+  echo "  🌐 https://my.gadgetcloud.io"
 else
-  echo -e "${BLUE}Staging URL:${NC}"
-  echo "  🌐 https://www-stg.gadgetcloud.io"
+  echo -e "${BLUE}Staging Portal URL:${NC}"
+  echo "  🌐 https://my-stg.gadgetcloud.io"
 fi
 
 echo ""
