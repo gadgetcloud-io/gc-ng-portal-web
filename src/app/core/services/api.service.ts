@@ -119,6 +119,14 @@ export class ApiService {
   }
 
   /**
+   * Check if token exists
+   * Public method for auth service to check token presence
+   */
+  hasToken(): boolean {
+    return this.getToken() !== null;
+  }
+
+  /**
    * Get stored token
    * Reads from cookie (production/staging) or localStorage (local dev)
    */

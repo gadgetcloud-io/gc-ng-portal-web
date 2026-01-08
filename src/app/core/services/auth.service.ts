@@ -66,9 +66,11 @@ export class AuthService {
 
   private loadStoredAuth(): void {
     const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('auth_token');
+    // Check for token in cookie (cross-subdomain) or localStorage (fallback)
+    const token = this.apiService.hasToken();
 
     if (storedUser && (this.useApi ? token : true)) {
+      // Have both user and token
       try {
         const user = JSON.parse(storedUser);
         this.authState.next({
@@ -78,9 +80,34 @@ export class AuthService {
       } catch (e) {
         console.error('Error parsing stored user:', e);
         localStorage.removeItem('user');
-        localStorage.removeItem('auth_token');
+        this.apiService.removeToken(); // Clear both cookie and localStorage
       }
+    } else if (token && !storedUser && this.useApi) {
+      // Have token but no user (cross-subdomain navigation)
+      // Fetch user profile from API
+      this.fetchUserProfile();
     }
+  }
+
+  private fetchUserProfile(): void {
+    this.apiService.get<User>('/auth/profile').subscribe({
+      next: (user) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.authState.next({
+          isAuthenticated: true,
+          user
+        });
+      },
+      error: (error) => {
+        console.error('Failed to fetch user profile:', error);
+        // Token might be invalid, clear it
+        this.apiService.removeToken();
+        this.authState.next({
+          isAuthenticated: false,
+          user: null
+        });
+      }
+    });
   }
 
   signup(firstName: string, lastName: string, email: string, password: string): Observable<{ success: boolean; error?: string; message?: string; email?: string }> {
