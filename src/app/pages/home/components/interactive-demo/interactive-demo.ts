@@ -46,6 +46,9 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
   analysisResult: ExtractedGadgetInfo | null = null;
   analysisError: string | null = null;
 
+  // Auto-detection flag
+  fieldsAutoDetected = false;
+
   // Results
   addedDevices: DemoDevice[] = [];
 
@@ -131,10 +134,130 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
       this.photoPreview = null;
       this.analysisResult = null;
       this.analysisError = null;
+      this.fieldsAutoDetected = false;
 
       // Go to results
       this.currentStep = 'results';
     }
+  }
+
+  // === Smart Device Name Parser ===
+
+  /**
+   * Parse device name and auto-populate category, brand, and model
+   */
+  onDeviceNameChange(): void {
+    const deviceName = this.deviceForm.get('name')?.value || '';
+
+    if (deviceName.length < 2) {
+      this.fieldsAutoDetected = false;
+      return;
+    }
+
+    const parsed = this.parseDeviceName(deviceName);
+
+    if (parsed.brand || parsed.category) {
+      this.fieldsAutoDetected = true;
+
+      // Only update if we detected something
+      if (parsed.category) {
+        this.deviceForm.patchValue({ category: parsed.category }, { emitEvent: false });
+      }
+
+      if (parsed.brand) {
+        this.deviceForm.patchValue({ brand: parsed.brand }, { emitEvent: false });
+      }
+
+      // Trigger change detection
+      this.cdr.markForCheck();
+    } else {
+      this.fieldsAutoDetected = false;
+    }
+  }
+
+  /**
+   * Smart parser for device names
+   * Detects brand, category, and extracts model from device name
+   */
+  private parseDeviceName(name: string): { brand?: string; category?: string } {
+    const nameLower = name.toLowerCase();
+
+    // Brand detection patterns (order matters - check specific patterns first)
+    const brandPatterns: { [key: string]: RegExp[] } = {
+      'Apple': [
+        /\b(iphone|ipad|macbook|imac|mac|airpods?|apple\s*watch|apple\s*tv)\b/i,
+        /\bapple\b/i
+      ],
+      'Samsung': [/\b(samsung|galaxy)\b/i],
+      'Dell': [/\b(dell|xps|inspiron|latitude|alienware)\b/i],
+      'HP': [/\b(hp|hewlett|pavilion|envy|omen|elitebook)\b/i],
+      'Lenovo': [/\b(lenovo|thinkpad|ideapad|yoga)\b/i],
+      'Microsoft': [/\b(microsoft|surface|xbox)\b/i],
+      'Sony': [/\b(sony|playstation|ps\d|bravia|xperia)\b/i],
+      'LG': [/\b(lg)\b/i],
+      'Asus': [/\b(asus|zenbook|rog)\b/i],
+      'Acer': [/\b(acer|aspire|predator|swift)\b/i],
+      'Google': [/\b(google|pixel|nest|chromecast)\b/i],
+      'OnePlus': [/\b(oneplus|one\s*plus)\b/i],
+      'Xiaomi': [/\b(xiaomi|redmi|poco|mi\s*\d)\b/i],
+      'Huawei': [/\b(huawei|honor)\b/i],
+      'Motorola': [/\b(motorola|moto)\b/i],
+      'Nokia': [/\b(nokia)\b/i],
+      'Oppo': [/\b(oppo)\b/i],
+      'Vivo': [/\b(vivo)\b/i],
+      'Realme': [/\b(realme)\b/i],
+      'Canon': [/\b(canon|eos)\b/i],
+      'Nikon': [/\b(nikon)\b/i],
+      'Bose': [/\b(bose)\b/i],
+      'JBL': [/\b(jbl)\b/i],
+      'Beats': [/\b(beats)\b/i]
+    };
+
+    // Category detection patterns (order matters - check specific patterns first)
+    const categoryPatterns: { [key: string]: RegExp[] } = {
+      'laptop': [
+        /\b(macbook|laptop|notebook|ultrabook|chromebook|thinkpad|ideapad|pavilion|inspiron|latitude|elitebook|zenbook|aspire|swift|surface\s*laptop)\b/i
+      ],
+      'smartphone': [
+        /\b(iphone|phone|smartphone|galaxy\s*s|galaxy\s*note|galaxy\s*z|pixel|oneplus|redmi|poco|mi\s*\d|xperia|moto\s*g|moto\s*e)\b/i
+      ],
+      'tablet': [
+        /\b(ipad|tablet|galaxy\s*tab|surface\s*pro|kindle|fire\s*hd)\b/i
+      ],
+      'smartwatch': [
+        /\b(watch|smartwatch|apple\s*watch|galaxy\s*watch|fitbit)\b/i
+      ],
+      'headphones': [
+        /\b(airpods?|headphones?|earbuds?|earphones?|beats|bose|jbl|wh-|wf-)\b/i
+      ],
+      'camera': [
+        /\b(camera|eos|nikon|dslr|mirrorless|gopro)\b/i
+      ]
+    };
+
+    let detectedBrand: string | undefined;
+    let detectedCategory: string | undefined;
+
+    // Detect brand
+    for (const [brand, patterns] of Object.entries(brandPatterns)) {
+      if (patterns.some(pattern => pattern.test(nameLower))) {
+        detectedBrand = brand;
+        break;
+      }
+    }
+
+    // Detect category
+    for (const [category, patterns] of Object.entries(categoryPatterns)) {
+      if (patterns.some(pattern => pattern.test(nameLower))) {
+        detectedCategory = category;
+        break;
+      }
+    }
+
+    return {
+      brand: detectedBrand,
+      category: detectedCategory || 'other'
+    };
   }
 
   // === Photo Upload ===
@@ -237,6 +360,9 @@ export class InteractiveDemoComponent implements OnInit, OnDestroy {
 
     // Apply updates to form
     this.deviceForm.patchValue(updates);
+
+    // Mark as auto-detected since it came from AI
+    this.fieldsAutoDetected = true;
 
     // Go back to info step to review/edit
     this.currentStep = 'info';

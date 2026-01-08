@@ -56,16 +56,6 @@
     </div>
 
     <form [formGroup]="deviceForm" class="device-form">
-      <!-- Category Selection -->
-      <div class="form-group">
-        <label for="category" class="form-label">Category *</label>
-        <select id="category" formControlName="category" class="form-control">
-          <option *ngFor="let cat of categories" [value]="cat.value">
-            {{ cat.icon }} {{ cat.label }}
-          </option>
-        </select>
-      </div>
-
       <!-- Device Name -->
       <div class="form-group">
         <label for="name" class="form-label">Device Name *</label>
@@ -74,7 +64,8 @@
           type="text"
           formControlName="name"
           class="form-control"
-          placeholder="e.g. MacBook Pro 2023"
+          placeholder="e.g. MacBook Pro 2023, iPhone 15 Pro, Samsung Galaxy S24"
+          (input)="onDeviceNameChange()"
         />
         <div
           class="form-error"
@@ -82,6 +73,19 @@
         >
           Please enter a device name (min 2 characters)
         </div>
+      </div>
+
+      <!-- Category Selection -->
+      <div class="form-group">
+        <label for="category" class="form-label">Category *</label>
+        <select id="category" formControlName="category" class="form-control">
+          <option *ngFor="let cat of categories" [value]="cat.value">
+            {{ cat.icon }} {{ cat.label }}
+          </option>
+        </select>
+        <p class="form-hint" *ngIf="fieldsAutoDetected">
+          ✨ Auto-detected from device name
+        </p>
       </div>
 
       <!-- Brand -->
@@ -94,6 +98,9 @@
           class="form-control"
           placeholder="e.g. Apple, Dell, Samsung"
         />
+        <p class="form-hint" *ngIf="fieldsAutoDetected">
+          ✨ Auto-detected from device name
+        </p>
       </div>
 
       <!-- Purchase Date and Warranty -->
