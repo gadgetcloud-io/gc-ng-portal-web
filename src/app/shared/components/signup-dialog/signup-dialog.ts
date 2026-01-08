@@ -15,6 +15,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class SignupDialogComponent {
   @Input() isOpen = false;
+  @Input() demoDeviceCount?: number; // Number of demo devices added
   @Output() close = new EventEmitter<void>();
   @Output() switchToLogin = new EventEmitter<void>();
   @Output() signupSuccess = new EventEmitter<void>();
@@ -83,8 +84,12 @@ export class SignupDialogComponent {
       next: (result) => {
         this.isLoading = false;
         if (result.success) {
-          // Show success message instead of closing
-          this.successMessage = result.message || 'Account created! Please check your email to verify your account.';
+          // Show contextual success message
+          if (this.demoDeviceCount && this.demoDeviceCount > 0) {
+            this.successMessage = `Success! Your ${this.demoDeviceCount} gadget${this.demoDeviceCount > 1 ? 's are' : ' is'} now saved. Please check your email to verify your account.`;
+          } else {
+            this.successMessage = result.message || 'Account created! Please check your email to verify your account.';
+          }
           // Don't emit signupSuccess or close dialog yet
           // User reads message, then clicks close or we auto-close after delay
           setTimeout(() => {

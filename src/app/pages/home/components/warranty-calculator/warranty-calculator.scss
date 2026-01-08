@@ -1,0 +1,397 @@
+@use '../../../../../styles/design-tokens' as *;
+
+.warranty-calculator {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--brand-primary-100);
+
+  // === Header ===
+
+  .calculator-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .calculator-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin-bottom: var(--space-2);
+  }
+
+  .calculator-subtitle {
+    font-size: 1rem;
+    color: var(--neutral-600);
+    line-height: 1.6;
+  }
+
+  // === Input Sliders ===
+
+  .calculator-inputs {
+    display: grid;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    padding: var(--space-6);
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--neutral-200);
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .input-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .input-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--brand-primary-600);
+    text-align: center;
+    padding: var(--space-2);
+    background: var(--brand-primary-50);
+    border-radius: var(--radius-md);
+  }
+
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(
+      to right,
+      var(--brand-primary-200) 0%,
+      var(--brand-primary-400) 100%
+    );
+    outline: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+
+    &:hover {
+      background: linear-gradient(
+        to right,
+        var(--brand-primary-300) 0%,
+        var(--brand-primary-500) 100%
+      );
+    }
+
+    // Webkit (Chrome, Safari)
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-primary-500) 0%, var(--brand-primary-600) 100%);
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+
+      &:hover {
+        transform: scale(1.15);
+        box-shadow: var(--shadow-lg);
+      }
+
+      &:active {
+        transform: scale(1.05);
+      }
+    }
+
+    // Firefox
+    &::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-primary-500) 0%, var(--brand-primary-600) 100%);
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+
+      &:hover {
+        transform: scale(1.15);
+        box-shadow: var(--shadow-lg);
+      }
+
+      &:active {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    margin-top: var(--space-1);
+  }
+
+  // === Results Display ===
+
+  .calculator-results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .result-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--neutral-200);
+    transition: all var(--transition-base);
+
+    &:hover {
+      border-color: var(--brand-primary-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  .primary-result {
+    background: linear-gradient(135deg, var(--brand-primary-50) 0%, var(--brand-primary-100) 100%);
+    border-color: var(--brand-primary-300);
+
+    .result-icon {
+      font-size: 3rem;
+    }
+
+    .result-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--brand-primary-700);
+      line-height: 1;
+      animation: countUp 0.5s ease-out;
+    }
+  }
+
+  .result-content {
+    flex: 1;
+  }
+
+  .result-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-1);
+  }
+
+  .result-note {
+    font-size: 0.875rem;
+    color: var(--neutral-500);
+    margin-top: var(--space-2);
+  }
+
+  // === Stats Grid ===
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--neutral-200);
+    transition: all var(--transition-base);
+
+    &:hover {
+      border-color: var(--brand-primary-200);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .stat-content {
+    flex: 1;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--neutral-600);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    line-height: 1.2;
+  }
+
+  .stat-note {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    margin-top: var(--space-1);
+  }
+
+  .stat-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--neutral-200);
+    border-radius: 3px;
+    margin-top: var(--space-2);
+    overflow: hidden;
+  }
+
+  .stat-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-primary-400) 0%, var(--brand-primary-600) 100%);
+    border-radius: 3px;
+    transition: width 0.5s ease-out;
+  }
+
+  // === Recommendation ===
+
+  .recommendation {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+    border-radius: var(--radius-lg);
+    border: 2px solid #ffd54f;
+  }
+
+  .recommendation-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .recommendation-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f57f17;
+    line-height: 1.5;
+  }
+
+  // === Info Box ===
+
+  .calculator-info {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    margin-top: var(--space-6);
+    background: var(--neutral-100);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--brand-primary-500);
+  }
+
+  .info-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .info-text {
+    font-size: 0.875rem;
+    color: var(--neutral-700);
+    line-height: 1.6;
+
+    strong {
+      color: var(--neutral-900);
+    }
+  }
+
+  // === Animations ===
+
+  @keyframes countUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // === Responsive Design ===
+
+  @media (max-width: 768px) {
+    padding: var(--space-6);
+
+    .calculator-title {
+      font-size: 1.5rem;
+    }
+
+    .calculator-inputs {
+      padding: var(--space-4);
+    }
+
+    .input-value {
+      font-size: 1.5rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .primary-result {
+      flex-direction: column;
+      text-align: center;
+
+      .result-value {
+        font-size: 2rem;
+      }
+    }
+
+    .stat-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .recommendation {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--space-4);
+
+    .calculator-title {
+      font-size: 1.25rem;
+    }
+
+    .input-value {
+      font-size: 1.25rem;
+    }
+
+    .primary-result .result-value {
+      font-size: 1.75rem;
+    }
+  }
+}

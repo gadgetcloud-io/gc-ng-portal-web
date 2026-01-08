@@ -1,0 +1,129 @@
+<div class="warranty-calculator">
+  <!-- Header -->
+  <div class="calculator-header">
+    <h3 class="calculator-title">💰 Warranty Savings Calculator</h3>
+    <p class="calculator-subtitle">
+      See how much you could save by tracking your warranties
+    </p>
+  </div>
+
+  <!-- Input Sliders -->
+  <div class="calculator-inputs">
+    <!-- Purchase Price Slider -->
+    <div class="input-group">
+      <label for="purchasePrice" class="input-label">
+        Purchase Price
+      </label>
+      <div class="input-value">
+        {{ formatCurrency(purchasePrice) }}
+      </div>
+      <input
+        type="range"
+        id="purchasePrice"
+        [(ngModel)]="purchasePrice"
+        (input)="onSliderChange()"
+        min="1000"
+        max="200000"
+        step="1000"
+        class="slider"
+      />
+      <div class="slider-labels">
+        <span>₹1K</span>
+        <span>₹200K</span>
+      </div>
+    </div>
+
+    <!-- Warranty Period Slider -->
+    <div class="input-group">
+      <label for="warrantyMonths" class="input-label">
+        Warranty Period
+      </label>
+      <div class="input-value">
+        {{ warrantyPeriod }}
+      </div>
+      <input
+        type="range"
+        id="warrantyMonths"
+        [(ngModel)]="warrantyMonths"
+        (input)="onSliderChange()"
+        min="3"
+        max="60"
+        step="3"
+        class="slider"
+      />
+      <div class="slider-labels">
+        <span>3 months</span>
+        <span>5 years</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Display -->
+  <div class="calculator-results">
+    <!-- Main Savings Card -->
+    <div class="result-card primary-result">
+      <div class="result-icon">💸</div>
+      <div class="result-content">
+        <div class="result-label">Potential Savings</div>
+        <div class="result-value">{{ formatCurrency(potentialSavings) }}</div>
+        <div class="result-note">
+          If you make a warranty claim during the period
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <!-- Repair Probability -->
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-label">Repair Probability</div>
+          <div class="stat-value">{{ getRepairProbabilityPercent() }}%</div>
+          <div class="stat-bar">
+            <div
+              class="stat-bar-fill"
+              [style.width.%]="getRepairProbabilityPercent()"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Average Repair Cost -->
+      <div class="stat-card">
+        <div class="stat-icon">🔧</div>
+        <div class="stat-content">
+          <div class="stat-label">Avg. Repair Cost</div>
+          <div class="stat-value">{{ formatCurrency(averageRepairCost) }}</div>
+          <div class="stat-note">~20% of purchase price</div>
+        </div>
+      </div>
+
+      <!-- Repair Estimate -->
+      <div class="stat-card">
+        <div class="stat-icon">🛠️</div>
+        <div class="stat-content">
+          <div class="stat-label">Est. Repairs</div>
+          <div class="stat-value">{{ repairCountEstimate }}</div>
+          <div class="stat-note">During warranty period</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="recommendation">
+      <div class="recommendation-icon">{{ getRecommendationIcon() }}</div>
+      <div class="recommendation-text">{{ getRecommendation() }}</div>
+    </div>
+  </div>
+
+  <!-- Info Box -->
+  <div class="calculator-info">
+    <div class="info-icon">ℹ️</div>
+    <div class="info-text">
+      <strong>How it works:</strong> We calculate potential savings based on average repair costs
+      (typically 20% of purchase price), repair probability, and warranty duration. Actual savings
+      may vary based on product type and usage.
+    </div>
+  </div>
+</div>

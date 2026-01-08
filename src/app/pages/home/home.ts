@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
 import { LoginDialogComponent } from '../../shared/components/login-dialog/login-dialog';
 import { SignupDialogComponent } from '../../shared/components/signup-dialog/signup-dialog';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
@@ -10,11 +11,30 @@ import { BlogService } from '../../core/services/blog.service';
 import { BlogPost } from '../../core/models/blog.model';
 import { BlogCardComponent } from '../../shared/components/blog-card/blog-card.component';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { ProgressIndicatorComponent } from './components/progress-indicator/progress-indicator';
+import { InteractiveDemoComponent } from './components/interactive-demo/interactive-demo';
+import { WarrantyCalculatorComponent } from './components/warranty-calculator/warranty-calculator';
+import { BeforeAfterSliderComponent } from './components/before-after-slider/before-after-slider';
+import { SaveProgressCtaComponent } from './components/save-progress-cta/save-progress-cta';
+import { HomeDemoService, DemoState, DemoDevice } from './services/home-demo.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoginDialogComponent, SignupDialogComponent, ScrollRevealDirective, BlogCardComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    LoginDialogComponent,
+    SignupDialogComponent,
+    ScrollRevealDirective,
+    BlogCardComponent,
+    ButtonComponent,
+    ProgressIndicatorComponent,
+    InteractiveDemoComponent,
+    WarrantyCalculatorComponent,
+    BeforeAfterSliderComponent,
+    SaveProgressCtaComponent
+  ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -22,6 +42,12 @@ export class HomeComponent implements OnInit {
   // Dialogs
   isLoginDialogOpen = false;
   isSignupDialogOpen = false;
+
+  // Demo state
+  demoState$: Observable<DemoState>;
+
+  // Exit intent tracking
+  private hasShownExitIntent = false;
 
   // Featured blog posts
   featuredPosts: BlogPost[] = [];
@@ -102,8 +128,12 @@ export class HomeComponent implements OnInit {
   constructor(
     private seoService: SeoService,
     private blogService: BlogService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private homeDemoService: HomeDemoService
+  ) {
+    // Initialize demo state observable
+    this.demoState$ = this.homeDemoService.demoState$;
+  }
 
   ngOnInit(): void {
     this.updateSEO();
@@ -148,6 +178,13 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  scrollToDemo(): void {
+    const element = document.getElementById('demo');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   openSignupDialog(): void {
     this.isSignupDialogOpen = true;
   }
@@ -180,5 +217,74 @@ export class HomeComponent implements OnInit {
 
   onSignupSuccess(): void {
     this.isSignupDialogOpen = false;
+    // Transfer demo data to user account after successful signup
+    this.homeDemoService.transferToAccount();
+  }
+
+  // === Demo-related methods ===
+
+  /**
+   * Open signup dialog with demo data transfer
+   */
+  openSignupWithDemo(): void {
+    this.isSignupDialogOpen = true;
+  }
+
+  /**
+   * Get current demo state (for use in template)
+   */
+  getDemoState(): DemoState {
+    return this.homeDemoService.getCurrentState();
+  }
+
+  /**
+   * Check if save CTA should be shown
+   */
+  shouldShowSaveCTA(): boolean {
+    return this.homeDemoService.shouldShowSaveCTA();
+  }
+
+  /**
+   * Reset demo state
+   */
+  resetDemo(): void {
+    this.homeDemoService.resetDemo();
+  }
+
+  // === Exit Intent Detection ===
+
+  /**
+   * Detect mouse leaving viewport (exit intent)
+   */
+  @HostListener('document:mouseleave', ['$event'])
+  onMouseLeave(event: MouseEvent): void {
+    // Only trigger if:
+    // 1. User has interacted with demo
+    // 2. User is not already signed up (check session)
+    // 3. Exit intent hasn't been shown yet this session
+    const demoState = this.getDemoState();
+    const hasInteracted = demoState.engagementScore > 0;
+
+    if (hasInteracted && !this.hasShownExitIntent) {
+      this.hasShownExitIntent = true;
+      this.showExitIntentModal();
+    }
+  }
+
+  /**
+   * Show exit intent modal
+   */
+  private showExitIntentModal(): void {
+    const demoState = this.getDemoState();
+    const deviceCount = demoState.devices.length;
+
+    if (deviceCount > 0) {
+      const message = `Don't lose your work! You've added ${deviceCount} gadget${deviceCount > 1 ? 's' : ''}. Sign up now to save your progress.`;
+
+      // Simple confirm dialog for now - can be replaced with custom modal
+      if (confirm(message)) {
+        this.openSignupWithDemo();
+      }
+    }
   }
 }
