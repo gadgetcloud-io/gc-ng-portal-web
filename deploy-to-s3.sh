@@ -38,7 +38,7 @@ if [ "$ENVIRONMENT" = "prd" ]; then
   BUILD_CONFIG="production"
 elif [ "$ENVIRONMENT" = "stg" ]; then
   BUCKET_NAME="www-stg.gadgetcloud.io"
-  DISTRIBUTION_ID="E1LLF7FUWQJVQN"
+  DISTRIBUTION_ID="EWZK41ROMBQH2"
   AWS_PROFILE="gc"
   BUILD_CONFIG="staging"
 else
