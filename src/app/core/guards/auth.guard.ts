@@ -22,7 +22,7 @@ export const authGuard: CanActivateFn = (
   // Store the attempted URL for redirecting after login
   localStorage.setItem('gc_redirect_url', state.url);
 
-  // Redirect to home page
-  router.navigate(['/']);
+  // Redirect to marketing site login (portal is for authenticated users only)
+  window.location.href = 'https://www.gadgetcloud.io';
   return false;
 };
