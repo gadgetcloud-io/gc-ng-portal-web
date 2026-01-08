@@ -131,14 +131,31 @@ export class ApiService {
    * Reads from cookie (production/staging) or localStorage (local dev)
    */
   private getToken(): string | null {
+    console.log('[Portal API Service] getToken called', {
+      hostname: window.location.hostname,
+      allCookies: document.cookie
+    });
+
     // Try cookie first (cross-subdomain support)
     const cookieToken = this.getCookie('gc_token');
+    console.log('[Portal API Service] Cookie check:', {
+      cookieFound: cookieToken ? 'YES' : 'NO',
+      cookieLength: cookieToken?.length || 0
+    });
+
     if (cookieToken) {
+      console.log('[Portal API Service] Returning token from cookie');
       return cookieToken;
     }
 
     // Fallback to localStorage (local development)
-    return localStorage.getItem('auth_token');
+    const localToken = localStorage.getItem('auth_token');
+    console.log('[Portal API Service] LocalStorage check:', {
+      tokenFound: localToken ? 'YES' : 'NO',
+      tokenLength: localToken?.length || 0
+    });
+
+    return localToken;
   }
 
   /**

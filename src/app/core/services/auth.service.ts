@@ -53,6 +53,9 @@ export class AuthService {
 
   public authState$ = this.authState.asObservable();
 
+  // Promise that resolves when initial auth check is complete
+  private initPromise: Promise<void>;
+
   // Flag to toggle between API and localStorage mode
   private useApi = true; // API mode enabled
 
@@ -61,52 +64,71 @@ export class AuthService {
     private apiService: ApiService
   ) {
     // Check for existing session on init
-    this.loadStoredAuth();
+    this.initPromise = this.loadStoredAuth();
   }
 
-  private loadStoredAuth(): void {
-    const storedUser = localStorage.getItem('user');
-    // Check for token in cookie (cross-subdomain) or localStorage (fallback)
-    const token = this.apiService.hasToken();
-
-    if (storedUser && (this.useApi ? token : true)) {
-      // Have both user and token
-      try {
-        const user = JSON.parse(storedUser);
-        this.authState.next({
-          isAuthenticated: true,
-          user
-        });
-      } catch (e) {
-        console.error('Error parsing stored user:', e);
-        localStorage.removeItem('user');
-        this.apiService.removeToken(); // Clear both cookie and localStorage
-      }
-    } else if (token && !storedUser && this.useApi) {
-      // Have token but no user (cross-subdomain navigation)
-      // Fetch user profile from API
-      this.fetchUserProfile();
-    }
+  /**
+   * Wait for initial auth check to complete
+   * Used by auth guard to ensure we've checked for existing session
+   */
+  waitForInit(): Promise<void> {
+    return this.initPromise;
   }
 
-  private fetchUserProfile(): void {
-    this.apiService.get<User>('/auth/profile').subscribe({
-      next: (user) => {
-        localStorage.setItem('user', JSON.stringify(user));
-        this.authState.next({
-          isAuthenticated: true,
-          user
-        });
-      },
-      error: (error) => {
-        console.error('Failed to fetch user profile:', error);
-        // Token might be invalid, clear it
-        this.apiService.removeToken();
-        this.authState.next({
-          isAuthenticated: false,
-          user: null
-        });
+  private loadStoredAuth(): Promise<void> {
+    return new Promise((resolve) => {
+      const storedUser = localStorage.getItem('user');
+      // Check for token in cookie (cross-subdomain) or localStorage (fallback)
+      const token = this.apiService.hasToken();
+
+      if (storedUser && (this.useApi ? token : true)) {
+        // Have both user and token
+        try {
+          const user = JSON.parse(storedUser);
+          this.authState.next({
+            isAuthenticated: true,
+            user
+          });
+          resolve();
+        } catch (e) {
+          console.error('Error parsing stored user:', e);
+          localStorage.removeItem('user');
+          this.apiService.removeToken(); // Clear both cookie and localStorage
+          resolve();
+        }
+      } else if (token && !storedUser && this.useApi) {
+        // Have token but no user (cross-subdomain navigation)
+        // Fetch user profile from API
+        this.fetchUserProfile().then(() => resolve());
+      } else {
+        // No token or user
+        resolve();
       }
+    });
+  }
+
+  private fetchUserProfile(): Promise<void> {
+    return new Promise((resolve) => {
+      this.apiService.get<User>('/auth/me').subscribe({
+        next: (user) => {
+          localStorage.setItem('user', JSON.stringify(user));
+          this.authState.next({
+            isAuthenticated: true,
+            user
+          });
+          resolve();
+        },
+        error: (error) => {
+          console.error('Failed to fetch user profile:', error);
+          // Token might be invalid, clear it
+          this.apiService.removeToken();
+          this.authState.next({
+            isAuthenticated: false,
+            user: null
+          });
+          resolve();
+        }
+      });
     });
   }
 
