@@ -408,9 +408,24 @@ npm test
   - Tabbed interface (Details, Warranty, Documents, Notes, Service Tickets)
   - RBAC field-level permissions
   - Inline editing with optimistic updates
-  - Document upload/management
+  - Document upload/management (uses generic documents-manager)
   - Breadcrumb integration with parent "My Gadgets"
   - Service tickets tab with navigation to detail page
+
+- ✅ **Generic Documents Manager** (`src/app/shared/components/documents-manager/`)
+  - **Reusable component** for document management across all entity types
+  - Supports multiple parent types: `item`, `service_ticket`, `user`
+  - Features:
+    - Drag-and-drop file upload
+    - Filter documents by type
+    - Download documents
+    - Delete documents
+    - Configurable allowed document types per parent
+    - Empty states and loading states
+  - **Used in**:
+    - Device Detail page (parentType: item)
+    - Service Ticket Detail page (parentType: service_ticket)
+    - Ready for User Profile (parentType: user)
 
 ### 9. Service Ticket Management
 - ✅ **Service Requests Page** (`src/app/pages/service-requests/`)
@@ -438,6 +453,7 @@ npm test
     - Editable fields (status, priority, assignedTo)
     - Request details (description, urgency, timestamps)
     - Message thread with send/receive
+    - Documents tab with generic documents-manager (upload/download/delete)
   - **Navigation**:
     - Deep linking support (bookmarkable URLs)
     - Browser back/forward navigation
