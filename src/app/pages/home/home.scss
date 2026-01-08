@@ -9,13 +9,35 @@
   display: flex;
   align-items: center;
   background: linear-gradient(135deg,
-    rgba(0, 128, 192, 0.03) 0%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(39, 199, 176, 0.03) 100%
+    #0a1628 0%,
+    #0d1b2a 50%,
+    #1b263b 100%
   );
   padding: var(--space-8) 0;
   position: relative;
   overflow: hidden;
+
+  // Subtle pattern overlay
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,.02) 40px, rgba(255,255,255,.02) 80px);
+    pointer-events: none;
+  }
+
+  // Accent glow effects
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(0, 128, 192, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
 }
 
 .hero-content {
@@ -42,11 +64,15 @@
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 900;
   line-height: 1.1;
-  color: var(--neutral-900);
+  color: #ffffff;
   margin-bottom: var(--space-6);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 
   .title-highlight {
-    color: #0080C0;
+    background: linear-gradient(135deg, #67D4F6 0%, #00B4A6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     display: inline-block;
   }
 }
@@ -54,7 +80,7 @@
 .hero-subtitle {
   font-size: clamp(1.125rem, 2vw, 1.5rem);
   line-height: 1.6;
-  color: var(--neutral-600);
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: var(--space-8);
   max-width: 540px;
 
@@ -69,11 +95,12 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-6);
-  background: linear-gradient(135deg, rgba(103, 212, 246, 0.15) 0%, rgba(0, 128, 192, 0.1) 100%);
-  border: 2px solid rgba(103, 212, 246, 0.3);
+  background: linear-gradient(135deg, rgba(103, 212, 246, 0.2) 0%, rgba(0, 180, 166, 0.2) 100%);
+  border: 2px solid rgba(103, 212, 246, 0.5);
   border-radius: var(--radius-full);
   margin-bottom: var(--space-6);
   animation: pulse 2s ease-in-out infinite;
+  backdrop-filter: blur(10px);
 
   @media (max-width: 1024px) {
     margin-left: auto;
@@ -83,7 +110,7 @@
   .badge-text {
     font-size: var(--text-sm);
     font-weight: 600;
-    color: var(--brand-primary-700);
+    color: #67D4F6;
   }
 }
 
@@ -158,16 +185,17 @@
   }
 
   &.cta-secondary {
-    background: white;
-    color: var(--neutral-900);
-    border: 2px solid var(--neutral-300);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
 
     &:hover {
-      background: var(--neutral-50);
-      border-color: #0080C0;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #67D4F6;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(103, 212, 246, 0.3);
     }
 
     &:active {
@@ -201,19 +229,19 @@
     cursor: default;
 
     &:hover {
-      background: rgba(0, 128, 192, 0.05);
+      background: rgba(103, 212, 246, 0.1);
       transform: translateY(-2px);
 
       .stat-number {
         transform: scale(1.1);
-        color: #006BA6;
+        color: #67D4F6;
       }
     }
 
     .stat-number {
       font-size: var(--text-3xl);
       font-weight: var(--font-bold);
-      color: var(--brand-primary-700);
+      color: #67D4F6;
       line-height: 1;
       margin-bottom: var(--space-2);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -221,7 +249,7 @@
 
     .stat-label {
       font-size: var(--text-sm);
-      color: var(--neutral-600);
+      color: rgba(255, 255, 255, 0.7);
       transition: color 0.3s;
     }
   }
