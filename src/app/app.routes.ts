@@ -93,30 +93,5 @@ export const routes: Routes = [
         }
       }
     }
-  },
-
-  // Blog routes (public)
-  {
-    path: 'blog',
-    data: {
-      breadcrumb: {
-        label: 'News & Updates'
-      }
-    },
-    children: [
-      {
-        path: '',
-        loadComponent: () => import('./pages/blog/blog').then(m => m.BlogComponent)
-      },
-      {
-        path: ':slug',
-        loadComponent: () => import('./pages/blog-detail/blog-detail').then(m => m.BlogDetailComponent),
-        data: {
-          breadcrumb: {
-            label: (snapshot: any) => snapshot.data['postTitle'] || 'Article'
-          }
-        }
-      }
-    ]
   }
 ];
