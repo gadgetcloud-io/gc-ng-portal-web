@@ -376,6 +376,33 @@ npm test
   - Warranty status tracking
   - Add device button
   - Integration with device creation flow
+  - **Bulk import** feature (CSV/Excel upload)
+
+- ✅ **Bulk Import Feature** (`src/app/shared/components/device-dialogs/bulk-import-dialog`)
+  - **Service**: `src/app/core/services/bulk-import.service.ts`
+    - File upload with progress tracking (FormData multipart)
+    - Template download (CSV and Excel formats)
+    - Client-side file validation (format, size, empty check)
+    - CSV file preview (first 5 rows)
+    - Error report generation and clipboard copy
+  - **Dialog Component**: 4-step flow with drag-and-drop
+    - Step 1: Template download (optional)
+    - Step 2: File selection with preview
+    - Step 3: Upload with progress bar
+    - Step 4: Results (success/error display)
+  - **Backend Integration**:
+    - POST `/api/items/bulk-import` - Upload CSV/Excel (max 10MB, 1000 rows)
+    - GET `/api/items/export/template` - Download template with examples
+    - All-or-nothing validation (entire import fails if any row invalid)
+    - Detailed error reporting with row numbers
+  - **User Experience**:
+    - Drag-and-drop file upload
+    - Real-time file preview for CSV files
+    - Progress bar during upload
+    - Success summary (X items created in Y seconds)
+    - Error table with row/column/value/error details
+    - Download error report or copy to clipboard
+    - Auto-refresh device list after successful import
 
 - ✅ **Device Detail Page** (`src/app/pages/device-detail/`)
   - Tabbed interface (Details, Warranty, Documents, Notes, Service Tickets)
