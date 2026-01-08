@@ -1,8 +1,8 @@
 <!-- Progress Indicator (sticky at top, shows after first interaction) -->
 <app-progress-indicator></app-progress-indicator>
 
-<!-- Problem Immersion Section - Dark, chaotic, relatable pain -->
-<section class="problem-immersion">
+<!-- Problem Immersion Section - Dark, chaotic, relatable pain (hidden after adding gadgets) -->
+<section class="problem-immersion" *ngIf="getDemoState().devices.length === 0">
   <div class="container">
     <div class="problem-content" appScrollReveal>
       <div class="problem-visual">
@@ -20,8 +20,8 @@
   </div>
 </section>
 
-<!-- Hero Section (Reimagined) -->
-<section class="hero">
+<!-- Hero Section (Reimagined) - hidden after adding gadgets -->
+<section class="hero" *ngIf="getDemoState().devices.length === 0">
   <div class="container">
     <div class="hero-content">
       <div class="hero-text">
