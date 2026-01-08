@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HomeDemoService } from '../../services/home-demo.service';
+import { Subscription } from 'rxjs';
+import { HomeDemoService, DemoState } from '../../services/home-demo.service';
 
 @Component({
   selector: 'app-warranty-calculator',
@@ -11,9 +12,12 @@ import { HomeDemoService } from '../../services/home-demo.service';
   styleUrl: './warranty-calculator.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WarrantyCalculatorComponent implements OnInit {
+export class WarrantyCalculatorComponent implements OnInit, OnDestroy {
+  // Values from demo state
+  purchasePrice = 0;
+  deviceCount = 0;
+
   // Slider values
-  purchasePrice = 50000;
   warrantyMonths = 24;
 
   // Calculated values
@@ -25,10 +29,25 @@ export class WarrantyCalculatorComponent implements OnInit {
   repairProbability = 0;
   repairCountEstimate = 0;
 
-  constructor(private homeDemoService: HomeDemoService) {}
+  private subscription?: Subscription;
+
+  constructor(
+    private homeDemoService: HomeDemoService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.calculate();
+    // Subscribe to demo state to get total purchase value
+    this.subscription = this.homeDemoService.demoState$.subscribe((state: DemoState) => {
+      this.purchasePrice = state.totalPurchaseValue;
+      this.deviceCount = state.devices.length;
+      this.calculate();
+      this.cdr.markForCheck();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
   /**

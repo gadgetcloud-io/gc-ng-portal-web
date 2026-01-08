@@ -7,36 +7,33 @@
     </p>
   </div>
 
-  <!-- Input Sliders -->
-  <div class="calculator-inputs">
-    <!-- Purchase Price Slider -->
-    <div class="input-group">
-      <label for="purchasePrice" class="input-label">
-        Purchase Price
+  <!-- No Devices State -->
+  <div class="empty-state" *ngIf="deviceCount === 0">
+    <div class="empty-icon">📱</div>
+    <p class="empty-text">
+      Add your gadgets above to see personalized warranty savings!
+    </p>
+  </div>
+
+  <!-- Calculator Inputs (shown when devices added) -->
+  <div class="calculator-inputs" *ngIf="deviceCount > 0">
+    <!-- Total Purchase Value (from added devices) -->
+    <div class="input-group total-value">
+      <label class="input-label">
+        Total Value of {{ deviceCount }} Gadget{{ deviceCount > 1 ? 's' : '' }}
       </label>
-      <div class="input-value">
+      <div class="input-value large">
         {{ formatCurrency(purchasePrice) }}
       </div>
-      <input
-        type="range"
-        id="purchasePrice"
-        [(ngModel)]="purchasePrice"
-        (input)="onSliderChange()"
-        min="1000"
-        max="200000"
-        step="1000"
-        class="slider"
-      />
-      <div class="slider-labels">
-        <span>₹1K</span>
-        <span>₹200K</span>
+      <div class="input-note">
+        Based on devices you've added above
       </div>
     </div>
 
     <!-- Warranty Period Slider -->
     <div class="input-group">
       <label for="warrantyMonths" class="input-label">
-        Warranty Period
+        Average Warranty Period
       </label>
       <div class="input-value">
         {{ warrantyPeriod }}
@@ -58,8 +55,8 @@
     </div>
   </div>
 
-  <!-- Results Display -->
-  <div class="calculator-results">
+  <!-- Results Display (shown when devices added) -->
+  <div class="calculator-results" *ngIf="deviceCount > 0">
     <!-- Main Savings Card -->
     <div class="result-card primary-result">
       <div class="result-icon">💸</div>
@@ -118,12 +115,12 @@
   </div>
 
   <!-- Info Box -->
-  <div class="calculator-info">
+  <div class="calculator-info" *ngIf="deviceCount > 0">
     <div class="info-icon">ℹ️</div>
     <div class="info-text">
-      <strong>How it works:</strong> We calculate potential savings based on average repair costs
-      (typically 20% of purchase price), repair probability, and warranty duration. Actual savings
-      may vary based on product type and usage.
+      <strong>How it works:</strong> We calculate potential savings based on your {{ deviceCount }} added gadget{{ deviceCount > 1 ? 's' : '' }},
+      average repair costs (typically 20% of purchase price), repair probability, and warranty duration.
+      Actual savings may vary based on product type and usage.
     </div>
   </div>
 </div>

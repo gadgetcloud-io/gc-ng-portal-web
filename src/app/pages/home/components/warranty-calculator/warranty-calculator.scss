@@ -29,6 +29,30 @@
     line-height: 1.6;
   }
 
+  // === Empty State ===
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-6);
+    background: linear-gradient(135deg, rgba(103, 212, 246, 0.05) 0%, rgba(0, 128, 192, 0.05) 100%);
+    border: 2px dashed var(--brand-primary-300);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-8);
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+    opacity: 0.6;
+  }
+
+  .empty-text {
+    font-size: 1.125rem;
+    color: var(--neutral-600);
+    font-weight: 600;
+    margin: 0;
+  }
+
   // === Input Sliders ===
 
   .calculator-inputs {
@@ -63,6 +87,27 @@
     padding: var(--space-2);
     background: var(--brand-primary-50);
     border-radius: var(--radius-md);
+
+    &.large {
+      font-size: 2.25rem;
+      padding: var(--space-4);
+      background: linear-gradient(135deg, rgba(103, 212, 246, 0.15) 0%, rgba(0, 128, 192, 0.1) 100%);
+      border: 2px solid var(--brand-primary-300);
+    }
+  }
+
+  .input-note {
+    font-size: 0.875rem;
+    color: var(--neutral-500);
+    text-align: center;
+    margin-top: var(--space-2);
+    font-style: italic;
+  }
+
+  .total-value {
+    .input-label {
+      color: var(--brand-primary-700);
+    }
   }
 
   .slider {
