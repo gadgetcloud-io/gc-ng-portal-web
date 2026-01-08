@@ -1,12 +1,32 @@
-# GadgetCloud Marketing Website
+# GadgetCloud Portal
 
-Angular 21 marketing website and customer portal for GadgetCloud - a modern platform for managing gadgets, warranties, and service requests.
+Angular 21 authenticated portal for GadgetCloud - Customer dashboard, device management, and support tickets.
 
 **🌐 Live Sites:**
-- **Production**: https://www.gadgetcloud.io
-- **Staging**: https://www-stg.gadgetcloud.io
+- **Production**: https://my.gadgetcloud.io
+- **Staging**: https://my-stg.gadgetcloud.io
 
 **Tech Stack**: Angular 21 • TypeScript 5.9 • Vitest • SCSS • AWS S3 + CloudFront
+
+---
+
+## Overview
+
+This is the authenticated portal for GadgetCloud users. After logging in on the marketing site ([www.gadgetcloud.io](https://www.gadgetcloud.io)), users are redirected here to access their dashboard, manage devices, and handle support tickets.
+
+**What's Included:**
+- ✅ User dashboard with quick stats
+- ✅ Device management (My Gadgets)
+- ✅ Device detail pages with tabs
+- ✅ User profile management
+- ✅ Service ticket system
+- ✅ Password reset & email verification flows
+
+**What's NOT Included** (see [gc-ng-www-web](https://github.com/gadgetcloud-io/gc-ng-www-web)):
+- ❌ Marketing pages (home, features, pricing, about)
+- ❌ Blog
+- ❌ Design system showcase
+- ❌ Interactive demos
 
 ---
 
@@ -20,7 +40,9 @@ Start the local development server:
 npm start
 ```
 
-The application will run at `http://localhost:4200/` and automatically reload on file changes.
+The application will run at `http://localhost:4201/` and automatically reload on file changes.
+
+**Note**: Portal runs on port **4201** (not 4200) to avoid conflicts with the marketing site during local development.
 
 ### Testing
 
@@ -42,20 +64,20 @@ npm run build -- --configuration=staging         # Staging
 npm run build -- --configuration=production      # Production
 ```
 
-Artifacts are stored in `dist/gc-ng-www-web/browser/`.
+Artifacts are stored in `dist/gc-ng-portal-web/browser/`.
 
 ### Deployment
 
-**Platform**: AWS S3 + CloudFront (migrated from Firebase Hosting in January 2025)
+**Platform**: AWS S3 + CloudFront
 
 Deploy to staging or production with a single command:
 
 ```bash
-npm run deploy:stg    # Deploy to staging (www-stg.gadgetcloud.io)
-npm run deploy:prd    # Deploy to production (www.gadgetcloud.io)
+npm run deploy:stg    # Deploy to staging (my-stg.gadgetcloud.io)
+npm run deploy:prd    # Deploy to production (my.gadgetcloud.io)
 ```
 
-**Deployment Process** (automated via `deploy-to-s3.sh`):
+**Deployment Process** (automated via `deploy-portal-to-s3.sh`):
 1. Builds Angular app with environment-specific configuration
 2. Syncs files to S3 bucket with smart cache headers
    - HTML: `no-cache, no-store, must-revalidate` (always fresh)
@@ -69,21 +91,98 @@ npm run deploy:prd    # Deploy to production (www.gadgetcloud.io)
 
 | Environment | S3 Bucket | CloudFront ID | URL |
 |------------|-----------|---------------|-----|
-| **Production** | `www.gadgetcloud.io` | `E1D6C4DNXVFZXX` | https://www.gadgetcloud.io |
-| **Staging** | `www-stg.gadgetcloud.io` | `E1LLF7FUWQJVQN` | https://www-stg.gadgetcloud.io |
+| **Production** | `my.gadgetcloud.io` | `E2C6CN3UB2T4L2` | https://my.gadgetcloud.io |
+| **Staging** | `my-stg.gadgetcloud.io` | `E14WTLCWV7VL2Z` | https://my-stg.gadgetcloud.io |
 
 **Prerequisites:**
 - AWS CLI installed and configured
 - AWS profile `gc` with S3 and CloudFront permissions
-- CloudFront distribution IDs configured in `deploy-to-s3.sh`
+- CloudFront distribution IDs configured in `deploy-portal-to-s3.sh`
 
-**Manual Deployment** (if needed):
-```bash
-# Build first
-npm run build -- --configuration=production
+---
 
-# Deploy with script
-./deploy-to-s3.sh prd
+## Authentication
+
+### Cross-Subdomain Authentication
+
+The portal uses **cookie-based authentication** to share JWT tokens across subdomains:
+
+**How it works:**
+1. User logs in on marketing site (www.gadgetcloud.io)
+2. JWT token is stored in cookie with `domain=.gadgetcloud.io`
+3. User is redirected to portal (my.gadgetcloud.io)
+4. Portal reads the shared cookie and authenticates automatically
+5. Logout clears cookie from both domains
+
+**Cookie Details:**
+- **Name**: `gc_token`
+- **Domain**: `.gadgetcloud.io` (accessible from all subdomains)
+- **Expiry**: 24 hours (matches JWT expiry)
+- **Security**: `Secure; SameSite=Lax`
+- **Fallback**: localStorage for local development
+
+**Implementation**: See `src/app/core/services/api.service.ts`
+
+### Route Guards
+
+All routes are protected by `authGuard` except auth-related pages:
+
+- **Protected**: `/dashboard`, `/profile`, `/my-gadgets`, `/service-requests`
+- **Public** (via `publicGuard`): `/forgot-password`, `/reset-password`, `/verify-email`
+- **Default**: `/` redirects to `/dashboard`
+
+---
+
+## Project Structure
+
+```
+src/app/
+├── pages/              # Lazy-loaded page components
+│   ├── dashboard/      # User dashboard with stats
+│   ├── profile/        # User profile management
+│   ├── devices/        # Device list (My Gadgets)
+│   ├── device-detail/  # Device detail with tabs
+│   │   ├── tabs/       # Details, Warranty, Notes, Service Tickets
+│   │   └── components/ # Warranty timeline
+│   ├── service-requests/ # Service ticket list
+│   ├── service-ticket-detail/ # Ticket detail view
+│   ├── forgot-password/  # Password reset request
+│   ├── reset-password/   # Password reset form
+│   └── verify-email/     # Email verification
+├── shared/
+│   └── components/     # Reusable design system components
+│       ├── button/     # 4 variants, 3 sizes
+│       ├── card/       # 4 variants, hoverable/clickable
+│       ├── badge/      # 7 variants (success, warning, error, etc.)
+│       ├── alert/      # 4 variants, dismissible
+│       ├── loading-spinner/ # 4 sizes
+│       ├── empty-state/ # 4 variants
+│       ├── skeleton/   # Loading placeholders
+│       ├── input/      # Form inputs with validation
+│       ├── checkbox/   # Checkbox with indeterminate
+│       ├── tooltip/    # 4 positions
+│       └── dropdown/   # Dropdown menu
+├── core/
+│   ├── services/       # Business logic & API integration
+│   │   ├── auth.service.ts        # Authentication
+│   │   ├── api.service.ts         # HTTP wrapper
+│   │   ├── device.service.ts      # Device CRUD
+│   │   ├── document.service.ts    # File uploads
+│   │   ├── rbac.service.ts        # Role-based access
+│   │   ├── activity.service.ts    # Audit logs
+│   │   ├── seo.service.ts         # SEO meta tags
+│   │   └── breadcrumb.service.ts  # Breadcrumb state
+│   ├── guards/
+│   │   ├── auth.guard.ts          # Protects authenticated routes
+│   │   └── public.guard.ts        # Redirects logged-in users
+│   ├── interceptors/
+│   │   └── auth.interceptor.ts    # Adds JWT to requests
+│   └── models/         # TypeScript interfaces
+└── styles/
+    ├── _design-tokens.scss  # Design system variables
+    ├── _base.scss           # Global styles & utilities
+    ├── _dialog-forms.scss   # Modal styling
+    └── _stepper.scss        # Multi-step form styling
 ```
 
 ---
@@ -92,7 +191,7 @@ npm run build -- --configuration=production
 
 ### Components
 
-The app uses a comprehensive design system with reusable components:
+The portal uses a comprehensive design system with reusable components shared with the marketing site:
 
 **Core Components:**
 - `<gc-button>` - 4 variants (primary, secondary, ghost, danger), 3 sizes
@@ -129,80 +228,34 @@ See `CLAUDE.md` for complete design system documentation.
 
 ---
 
-## Project Structure
+## Backend Integration
 
-```
-src/app/
-├── pages/              # Lazy-loaded page components
-│   ├── home/           # Public marketing homepage
-│   │   ├── components/ # Interactive demo components
-│   │   │   ├── progress-indicator/       # Engagement tracking indicator
-│   │   │   ├── interactive-demo/         # Gadget addition demo
-│   │   │   ├── warranty-calculator/      # ROI calculator
-│   │   │   ├── before-after-slider/      # Visual comparison
-│   │   │   └── save-progress-cta/        # Conversion CTA
-│   │   └── services/
-│   │       └── home-demo.service.ts      # Demo state management
-│   ├── dashboard/      # Protected user dashboard
-│   ├── devices/        # Protected device management (My Gadgets)
-│   ├── device-detail/  # Protected device detail view
-│   ├── profile/        # Protected user profile
-│   └── design-system/  # Design system showcase
-├── shared/
-│   └── components/     # Reusable design system components
-├── core/
-│   ├── services/       # Business logic & API integration
-│   ├── guards/         # Route protection
-│   └── interceptors/   # HTTP interceptors
-└── styles/
-    ├── _design-tokens.scss  # Design system variables
-    ├── _base.scss           # Global styles & utilities
-    └── _dialog-forms.scss   # Modal styling
-```
+The portal connects to the GadgetCloud FastAPI backend via `ApiService`.
 
----
+**Backend Environments:**
 
-## Interactive Homepage Features
+| Environment | API URL |
+|------------|---------|
+| **Local** | `http://localhost:8000/api` |
+| **Staging** | `https://gc-py-backend-198991430816.asia-south1.run.app/api` |
+| **Production** | `https://gc-py-backend-935361188774.asia-south1.run.app/api` |
 
-The homepage includes interactive components that let users experience the product before signing up:
+**API Endpoints Used:**
+- `POST /api/auth/login` - Login
+- `GET /api/auth/profile` - Get current user
+- `PUT /api/auth/profile` - Update profile
+- `POST /api/auth/change-password` - Change password
+- `GET /api/items` - List devices
+- `POST /api/items` - Create device
+- `GET /api/items/:id` - Get device
+- `PUT /api/items/:id` - Update device
+- `DELETE /api/items/:id` - Delete device
+- `POST /api/documents/upload` - Upload file
+- `GET /api/documents` - List documents
+- `GET /api/service-tickets` - List tickets
+- `GET /api/service-tickets/:id` - Get ticket
 
-### 1. **Interactive Demo**
-Users can add gadgets without authentication to experience the core functionality:
-- Device information form with validation
-- Photo upload placeholder with AI extraction demo
-- Real-time demo result cards showing added gadgets
-- Demo data persists in LocalStorage
-
-### 2. **Warranty Savings Calculator**
-Interactive ROI calculator showing potential savings:
-- Adjustable purchase price (default: ₹50,000)
-- Warranty period slider
-- Real-time savings calculation
-- Visual breakdown of repair costs avoided
-
-### 3. **Before/After Slider**
-Visual comparison slider showing the value proposition:
-- **Before**: Real photograph of cluttered receipts/documents
-- **After**: Organized GadgetCloud dashboard
-- Draggable divider (desktop) / Tap to toggle (mobile)
-- Immediate visual impact
-
-### 4. **Save Progress CTA**
-Contextual conversion bar that appears after engagement:
-- Triggers when engagement score ≥ 25 (1+ gadget added)
-- Dynamic message: "Save My {N} Gadget(s)"
-- Sticky bottom bar with dismiss option
-- Transfers demo data to real account on signup
-
-### 5. **Engagement Tracking**
-`HomeDemoService` tracks user interactions and calculates engagement score:
-- Adding gadget: 25 points
-- Uploading photo: 15 points
-- Using calculator: 10 points
-- Viewing comparison: 10 points
-- Exit intent detection for recovery modal
-
-**State Management**: All demo state managed via RxJS BehaviorSubject with LocalStorage persistence.
+See backend documentation in [gc-py-backend](https://github.com/gadgetcloud-io/gc-py-backend) repository.
 
 ---
 
@@ -222,10 +275,18 @@ All components use **standalone architecture** (no NgModules).
 
 ---
 
+## Related Repositories
+
+- **[gc-ng-www-web](https://github.com/gadgetcloud-io/gc-ng-www-web)** - Marketing website (www.gadgetcloud.io)
+- **[gc-py-backend](https://github.com/gadgetcloud-io/gc-py-backend)** - FastAPI backend
+- **[gc-tf-infra](https://github.com/gadgetcloud-io/gc-tf-infra)** - Terraform infrastructure
+- **[gc-ng-shared-ui](https://github.com/gadgetcloud-io/gc-ng-shared-ui)** - Shared component library (planned)
+
+---
+
 ## Additional Resources
 
 - **CLAUDE.md** - Detailed development guide for Claude Code
 - **PROJECT_STATUS.md** - Implementation status and roadmap
-- **API_INTEGRATION.md** - Backend API integration guide
 - [Angular CLI Documentation](https://angular.dev/tools/cli)
 - [Vitest Documentation](https://vitest.dev/)
