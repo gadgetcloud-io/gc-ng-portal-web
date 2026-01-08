@@ -19,6 +19,8 @@ import { CardComponent } from '../../shared/components/card/card';
 import { BadgeComponent } from '../../shared/components/badge/badge';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
+import { AnalyticsDashboardComponent } from '../../shared/components/analytics-dashboard/analytics-dashboard';
+import { FeatureFlagsService, FeatureFlag } from '../../core/services/feature-flags.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,7 +39,8 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
     CardComponent,
     BadgeComponent,
     SkeletonComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    AnalyticsDashboardComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
@@ -47,6 +50,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   devices: Device[] = [];
   isLoading = true;
   isLoadingActivity = true;
+
+  // Feature flags
+  showAnalytics = false;
 
   // Dialog states
   isAddDialogOpen = false;
@@ -69,11 +75,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private documentService: DocumentService,
     private activityService: ActivityService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private featureFlags: FeatureFlagsService
   ) {}
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
+
+    // Check if analytics dashboard should be shown
+    this.showAnalytics = this.featureFlags.isEnabled(FeatureFlag.ANALYTICS_DASHBOARD);
 
     if (!this.user) {
       // Redirect to home if not authenticated

@@ -20,6 +20,13 @@
   </div>
 </section>
 
+<!-- Analytics Dashboard (Feature Flag Controlled) -->
+<section class="analytics-section" *ngIf="showAnalytics && devices.length > 0">
+  <div class="container">
+    <gc-analytics-dashboard></gc-analytics-dashboard>
+  </div>
+</section>
+
 <!-- Main Content Grid -->
 <section class="main-content">
   <div class="container">

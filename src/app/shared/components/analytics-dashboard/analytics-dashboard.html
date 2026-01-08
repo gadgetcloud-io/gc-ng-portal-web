@@ -1,0 +1,276 @@
+<!-- Loading state -->
+<div *ngIf="isLoading" class="analytics-loading">
+  <gc-loading-spinner
+    variant="primary"
+    size="lg"
+    label="Loading analytics..."
+    [centered]="true"
+  ></gc-loading-spinner>
+</div>
+
+<!-- Empty state (no devices) -->
+<gc-empty-state
+  *ngIf="!isLoading && analytics && analytics.totalDevices === 0"
+  variant="no-data"
+  icon="📊"
+  title="No Analytics Yet"
+  description="Add gadgets to your portfolio to see analytics and insights"
+  size="lg"
+></gc-empty-state>
+
+<!-- Analytics Dashboard -->
+<div *ngIf="!isLoading && analytics && analytics.totalDevices > 0" class="analytics-dashboard">
+
+  <!-- Header -->
+  <div class="analytics-header">
+    <h2 class="analytics-title">📊 Portfolio Analytics</h2>
+    <p class="analytics-subtitle">Comprehensive insights into your gadget portfolio</p>
+  </div>
+
+  <!-- Summary Cards Grid -->
+  <div class="summary-grid">
+    <!-- Total Devices -->
+    <gc-card variant="elevated" padding="md" class="summary-card">
+      <div class="summary-content">
+        <div class="summary-icon">📱</div>
+        <div class="summary-details">
+          <div class="summary-label">Total Devices</div>
+          <div class="summary-value">{{ analytics.totalDevices }}</div>
+          <div class="summary-meta">Avg age: {{ analytics.averageDeviceAge }} months</div>
+        </div>
+      </div>
+    </gc-card>
+
+    <!-- Total Value -->
+    <gc-card variant="elevated" padding="md" class="summary-card">
+      <div class="summary-content">
+        <div class="summary-icon">💰</div>
+        <div class="summary-details">
+          <div class="summary-label">Purchase Value</div>
+          <div class="summary-value">{{ formatCurrency(analytics.totalPurchaseValue) }}</div>
+          <div class="summary-meta">Original investment</div>
+        </div>
+      </div>
+    </gc-card>
+
+    <!-- Current Value (with depreciation) -->
+    <gc-card variant="elevated" padding="md" class="summary-card" *ngIf="showDepreciation">
+      <div class="summary-content">
+        <div class="summary-icon">📉</div>
+        <div class="summary-details">
+          <div class="summary-label">Current Value</div>
+          <div class="summary-value">{{ formatCurrency(analytics.totalCurrentValue) }}</div>
+          <div class="summary-meta">
+            <gc-badge
+              [variant]="getDepreciationBadgeVariant(analytics.totalDepreciationPercentage)"
+              size="sm"
+            >
+              {{ formatPercentage(analytics.totalDepreciationPercentage) }} depreciation
+            </gc-badge>
+          </div>
+        </div>
+      </div>
+    </gc-card>
+
+    <!-- Warranty Protection -->
+    <gc-card variant="elevated" padding="md" class="summary-card" *ngIf="showWarrantyProtection">
+      <div class="summary-content">
+        <div class="summary-icon">🛡️</div>
+        <div class="summary-details">
+          <div class="summary-label">Protection Value</div>
+          <div class="summary-value">{{ formatCurrency(analytics.totalProtectionValue) }}</div>
+          <div class="summary-meta">
+            <gc-badge
+              [variant]="getWarrantyBadgeVariant(analytics.activeWarranties, analytics.totalDevices)"
+              size="sm"
+            >
+              {{ analytics.activeWarranties }} active warranties
+            </gc-badge>
+          </div>
+        </div>
+      </div>
+    </gc-card>
+  </div>
+
+  <!-- Depreciation Breakdown (Premium Feature) -->
+  <gc-card variant="bordered" padding="lg" class="analytics-section" *ngIf="showDepreciation">
+    <div class="section-header">
+      <h3 class="section-title">📉 Depreciation Breakdown</h3>
+      <gc-badge variant="primary" size="sm">Premium</gc-badge>
+    </div>
+
+    <div class="depreciation-stats">
+      <div class="stat-item">
+        <div class="stat-label">Total Depreciation</div>
+        <div class="stat-value negative">-{{ formatCurrency(analytics.totalDepreciation) }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Average Depreciation</div>
+        <div class="stat-value">{{ formatPercentage(analytics.totalDepreciationPercentage) }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Current Portfolio Value</div>
+        <div class="stat-value">{{ formatCurrency(analytics.totalCurrentValue) }}</div>
+      </div>
+    </div>
+
+    <!-- Depreciation Trend Chart (Simple) -->
+    <div class="trend-chart" *ngIf="showAdvancedAnalytics && analytics.depreciationTrend.length > 0">
+      <div class="chart-header">
+        <h4 class="chart-title">Value Over Time (Past 24 Months)</h4>
+      </div>
+      <div class="chart-container">
+        <div class="chart-bars">
+          <div
+            *ngFor="let trend of analytics.depreciationTrend.slice(-12); let i = index"
+            class="chart-bar"
+            [style.height.%]="getCategoryBarHeight(trend.portfolioValue, getMaxCategoryValue())"
+            [title]="formatMonth(trend.month) + ': ' + formatCurrency(trend.portfolioValue)"
+          >
+            <div class="bar-value">{{ formatCurrency(trend.portfolioValue) }}</div>
+            <div class="bar-label">{{ formatMonth(trend.month) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </gc-card>
+
+  <!-- Category Breakdown -->
+  <gc-card variant="bordered" padding="lg" class="analytics-section">
+    <div class="section-header">
+      <h3 class="section-title">📊 Category Breakdown</h3>
+    </div>
+
+    <div class="category-list" *ngIf="analytics.categoryBreakdown.length > 0">
+      <div
+        *ngFor="let category of analytics.categoryBreakdown"
+        class="category-item"
+      >
+        <div class="category-icon">{{ getCategoryIcon(category.category) }}</div>
+        <div class="category-info">
+          <div class="category-name">
+            {{ getCategoryLabel(category.category) }}
+            <span class="category-count">({{ category.deviceCount }})</span>
+          </div>
+          <div class="category-values">
+            <div class="category-value">
+              <span class="value-label">Purchase:</span>
+              <span class="value-amount">{{ formatCurrency(category.totalValue) }}</span>
+            </div>
+            <div class="category-value" *ngIf="showDepreciation">
+              <span class="value-label">Current:</span>
+              <span class="value-amount">{{ formatCurrency(category.currentValue) }}</span>
+            </div>
+            <div class="category-value" *ngIf="showWarrantyProtection">
+              <span class="value-label">Warranty:</span>
+              <span class="value-amount">{{ formatCurrency(category.warrantyValue) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="category-bar">
+          <div
+            class="category-bar-fill"
+            [style.width.%]="getCategoryBarHeight(category.totalValue, getMaxCategoryValue())"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </gc-card>
+
+  <!-- Warranty Timeline (Premium Feature) -->
+  <gc-card
+    variant="bordered"
+    padding="lg"
+    class="analytics-section"
+    *ngIf="showWarrantyProtection && showAdvancedAnalytics"
+  >
+    <div class="section-header">
+      <h3 class="section-title">⏰ Warranty Expiration Timeline</h3>
+      <gc-badge variant="primary" size="sm">Premium</gc-badge>
+    </div>
+
+    <div class="timeline-list" *ngIf="analytics.warrantyTimeline.length > 0">
+      <div
+        *ngFor="let item of analytics.warrantyTimeline.slice(0, 6)"
+        class="timeline-item"
+      >
+        <div class="timeline-month">{{ formatMonth(item.month) }}</div>
+        <div class="timeline-details">
+          <div class="timeline-count">
+            {{ item.expiringCount }}
+            <span class="timeline-label">{{ item.expiringCount === 1 ? 'warranty' : 'warranties' }} expiring</span>
+          </div>
+          <div class="timeline-value">Value: {{ formatCurrency(item.expiringValue) }}</div>
+          <div class="timeline-devices">{{ item.deviceNames.join(', ') }}</div>
+        </div>
+      </div>
+    </div>
+
+    <gc-empty-state
+      *ngIf="analytics.warrantyTimeline.length === 0"
+      variant="no-results"
+      icon="✅"
+      title="No Upcoming Expirations"
+      description="All warranties are either expired or valid for 12+ months"
+      size="sm"
+    ></gc-empty-state>
+  </gc-card>
+
+  <!-- Warranty Status Summary -->
+  <gc-card variant="bordered" padding="lg" class="analytics-section" *ngIf="showWarrantyProtection">
+    <div class="section-header">
+      <h3 class="section-title">🛡️ Warranty Status</h3>
+    </div>
+
+    <div class="warranty-stats-grid">
+      <div class="warranty-stat">
+        <gc-badge variant="success" size="lg">{{ analytics.activeWarranties }}</gc-badge>
+        <div class="warranty-stat-label">Active</div>
+        <div class="warranty-stat-value">{{ formatCurrency(analytics.totalWarrantyValue) }}</div>
+      </div>
+
+      <div class="warranty-stat">
+        <gc-badge variant="warning" size="lg">{{ analytics.expiringWarranties }}</gc-badge>
+        <div class="warranty-stat-label">Expiring Soon</div>
+        <div class="warranty-stat-sublabel">(within 30 days)</div>
+      </div>
+
+      <div class="warranty-stat">
+        <gc-badge variant="error" size="lg">{{ analytics.expiredWarranties }}</gc-badge>
+        <div class="warranty-stat-label">Expired</div>
+        <div class="warranty-stat-sublabel">(needs renewal)</div>
+      </div>
+    </div>
+  </gc-card>
+
+  <!-- Upgrade Prompt (for free tier users) -->
+  <gc-card
+    variant="elevated"
+    padding="lg"
+    class="upgrade-prompt"
+    *ngIf="shouldShowUpgradePrompt()"
+  >
+    <div class="upgrade-content">
+      <div class="upgrade-icon">✨</div>
+      <div class="upgrade-text">
+        <h3 class="upgrade-title">Unlock Premium Analytics</h3>
+        <p class="upgrade-description">
+          Get access to advanced features like depreciation tracking, warranty timeline,
+          and detailed trend analysis.
+        </p>
+        <div class="upgrade-features">
+          <div class="upgrade-feature" *ngFor="let feature of getDisabledFeatures()">
+            <span class="feature-icon">🔒</span>
+            <span class="feature-name">{{ feature }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="upgrade-action">
+        <gc-button variant="primary" size="lg">
+          Upgrade to Premium
+        </gc-button>
+      </div>
+    </div>
+  </gc-card>
+
+</div>
