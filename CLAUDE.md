@@ -120,6 +120,14 @@ src/
 ├── app/
 │   ├── pages/                    # Lazy-loaded page components
 │   │   ├── home/                 # Public marketing homepage
+│   │   │   ├── components/       # Interactive demo components
+│   │   │   │   ├── progress-indicator/       # Engagement tracking indicator
+│   │   │   │   ├── interactive-demo/         # Gadget addition demo
+│   │   │   │   ├── warranty-calculator/      # ROI calculator
+│   │   │   │   ├── before-after-slider/      # Visual comparison
+│   │   │   │   └── save-progress-cta/        # Conversion CTA
+│   │   │   └── services/
+│   │   │       └── home-demo.service.ts      # Demo state management
 │   │   ├── features/             # Public features page
 │   │   ├── pricing/              # Public pricing page
 │   │   ├── about/                # Public about page
@@ -167,6 +175,65 @@ src/
     ├── environment.ts            # Local dev (localhost:8000)
     ├── environment.stg.ts        # Staging Cloud Run
     └── environment.prd.ts        # Production Cloud Run
+```
+
+### Interactive Homepage Features
+
+The homepage implements an **"interactive-first"** approach where users experience the product before signing up:
+
+**1. Interactive Demo Component**
+- Add gadgets without authentication
+- Device form with validation (name, category, purchase date, warranty)
+- Photo upload placeholder (AI extraction demo)
+- Demo result cards showing added gadgets
+- LocalStorage persistence
+
+**2. Warranty Savings Calculator**
+- Adjustable purchase price slider (default: ₹50,000)
+- Warranty period input
+- Real-time savings calculation
+- Visual breakdown (repair costs avoided, time saved)
+
+**3. Before/After Slider**
+- Visual comparison component
+- **Before**: Real photo of cluttered receipts/documents (`/clustered-docs.png`)
+- **After**: Organized GadgetCloud dashboard
+- Draggable divider (desktop) / Tap-toggle (mobile)
+
+**4. Save Progress CTA**
+- Sticky conversion bar at bottom
+- Appears when engagement score ≥ 25 (1+ gadget added)
+- Dynamic message: "Save My {N} Gadget(s)"
+- Dismissible, transfers demo data to account on signup
+
+**5. Engagement Tracking** (`HomeDemoService`)
+- Tracks user interactions with scoring system:
+  - Add gadget: 25 points
+  - Upload photo: 15 points
+  - Use calculator: 10 points
+  - View comparison: 10 points
+- Exit intent detection for recovery modal
+- LocalStorage persistence: `gc_home_demo`
+
+**State Management Pattern**:
+```typescript
+// home-demo.service.ts
+export class HomeDemoService {
+  private demoState = new BehaviorSubject<DemoState>(initialState);
+  public demoState$ = this.demoState.asObservable();
+
+  trackEngagement(action: string): void {
+    // Update score, trigger CTA if threshold met
+  }
+
+  saveDemoToLocal(): void {
+    localStorage.setItem('gc_home_demo', JSON.stringify(state));
+  }
+
+  transferToAccount(): Promise<void> {
+    // Convert demo devices to real account after signup
+  }
+}
 ```
 
 ### Routing & Guards

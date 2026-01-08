@@ -135,6 +135,14 @@ See `CLAUDE.md` for complete design system documentation.
 src/app/
 ├── pages/              # Lazy-loaded page components
 │   ├── home/           # Public marketing homepage
+│   │   ├── components/ # Interactive demo components
+│   │   │   ├── progress-indicator/       # Engagement tracking indicator
+│   │   │   ├── interactive-demo/         # Gadget addition demo
+│   │   │   ├── warranty-calculator/      # ROI calculator
+│   │   │   ├── before-after-slider/      # Visual comparison
+│   │   │   └── save-progress-cta/        # Conversion CTA
+│   │   └── services/
+│   │       └── home-demo.service.ts      # Demo state management
 │   ├── dashboard/      # Protected user dashboard
 │   ├── devices/        # Protected device management (My Gadgets)
 │   ├── device-detail/  # Protected device detail view
@@ -151,6 +159,50 @@ src/app/
     ├── _base.scss           # Global styles & utilities
     └── _dialog-forms.scss   # Modal styling
 ```
+
+---
+
+## Interactive Homepage Features
+
+The homepage includes interactive components that let users experience the product before signing up:
+
+### 1. **Interactive Demo**
+Users can add gadgets without authentication to experience the core functionality:
+- Device information form with validation
+- Photo upload placeholder with AI extraction demo
+- Real-time demo result cards showing added gadgets
+- Demo data persists in LocalStorage
+
+### 2. **Warranty Savings Calculator**
+Interactive ROI calculator showing potential savings:
+- Adjustable purchase price (default: ₹50,000)
+- Warranty period slider
+- Real-time savings calculation
+- Visual breakdown of repair costs avoided
+
+### 3. **Before/After Slider**
+Visual comparison slider showing the value proposition:
+- **Before**: Real photograph of cluttered receipts/documents
+- **After**: Organized GadgetCloud dashboard
+- Draggable divider (desktop) / Tap to toggle (mobile)
+- Immediate visual impact
+
+### 4. **Save Progress CTA**
+Contextual conversion bar that appears after engagement:
+- Triggers when engagement score ≥ 25 (1+ gadget added)
+- Dynamic message: "Save My {N} Gadget(s)"
+- Sticky bottom bar with dismiss option
+- Transfers demo data to real account on signup
+
+### 5. **Engagement Tracking**
+`HomeDemoService` tracks user interactions and calculates engagement score:
+- Adding gadget: 25 points
+- Uploading photo: 15 points
+- Using calculator: 10 points
+- Viewing comparison: 10 points
+- Exit intent detection for recovery modal
+
+**State Management**: All demo state managed via RxJS BehaviorSubject with LocalStorage persistence.
 
 ---
 
