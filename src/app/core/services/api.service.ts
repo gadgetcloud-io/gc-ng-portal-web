@@ -120,22 +120,81 @@ export class ApiService {
 
   /**
    * Get stored token
+   * Reads from cookie (production/staging) or localStorage (local dev)
    */
   private getToken(): string | null {
+    // Try cookie first (cross-subdomain support)
+    const cookieToken = this.getCookie('gc_token');
+    if (cookieToken) {
+      return cookieToken;
+    }
+
+    // Fallback to localStorage (local development)
     return localStorage.getItem('auth_token');
   }
 
   /**
    * Store token
+   * Stores in cookie with domain=.gadgetcloud.io for cross-subdomain access
+   * Falls back to localStorage for local development
    */
   setToken(token: string): void {
+    // Store in localStorage as fallback
     localStorage.setItem('auth_token', token);
+
+    // Store in cookie for cross-subdomain access (production/staging only)
+    if (environment.production || window.location.hostname.includes('gadgetcloud.io')) {
+      // Set cookie with domain=.gadgetcloud.io for cross-subdomain access
+      // Expires in 24 hours (same as JWT expiry)
+      const expiryDate = new Date();
+      expiryDate.setHours(expiryDate.getHours() + 24);
+
+      const domain = this.getCookieDomain();
+      document.cookie = `gc_token=${token}; path=/; domain=${domain}; expires=${expiryDate.toUTCString()}; SameSite=Lax; Secure`;
+    }
   }
 
   /**
    * Remove token
+   * Clears both cookie and localStorage
    */
   removeToken(): void {
     localStorage.removeItem('auth_token');
+
+    // Remove cookie by setting expiry to past date
+    const domain = this.getCookieDomain();
+    document.cookie = `gc_token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax; Secure`;
+  }
+
+  /**
+   * Get cookie value by name
+   */
+  private getCookie(name: string): string | null {
+    const nameEQ = name + '=';
+    const cookies = document.cookie.split(';');
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      if (cookie.indexOf(nameEQ) === 0) {
+        return cookie.substring(nameEQ.length);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get cookie domain for current environment
+   * Returns .gadgetcloud.io for production/staging, null for local dev
+   */
+  private getCookieDomain(): string {
+    const hostname = window.location.hostname;
+
+    // For gadgetcloud.io domains (www, my, my-stg, etc.)
+    if (hostname.includes('gadgetcloud.io')) {
+      return '.gadgetcloud.io';
+    }
+
+    // For local development, don't set domain (defaults to current host)
+    return '';
   }
 }

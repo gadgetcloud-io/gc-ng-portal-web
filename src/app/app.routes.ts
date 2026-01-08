@@ -3,11 +3,14 @@ import { authGuard } from './core/guards/auth.guard';
 import { publicGuard } from './core/guards/public.guard';
 
 export const routes: Routes = [
-  // Public pages (accessible to everyone)
+  // Default route - redirect to dashboard
   {
     path: '',
-    loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent)
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
+
+  // Auth-related pages (accessible when not logged in)
   {
     path: 'forgot-password',
     loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent),
@@ -22,42 +25,6 @@ export const routes: Routes = [
     path: 'verify-email',
     loadComponent: () => import('./pages/verify-email/verify-email').then(m => m.VerifyEmailComponent),
     canActivate: [publicGuard]
-  },
-  {
-    path: 'features',
-    loadComponent: () => import('./pages/features/features').then(m => m.FeaturesComponent),
-    data: {
-      breadcrumb: {
-        label: 'Features'
-      }
-    }
-  },
-  {
-    path: 'pricing',
-    loadComponent: () => import('./pages/pricing/pricing').then(m => m.PricingComponent),
-    data: {
-      breadcrumb: {
-        label: 'Pricing'
-      }
-    }
-  },
-  {
-    path: 'about',
-    loadComponent: () => import('./pages/about/about').then(m => m.AboutComponent),
-    data: {
-      breadcrumb: {
-        label: 'About Us'
-      }
-    }
-  },
-  {
-    path: 'design-system',
-    loadComponent: () => import('./pages/design-system/design-system').then(m => m.DesignSystemComponent),
-    data: {
-      breadcrumb: {
-        label: 'Design System'
-      }
-    }
   },
 
   // Protected pages (require authentication)

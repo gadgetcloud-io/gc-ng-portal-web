@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "gc-ng-www-web": {
+    "gc-ng-portal-web": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -89,10 +89,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gc-ng-www-web:build:production"
+              "buildTarget": "gc-ng-portal-web:build:production"
             },
             "development": {
-              "buildTarget": "gc-ng-www-web:build:development"
+              "buildTarget": "gc-ng-portal-web:build:development"
             }
           },
           "defaultConfiguration": "development"
