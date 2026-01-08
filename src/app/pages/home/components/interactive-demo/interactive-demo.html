@@ -49,7 +49,7 @@
   <!-- Step 1: Device Info Form -->
   <div class="demo-step" *ngIf="currentStep === 'info'">
     <div class="step-header">
-      <h3 class="step-title">📱 Add Your First Gadget</h3>
+      <h3 class="step-title">📱 {{ addedDevices.length === 0 ? 'Add Your First Gadget' : 'Add Your Next Gadget' }}</h3>
       <p class="step-description">
         Enter your device details below. Takes less than 30 seconds!
       </p>
