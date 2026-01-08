@@ -109,15 +109,23 @@
         </svg>
       </div>
     </div>
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator" (click)="scrollToDemo()">
+      <span class="scroll-text">Scroll to Explore</span>
+      <span class="scroll-arrow">↓</span>
+    </div>
   </div>
 </section>
+
+<!-- Section connector -->
+<div class="section-connector"></div>
 
 <!-- Interactive Demo Zone - PLACEHOLDER -->
 <section class="interactive-demo-section" id="demo">
   <div class="container">
     <div class="section-header" appScrollReveal>
-      <h2 class="section-title">Try it yourself</h2>
-      <p class="section-subtitle">Add a gadget, upload a photo, see the magic. No signup required.</p>
+      <h2 class="section-title">Add Your First Gadget</h2>
+      <p class="section-subtitle">Enter device details or upload a photo. See how easy it is—no signup required.</p>
     </div>
 
     <!-- Interactive Demo Component -->
@@ -125,9 +133,16 @@
   </div>
 </section>
 
+<!-- Section connector -->
+<div class="section-connector"></div>
+
 <!-- Before/After Value - Warranty Calculator -->
 <section class="value-demonstration">
   <div class="container">
+    <div class="section-header" appScrollReveal>
+      <h2 class="section-title">See Your Potential Savings</h2>
+      <p class="section-subtitle">Calculate warranty value and compare before/after organization.</p>
+    </div>
     <div class="value-content">
       <!-- Warranty Calculator Component -->
       <app-warranty-calculator></app-warranty-calculator>
@@ -138,12 +153,15 @@
   </div>
 </section>
 
+<!-- Section connector -->
+<div class="section-connector"></div>
+
 <!-- Features Section -->
 <section class="features" id="features">
   <div class="container">
     <div class="section-header" appScrollReveal>
-      <h2 class="section-title">Everything you need, nothing you don't</h2>
-      <p class="section-subtitle">Gadget management shouldn't be complicated. We made it simple, smart, and dare we say... fun?</p>
+      <h2 class="section-title">Explore All Features</h2>
+      <p class="section-subtitle">Everything you need to manage your gadgets—warranties, receipts, manuals, and more.</p>
     </div>
 
     <div class="feature-grid">
@@ -156,12 +174,15 @@
   </div>
 </section>
 
+<!-- Section connector -->
+<div class="section-connector"></div>
+
 <!-- How It Works Section (Simplified to 2 steps) -->
 <section class="how-it-works">
   <div class="container">
     <div class="section-header" appScrollReveal>
-      <h2 class="section-title">Two steps to gadget zen</h2>
-      <p class="section-subtitle">You've already tried step 1 above!</p>
+      <h2 class="section-title">Start Your Journey</h2>
+      <p class="section-subtitle">Just two simple steps to never lose track of your gadgets again.</p>
     </div>
 
     <div class="steps">

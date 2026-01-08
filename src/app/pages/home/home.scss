@@ -5,7 +5,7 @@
 
 // ===== PROBLEM IMMERSION SECTION =====
 .problem-immersion {
-  padding: var(--space-16) 0;
+  padding: var(--space-8) 0 var(--space-12) 0;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   position: relative;
   overflow: hidden;
@@ -120,7 +120,7 @@
 
 // ===== HERO SECTION =====
 .hero {
-  min-height: 90vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
   background: linear-gradient(135deg,
@@ -128,7 +128,7 @@
     rgba(255, 255, 255, 1) 50%,
     rgba(39, 199, 176, 0.03) 100%
   );
-  padding: var(--space-12) 0;
+  padding: var(--space-8) 0;
   position: relative;
   overflow: hidden;
 }
@@ -481,21 +481,38 @@
 
 // ===== FEATURES SECTION =====
 .features {
-  padding: 120px 0; // Lemonade-style generous spacing
+  padding: var(--space-12) 0;
   background: #fafafa;
+  position: relative;
 
   @media (max-width: 768px) {
-    padding: 80px 0;
+    padding: var(--space-10) 0;
+  }
+
+  // Add step indicator
+  &::before {
+    content: 'STEP 3';
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(167, 139, 250, 0.15);
+    color: #8B5CF6;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
 }
 
 .section-header {
   text-align: center;
   max-width: 700px;
-  margin: 0 auto 64px; // Increased spacing below header
+  margin: var(--space-10) auto var(--space-8);
 
   @media (max-width: 768px) {
-    margin: 0 auto 48px;
+    margin: var(--space-8) auto var(--space-6);
   }
 
   .section-title {
@@ -516,18 +533,18 @@
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 32px; // Increased spacing between cards
+  gap: var(--space-6);
 
   @media (max-width: 768px) {
-    gap: 24px;
+    gap: var(--space-4);
   }
 }
 
 .feature-card {
   background: white;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 24px; // Lemonade-style rounded corners
-  padding: 40px 32px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -565,11 +582,28 @@
 
 // ===== HOW IT WORKS SECTION =====
 .how-it-works {
-  padding: 120px 0; // Lemonade-style generous spacing
+  padding: var(--space-12) 0;
   background: #ffffff;
+  position: relative;
 
   @media (max-width: 768px) {
-    padding: 80px 0;
+    padding: var(--space-10) 0;
+  }
+
+  // Add step indicator
+  &::before {
+    content: 'STEP 4';
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(39, 199, 176, 0.15);
+    color: #0F9D89;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -635,11 +669,11 @@
 
 // ===== SOCIAL PROOF SECTION =====
 .social-proof {
-  padding: 120px 0; // Lemonade-style generous spacing
+  padding: var(--space-12) 0;
   background: #fafafa;
 
   @media (max-width: 768px) {
-    padding: 80px 0;
+    padding: var(--space-10) 0;
   }
 }
 
@@ -744,14 +778,14 @@
 
 // ===== CTA SECTION =====
 .cta-section {
-  padding: 120px 0; // Lemonade-style generous spacing
+  padding: var(--space-12) 0;
   background: linear-gradient(135deg, #0080C0 0%, #006BA6 100%);
   text-align: center;
   position: relative;
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding: 80px 0;
+    padding: var(--space-10) 0;
   }
 
   // Add subtle pattern overlay
@@ -849,8 +883,25 @@
 
 // ===== INTERACTIVE DEMO SECTION =====
 .interactive-demo-section {
-  padding: var(--space-20) 0;
+  padding: var(--space-10) 0;
   background: linear-gradient(180deg, #ffffff 0%, rgba(103, 212, 246, 0.05) 100%);
+  position: relative;
+
+  // Add step indicator
+  &::before {
+    content: 'STEP 1';
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 128, 192, 0.1);
+    color: var(--brand-primary-700);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
 }
 
 .demo-placeholder {
@@ -886,8 +937,25 @@
 
 // ===== VALUE DEMONSTRATION SECTION =====
 .value-demonstration {
-  padding: var(--space-20) 0;
+  padding: var(--space-10) 0;
   background: var(--neutral-bg-subtle);
+  position: relative;
+
+  // Add step indicator
+  &::before {
+    content: 'STEP 2';
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(103, 212, 246, 0.15);
+    color: var(--brand-primary-700);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
 }
 
 .value-content {
@@ -924,5 +992,64 @@
       font-size: var(--text-lg);
       color: var(--neutral-900);
     }
+  }
+}
+
+// ===== SCROLL INDICATOR =====
+.scroll-indicator {
+  position: absolute;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  opacity: 0.6;
+  animation: bounce-down 2s ease-in-out infinite;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  .scroll-text {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--neutral-600);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .scroll-arrow {
+    font-size: 1.5rem;
+    color: var(--brand-primary-700);
+  }
+}
+
+@keyframes bounce-down {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+// ===== SECTION CONNECTORS =====
+.section-connector {
+  position: relative;
+  height: var(--space-6);
+  background: linear-gradient(to bottom, rgba(0, 128, 192, 0.05), transparent);
+
+  &::after {
+    content: '↓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    color: var(--brand-primary-700);
+    opacity: 0.3;
   }
 }
