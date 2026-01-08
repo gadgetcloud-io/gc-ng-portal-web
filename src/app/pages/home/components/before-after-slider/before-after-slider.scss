@@ -163,79 +163,12 @@
     max-width: 1000px;
   }
 
-  .mock-chaos {
-    position: relative;
+  .chaos-image {
     width: 100%;
-    max-width: 600px;
-    height: 300px;
-  }
-
-  .receipt {
-    position: absolute;
-    padding: var(--space-2) var(--space-3);
-    background: white;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
-    font-size: 0.875rem;
-    transform: rotate(0deg);
-    animation: float 3s ease-in-out infinite;
-
-    &:nth-child(1) {
-      top: 20%;
-      left: 10%;
-      transform: rotate(-15deg);
-    }
-
-    &:nth-child(2) {
-      top: 10%;
-      left: 50%;
-      transform: rotate(10deg);
-      animation-delay: 0.5s;
-    }
-
-    &:nth-child(3) {
-      top: 40%;
-      left: 30%;
-      transform: rotate(-5deg);
-      animation-delay: 1s;
-    }
-
-    &:nth-child(4) {
-      top: 60%;
-      left: 60%;
-      transform: rotate(20deg);
-      animation-delay: 1.5s;
-    }
-
-    &:nth-child(5) {
-      top: 30%;
-      left: 70%;
-      transform: rotate(-10deg);
-      animation-delay: 2s;
-    }
-
-    &.scattered {
-      opacity: 0.7;
-      font-style: italic;
-    }
-  }
-
-  .warning-icon {
-    position: absolute;
-    top: 70%;
-    left: 20%;
-    font-size: 3rem;
-    animation: shake 1s ease-in-out infinite;
-  }
-
-  .question-marks {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 4rem;
-    opacity: 0.3;
-    animation: pulse 2s ease-in-out infinite;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   // === Image Labels ===

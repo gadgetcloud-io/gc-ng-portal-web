@@ -65,18 +65,11 @@
     <!-- BEFORE Image (Revealed as slider moves) -->
     <div class="before-image" [style.width]="getSliderWidth()">
       <div class="image-content before-content">
-        <div class="mock-chaos">
-          <!-- Simulated messy receipts -->
-          <div class="receipt">📄 Receipt 1</div>
-          <div class="receipt">🧾 Invoice</div>
-          <div class="receipt">📋 Warranty?</div>
-          <div class="receipt">📃 Manual</div>
-          <div class="receipt">🧾 Receipt 2</div>
-          <div class="receipt scattered">📄 Lost...</div>
-          <div class="receipt scattered">📋 Expired?</div>
-          <div class="warning-icon">⚠️</div>
-          <div class="question-marks">❓❓❓</div>
-        </div>
+        <img
+          src="/clustered-docs.png"
+          alt="Messy pile of receipts and documents"
+          class="chaos-image"
+        />
         <div class="image-label before-label">Before: Chaos & Stress</div>
       </div>
     </div>
