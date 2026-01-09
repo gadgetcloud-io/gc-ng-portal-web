@@ -1,7 +1,18 @@
 <gc-modal [isOpen]="isOpen" [title]="'Add New Gadget'" [maxWidth]="'lg'" (close)="onClose()">
   <!-- Error Message -->
-  <div *ngIf="error" class="error-message">
-    {{ error }}
+  <div *ngIf="error" class="error-banner">
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <div class="error-text">
+        <strong>{{ error.includes('limit') ? 'Device Limit Exceeded' : 'Error' }}</strong>
+        <p>{{ error }}</p>
+      </div>
+    </div>
+    <div *ngIf="error.includes('upgrade')" class="error-actions">
+      <button type="button" class="btn-upgrade" (click)="onUpgradePlan()">
+        🚀 Upgrade Plan
+      </button>
+    </div>
   </div>
 
   <!-- Step 0: Choose Creation Method -->

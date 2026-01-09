@@ -201,7 +201,30 @@ export class AddDeviceDialogComponent implements OnDestroy {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.error = 'An error occurred while adding the device';
+
+        // Check if this is a device limit error (403)
+        if (err.status === 403) {
+          // Parse the error message for device limit information
+          const errorMessage = err.error?.detail?.message || err.error?.message || '';
+
+          if (errorMessage.toLowerCase().includes('device limit') || errorMessage.toLowerCase().includes('limit exceeded')) {
+            // Extract plan name and limit from error if available
+            const limitMatch = errorMessage.match(/(\d+)\s+devices?/i);
+            const planMatch = errorMessage.match(/(Standard|Family|Premium)\s+plan/i);
+
+            const limit = limitMatch ? limitMatch[1] : 'your plan';
+            const planName = planMatch ? planMatch[1] : 'current';
+
+            this.error = `Device limit reached! Your ${planName} plan allows ${limit === 'your plan' ? 'a limited number of' : limit} devices. Please upgrade to add more devices.`;
+          } else {
+            // Generic 403 error
+            this.error = errorMessage || 'You do not have permission to perform this action';
+          }
+        } else {
+          // Other errors
+          this.error = err.error?.detail?.message || err.error?.message || 'An error occurred while adding the device';
+        }
+
         console.error('Error adding device:', err);
       }
     });
@@ -210,6 +233,14 @@ export class AddDeviceDialogComponent implements OnDestroy {
   onClose(): void {
     this.resetForm();
     this.close.emit();
+  }
+
+  onUpgradePlan(): void {
+    // Close the dialog and navigate to profile subscription tab
+    this.resetForm();
+    this.close.emit();
+    // Use window.location for navigation to ensure proper routing
+    window.location.href = '/profile?tab=subscription';
   }
 
   // Photo mode methods
