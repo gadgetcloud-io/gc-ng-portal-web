@@ -100,11 +100,14 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
    * Format currency (INR)
    */
   formatCurrency(value: number): string {
+    // Handle NaN, null, undefined by defaulting to 0
+    const safeValue = (value != null && isFinite(value)) ? value : 0;
+
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0
-    }).format(value);
+    }).format(safeValue);
   }
 
   /**

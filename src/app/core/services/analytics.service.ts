@@ -167,14 +167,15 @@ export class AnalyticsService {
 
     // Calculate warranty value (remaining months * monthly value)
     const monthlyWarrantyValue = purchasePrice * 0.01; // 1% of purchase price per month
-    const remainingMonths = Math.max(0, daysUntilExpiry / 30);
+    const remainingMonths = Math.max(0, isFinite(daysUntilExpiry) ? daysUntilExpiry / 30 : 0);
     const warrantyValue = monthlyWarrantyValue * remainingMonths;
 
     // Estimate repair cost
     const estimatedRepairCost = purchasePrice * REPAIR_COST_PERCENTAGE;
 
     // Calculate protection value (warranty value + potential repair savings)
-    const protectionValue = warrantyValue + (warrantyStatus === 'active' ? estimatedRepairCost : 0);
+    // Ensure we never return NaN by defaulting to 0
+    const protectionValue = (warrantyValue || 0) + (warrantyStatus === 'active' ? estimatedRepairCost : 0);
 
     return {
       deviceId: device.id,
@@ -375,8 +376,19 @@ export class AnalyticsService {
    * Calculate days until warranty expiry
    */
   private getDaysUntilExpiry(warrantyExpiry: string): number {
+    // Return -Infinity for missing/invalid warranty dates (treated as expired)
+    if (!warrantyExpiry) {
+      return -Infinity;
+    }
+
     const today = new Date();
     const expiryDate = new Date(warrantyExpiry);
+
+    // Check if date is valid
+    if (isNaN(expiryDate.getTime())) {
+      return -Infinity;
+    }
+
     const diffMs = expiryDate.getTime() - today.getTime();
     return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   }

@@ -1,0 +1,216 @@
+<div class="activity-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Activity</h1>
+    <p class="page-subtitle">Your activity history across the platform</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <gc-card variant="elevated" padding="md" class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ activityStats?.totalActivities || 0 }}</div>
+          <div class="stat-label">Total Activities</div>
+        </div>
+      </div>
+    </gc-card>
+
+    <gc-card variant="elevated" padding="md" class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon">📱</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ activityStats?.deviceActions || 0 }}</div>
+          <div class="stat-label">Device Actions</div>
+        </div>
+      </div>
+    </gc-card>
+
+    <gc-card variant="elevated" padding="md" class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon">📝</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ activityStats?.ticketActions || 0 }}</div>
+          <div class="stat-label">Ticket Actions</div>
+        </div>
+      </div>
+    </gc-card>
+
+    <gc-card variant="elevated" padding="md" class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ activityStats?.documentActions || 0 }}</div>
+          <div class="stat-label">Document Actions</div>
+        </div>
+      </div>
+    </gc-card>
+  </div>
+
+  <!-- Filters Section -->
+  <gc-card variant="elevated" padding="md" class="filters-card">
+    <div class="filters-container">
+      <div class="filters-row">
+        <!-- Event Type Filter -->
+        <div class="filter-group">
+          <label for="eventType" class="filter-label">Type</label>
+          <select
+            id="eventType"
+            class="filter-select"
+            [(ngModel)]="selectedEventType"
+            (change)="onEventTypeChange()"
+          >
+            <option *ngFor="let option of eventTypeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Date Range Filter -->
+        <div class="filter-group">
+          <label for="dateRange" class="filter-label">Date Range</label>
+          <select
+            id="dateRange"
+            class="filter-select"
+            [(ngModel)]="selectedDateRange"
+            (change)="onDateRangeChange()"
+          >
+            <option *ngFor="let option of dateRangeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Search -->
+        <div class="filter-group filter-search">
+          <label for="search" class="filter-label">Search</label>
+          <input
+            type="text"
+            id="search"
+            class="filter-input"
+            placeholder="Search activities..."
+            [(ngModel)]="searchTerm"
+          />
+        </div>
+
+        <!-- Refresh Button -->
+        <div class="filter-group filter-actions">
+          <gc-button
+            variant="ghost"
+            size="md"
+            (click)="onRefresh()"
+            [disabled]="isLoading"
+          >
+            <span class="refresh-icon">↻</span> Refresh
+          </gc-button>
+        </div>
+      </div>
+
+      <!-- Result Count -->
+      <div class="result-count" *ngIf="!isLoading">
+        Showing {{ filteredActivities.length }} of {{ totalActivities }} activities
+      </div>
+    </div>
+  </gc-card>
+
+  <!-- Activities Timeline -->
+  <div class="timeline-section">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <gc-card variant="elevated" padding="md" *ngFor="let i of [1, 2, 3, 4, 5]" class="activity-skeleton">
+        <div class="skeleton-content">
+          <gc-skeleton variant="circle" width="48px" height="48px"></gc-skeleton>
+          <div class="skeleton-text">
+            <gc-skeleton variant="text" width="80%"></gc-skeleton>
+            <gc-skeleton variant="text" width="40%"></gc-skeleton>
+          </div>
+        </div>
+      </gc-card>
+    </div>
+
+    <!-- Error State -->
+    <gc-card variant="elevated" padding="md" *ngIf="!isLoading && errorMessage" class="error-card">
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <div class="error-text">
+          <p class="error-message">{{ errorMessage }}</p>
+          <gc-button variant="primary" size="md" (click)="onRefresh()">
+            Try Again
+          </gc-button>
+        </div>
+      </div>
+    </gc-card>
+
+    <!-- Empty State -->
+    <gc-empty-state
+      *ngIf="!isLoading && !errorMessage && filteredActivities.length === 0"
+      variant="no-data"
+      icon="📋"
+      title="No activity yet"
+      description="Your activity will appear here once you start using the platform"
+      size="lg"
+    ></gc-empty-state>
+
+    <!-- Activity Timeline -->
+    <div *ngIf="!isLoading && !errorMessage && filteredActivities.length > 0" class="timeline">
+      <div
+        *ngFor="let activity of filteredActivities; let last = last"
+        class="timeline-item"
+        [class.timeline-item-last]="last"
+      >
+        <div class="timeline-marker">
+          <div class="timeline-icon">{{ activity.icon }}</div>
+          <div class="timeline-line" *ngIf="!last"></div>
+        </div>
+
+        <gc-card variant="elevated" padding="md" class="activity-card">
+          <div class="activity-content">
+            <p class="activity-description">{{ activity.description }}</p>
+            <span
+              class="activity-timestamp"
+              [title]="getAbsoluteTime(activity.timestamp)"
+            >
+              {{ activity.relativeTime || activity.timestamp }}
+            </span>
+          </div>
+        </gc-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && !errorMessage && totalPages > 1" class="pagination-container">
+    <gc-card variant="elevated" padding="sm" class="pagination-card">
+      <div class="pagination">
+        <!-- Previous Button -->
+        <button
+          class="pagination-btn"
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)"
+        >
+          «
+        </button>
+
+        <!-- Page Numbers -->
+        <button
+          *ngFor="let page of pageNumbers"
+          class="pagination-btn"
+          [class.pagination-btn-active]="page === currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+
+        <!-- Next Button -->
+        <button
+          class="pagination-btn"
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)"
+        >
+          »
+        </button>
+      </div>
+    </gc-card>
+  </div>
+</div>

@@ -35,8 +35,14 @@ export const routes: Routes = [
   },
   {
     path: 'activity',
-    redirectTo: '/dashboard', // Temporary until ActivityComponent exists
-    pathMatch: 'full'
+    loadComponent: () => import('./pages/activity/activity').then(m => m.ActivityComponent),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'Activity',
+        icon: '📋'
+      }
+    }
   },
 
   // Password reset pages (accessible when not logged in)

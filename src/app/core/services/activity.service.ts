@@ -23,6 +23,17 @@ export interface Activity {
 }
 
 /**
+ * Activity statistics interface
+ */
+export interface ActivityStats {
+  totalActivities: number;
+  deviceActions: number;
+  ticketActions: number;
+  documentActions: number;
+  accountActions: number;
+}
+
+/**
  * Raw audit log from backend
  */
 interface AuditLog {
@@ -219,5 +230,100 @@ export class ActivityService {
       const months = Math.floor(diffDays / 30);
       return `${months} month${months !== 1 ? 's' : ''} ago`;
     }
+  }
+
+  /**
+   * Get customer's own activity with pagination and filters
+   * @param limit Number of activities per page (default: 20)
+   * @param offset Number of activities to skip (for pagination)
+   * @param eventType Filter by event type (optional)
+   * @param startDate Filter by start date ISO string (optional)
+   * @param endDate Filter by end date ISO string (optional)
+   * @returns Observable of Activity array
+   */
+  getMyActivity(
+    limit: number = 20,
+    offset: number = 0,
+    eventType?: string,
+    startDate?: string,
+    endDate?: string
+  ): Observable<Activity[]> {
+    let params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString());
+
+    if (eventType && eventType !== 'all') {
+      params = params.set('event_type', eventType);
+    }
+    if (startDate) {
+      params = params.set('start_date', startDate);
+    }
+    if (endDate) {
+      params = params.set('end_date', endDate);
+    }
+
+    return this.http.get<AuditLog[]>(this.apiUrl, { params }).pipe(
+      map(logs => logs.map(log => this.mapAuditLogToActivity(log))),
+      catchError(error => {
+        console.error('Failed to load customer activity:', error);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Get total count of customer's activity
+   * @param eventType Filter by event type (optional)
+   * @returns Observable of activity count
+   */
+  getMyActivityCount(eventType?: string): Observable<number> {
+    let params = new HttpParams();
+    if (eventType && eventType !== 'all') {
+      params = params.set('event_type', eventType);
+    }
+
+    return this.http.get<{ count: number }>(`${this.apiUrl}/count`, { params }).pipe(
+      map(response => response.count),
+      catchError(error => {
+        console.error('Failed to load activity count:', error);
+        return of(0);
+      })
+    );
+  }
+
+  /**
+   * Get activity statistics grouped by type
+   * @returns Observable of ActivityStats
+   */
+  getMyActivityStats(): Observable<ActivityStats> {
+    return this.http.get<any>(`${this.apiUrl}/statistics`).pipe(
+      map(stats => this.transformStats(stats)),
+      catchError(error => {
+        console.error('Failed to load activity stats:', error);
+        return of({
+          totalActivities: 0,
+          deviceActions: 0,
+          ticketActions: 0,
+          documentActions: 0,
+          accountActions: 0
+        });
+      })
+    );
+  }
+
+  /**
+   * Transform backend stats to ActivityStats interface
+   */
+  private transformStats(stats: any): ActivityStats {
+    // Backend returns event_type_counts like { "item.field_updated": 45, "ticket.field_updated": 32, ... }
+    const eventCounts = stats.event_type_counts || {};
+
+    return {
+      totalActivities: stats.total_logs || 0,
+      deviceActions: (eventCounts['item.field_updated'] || 0) + (eventCounts['item.created'] || 0),
+      ticketActions: (eventCounts['ticket.field_updated'] || 0) + (eventCounts['ticket.created'] || 0),
+      documentActions: (eventCounts['document.uploaded'] || 0) + (eventCounts['document.deleted'] || 0),
+      accountActions: (eventCounts['auth.login_success'] || 0) + (eventCounts['user.password_changed'] || 0) + (eventCounts['user.field_updated'] || 0)
+    };
   }
 }
