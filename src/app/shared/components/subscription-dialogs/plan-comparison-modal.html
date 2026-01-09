@@ -1,0 +1,184 @@
+<!-- Modal Backdrop -->
+<div
+  class="modal-backdrop"
+  *ngIf="isOpen"
+  (click)="handleBackdropClick($event)"
+  [@fadeIn]
+>
+  <!-- Modal Container -->
+  <div class="modal-container" [@slideUp]>
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="modal-header-content">
+        <h2 class="modal-title">Choose Your Plan</h2>
+        <p class="modal-subtitle">Select the plan that best fits your needs</p>
+      </div>
+      <button
+        class="modal-close-button"
+        (click)="handleClose()"
+        type="button"
+        aria-label="Close modal"
+      >
+        <span class="close-icon">✕</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoadingPlans" class="modal-loading">
+        <gc-loading-spinner
+          variant="primary"
+          size="lg"
+          label="Loading plans..."
+          [centered]="true"
+        ></gc-loading-spinner>
+      </div>
+
+      <!-- Error State -->
+      <gc-alert
+        *ngIf="loadError && !isLoadingPlans"
+        variant="error"
+        [dismissible]="false"
+      >
+        {{ loadError }}
+      </gc-alert>
+
+      <!-- Plans Grid -->
+      <div
+        *ngIf="!isLoadingPlans && !loadError && plans.length > 0"
+        class="plans-grid"
+      >
+        <div
+          *ngFor="let plan of plans; let i = index"
+          class="plan-card-wrapper"
+          [class.current-plan]="isCurrentPlan(plan.id)"
+          [class.most-popular]="isMostPopular(i)"
+        >
+          <!-- Most Popular Badge -->
+          <div *ngIf="isMostPopular(i)" class="popular-badge">
+            <span class="popular-icon">⭐</span>
+            <span class="popular-text">Most Popular</span>
+          </div>
+
+          <gc-card
+            [variant]="getPlanVariant(i)"
+            padding="lg"
+            [class.elevated]="isMostPopular(i)"
+          >
+            <!-- Plan Header -->
+            <div class="plan-header">
+              <div class="plan-header-top">
+                <h3 class="plan-name">{{ plan.displayName }}</h3>
+                <gc-badge
+                  *ngIf="isCurrentPlan(plan.id)"
+                  variant="success"
+                  size="sm"
+                >
+                  Current Plan
+                </gc-badge>
+              </div>
+              <p class="plan-description">{{ plan.description }}</p>
+            </div>
+
+            <!-- Plan Price -->
+            <div class="plan-price-section">
+              <div class="plan-price">
+                <span class="price-currency">₹</span>
+                <span class="price-amount">{{ plan.price.amount }}</span>
+                <span class="price-period" *ngIf="plan.price.amount > 0">
+                  /{{ getBillingPeriodLabel(plan.price.billingPeriod) }}
+                </span>
+                <span class="price-period" *ngIf="plan.price.amount === 0">
+                  forever
+                </span>
+              </div>
+            </div>
+
+            <!-- Plan Features -->
+            <div class="plan-features">
+              <div
+                *ngFor="let feature of getFeatureList(plan)"
+                class="feature-item"
+              >
+                <span class="feature-icon">✓</span>
+                <span class="feature-text">{{ feature }}</span>
+              </div>
+            </div>
+
+            <!-- Plan Action -->
+            <div class="plan-action">
+              <button
+                *ngIf="!isCurrentPlan(plan.id)"
+                class="btn-select-plan"
+                [class.btn-primary]="isMostPopular(i)"
+                [class.btn-secondary]="!isMostPopular(i)"
+                (click)="selectPlan(plan)"
+                type="button"
+              >
+                <span *ngIf="plan.price.amount === 0">Get Started Free</span>
+                <span *ngIf="plan.price.amount > 0 && plan.name === 'Premium'">Contact Sales</span>
+                <span *ngIf="plan.price.amount > 0 && plan.name !== 'Premium'">Select Plan</span>
+              </button>
+              <button
+                *ngIf="isCurrentPlan(plan.id)"
+                class="btn-current-plan"
+                disabled
+                type="button"
+              >
+                Current Plan
+              </button>
+            </div>
+          </gc-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Dialog -->
+  <div
+    *ngIf="showConfirmation && selectedPlan"
+    class="confirmation-overlay"
+    [@fadeIn]
+  >
+    <div class="confirmation-dialog" [@scaleIn]>
+      <div class="confirmation-header">
+        <span class="confirmation-icon">🚀</span>
+        <h3 class="confirmation-title">Confirm Plan Upgrade</h3>
+      </div>
+
+      <div class="confirmation-body">
+        <p class="confirmation-text">
+          You're about to upgrade to the
+          <strong>{{ selectedPlan.displayName }}</strong> plan
+          <span *ngIf="selectedPlan.price.amount > 0">
+            (₹{{ selectedPlan.price.amount }}/{{ getBillingPeriodLabel(selectedPlan.price.billingPeriod) }})
+          </span>
+          <span *ngIf="selectedPlan.price.amount === 0">
+            (Free forever)
+          </span>.
+        </p>
+        <p class="confirmation-note">
+          This is a mock payment. No actual charges will be made.
+        </p>
+      </div>
+
+      <div class="confirmation-actions">
+        <button
+          class="btn-confirm"
+          (click)="confirmPlanSelection()"
+          type="button"
+        >
+          Confirm Upgrade
+        </button>
+        <button
+          class="btn-cancel"
+          (click)="cancelPlanSelection()"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

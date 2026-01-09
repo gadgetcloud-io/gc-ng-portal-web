@@ -71,6 +71,13 @@
         <span class="tab-icon">👤</span>
         <span class="tab-label">Account</span>
       </button>
+      <button
+        class="tab-pill"
+        [class.active]="activeTab === 'subscription'"
+        (click)="switchTab('subscription')">
+        <span class="tab-icon">💳</span>
+        <span class="tab-label">Subscription</span>
+      </button>
     </div>
   </div>
 
@@ -421,5 +428,153 @@
         </gc-card>
       </div>
     </div>
+
+    <!-- SUBSCRIPTION TAB -->
+    <div class="tab-pane" *ngIf="activeTab === 'subscription'">
+      <div class="subscription-container">
+
+        <!-- Loading State -->
+        <div *ngIf="isLoadingSubscription" class="subscription-loading">
+          <gc-loading-spinner variant="primary" size="lg" label="Loading subscription..." [centered]="true"></gc-loading-spinner>
+        </div>
+
+        <!-- Error State -->
+        <gc-alert *ngIf="subscriptionError && !isLoadingSubscription" variant="error" [dismissible]="false">
+          {{ subscriptionError }}
+        </gc-alert>
+
+        <!-- Subscription Content -->
+        <div *ngIf="!isLoadingSubscription && !subscriptionError && subscription" class="subscription-content">
+
+          <!-- Current Plan Card -->
+          <gc-card variant="elevated" padding="lg">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>{{ subscription.planDisplayName }}</h3>
+                <gc-badge variant="success" size="sm">Active</gc-badge>
+              </div>
+              <span class="card-icon">💳</span>
+            </div>
+
+            <div class="card-content">
+              <!-- Plan Info -->
+              <div class="plan-info-section">
+                <p class="plan-description">{{ subscription.planName }} subscription</p>
+                <div class="plan-dates">
+                  <span class="plan-date-label">Started:</span>
+                  <span class="plan-date-value">{{ subscription.subscriptionStartedAt | date:'mediumDate' }}</span>
+                </div>
+              </div>
+
+              <!-- Overrides Indicator -->
+              <div *ngIf="subscription.hasOverrides" class="overrides-indicator">
+                <gc-badge variant="info" size="sm">Custom Limits</gc-badge>
+                <span class="overrides-text">Your account has custom feature limits applied by an administrator.</span>
+              </div>
+
+              <!-- Usage Statistics -->
+              <div class="usage-stats-section">
+                <h4 class="section-title">Usage & Limits</h4>
+
+                <!-- Device Usage -->
+                <div class="usage-stat">
+                  <div class="usage-stat-header">
+                    <span class="usage-stat-label">📱 Devices</span>
+                    <span class="usage-stat-value">
+                      {{ subscription.currentUsage.deviceCount }} / {{ formatCount(subscription.effectiveLimits.maxDevices) }}
+                    </span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div
+                      class="progress-bar"
+                      [style.width.%]="getDeviceUsagePercentage()"
+                      [style.background-color]="getProgressColor(getDeviceUsagePercentage())"
+                    ></div>
+                  </div>
+                  <span class="usage-stat-percentage">{{ getDeviceUsagePercentage() }}% used</span>
+                </div>
+
+                <!-- Storage Usage -->
+                <div class="usage-stat">
+                  <div class="usage-stat-header">
+                    <span class="usage-stat-label">💾 Storage</span>
+                    <span class="usage-stat-value">
+                      {{ formatBytes(subscription.currentUsage.storageUsed) }} / {{ formatBytes(subscription.effectiveLimits.maxStorageBytes) }}
+                    </span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div
+                      class="progress-bar"
+                      [style.width.%]="getStorageUsagePercentage()"
+                      [style.background-color]="getProgressColor(getStorageUsagePercentage())"
+                    ></div>
+                  </div>
+                  <span class="usage-stat-percentage">{{ getStorageUsagePercentage() }}% used</span>
+                </div>
+              </div>
+
+              <!-- Upgrade Prompt -->
+              <div *ngIf="shouldShowUpgradePrompt()" class="upgrade-prompt">
+                <gc-alert variant="warning" [dismissible]="false">
+                  <strong>Usage Alert:</strong> You're nearing your plan limits. Consider upgrading for more capacity.
+                </gc-alert>
+              </div>
+
+              <!-- Key Features -->
+              <div class="features-section">
+                <h4 class="section-title">Key Features</h4>
+                <div class="features-grid">
+                  <div class="feature-item">
+                    <span class="feature-icon">📱</span>
+                    <div class="feature-info">
+                      <span class="feature-label">Devices</span>
+                      <span class="feature-value">{{ formatCount(subscription.effectiveLimits.maxDevices) }}</span>
+                    </div>
+                  </div>
+                  <div class="feature-item">
+                    <span class="feature-icon">💾</span>
+                    <div class="feature-info">
+                      <span class="feature-label">Storage</span>
+                      <span class="feature-value">{{ formatBytes(subscription.effectiveLimits.maxStorageBytes) }}</span>
+                    </div>
+                  </div>
+                  <div class="feature-item">
+                    <span class="feature-icon">🤖</span>
+                    <div class="feature-info">
+                      <span class="feature-label">AI Recognition</span>
+                      <span class="feature-value">{{ subscription.effectiveLimits.aiPhotoRecognition ? 'Enabled' : 'Disabled' }}</span>
+                    </div>
+                  </div>
+                  <div class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <div class="feature-info">
+                      <span class="feature-label">Support Response</span>
+                      <span class="feature-value">{{ subscription.effectiveLimits.prioritySupportHours }}h</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="subscription-actions">
+                <button class="btn-primary-upgrade" (click)="openPlanComparisonModal()">
+                  🚀 Upgrade Plan
+                </button>
+              </div>
+            </div>
+          </gc-card>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<!-- Plan Comparison Modal -->
+<app-plan-comparison-modal
+  [isOpen]="showPlanComparisonModal"
+  [currentPlanId]="subscription?.planId || ''"
+  (close)="closePlanComparisonModal()"
+  (planSelected)="handlePlanChange($event)"
+></app-plan-comparison-modal>

@@ -1,0 +1,514 @@
+// Modal Backdrop
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--space-4);
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    padding: var(--space-2);
+    align-items: flex-start;
+  }
+}
+
+// Modal Container
+.modal-container {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+  max-width: 1200px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  @media (max-width: 768px) {
+    max-height: 95vh;
+    margin: var(--space-4) 0;
+  }
+}
+
+// Modal Header
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-8);
+  border-bottom: 2px solid rgba(0, 128, 192, 0.1);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: var(--space-4) var(--space-5);
+  }
+}
+
+.modal-header-content {
+  flex: 1;
+  min-width: 0;
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--brand-primary-700) 0%, var(--brand-secondary-700) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 var(--space-2);
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .modal-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--neutral-600);
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.modal-close-button {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: var(--neutral-100);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-left: var(--space-4);
+
+  .close-icon {
+    font-size: 1.5rem;
+    color: var(--neutral-600);
+    font-weight: bold;
+  }
+
+  &:hover {
+    background: var(--neutral-200);
+    transform: scale(1.05);
+
+    .close-icon {
+      color: var(--neutral-900);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    margin-left: var(--space-2);
+
+    .close-icon {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Modal Body
+.modal-body {
+  padding: var(--space-8);
+  overflow-y: auto;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+.modal-loading {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Plans Grid
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+}
+
+.plan-card-wrapper {
+  position: relative;
+  transition: all var(--transition-base);
+
+  &.current-plan {
+    gc-card {
+      border: 3px solid var(--brand-primary-700);
+      box-shadow: 0 8px 24px rgba(0, 128, 192, 0.2);
+    }
+  }
+
+  &.most-popular {
+    transform: scale(1.05);
+    z-index: 1;
+
+    @media (max-width: 1024px) {
+      transform: scale(1);
+    }
+
+    gc-card {
+      border: 3px solid var(--brand-secondary-700);
+      box-shadow: 0 12px 32px rgba(103, 212, 246, 0.25);
+    }
+  }
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--brand-secondary-700) 0%, var(--brand-primary-700) 100%);
+  color: white;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: 0 4px 12px rgba(103, 212, 246, 0.4);
+  z-index: 2;
+
+  .popular-icon {
+    font-size: 0.875rem;
+  }
+}
+
+// Plan Card Content
+.plan-header {
+  margin-bottom: var(--space-5);
+
+  .plan-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .plan-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
+  }
+
+  .plan-description {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--neutral-600);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.plan-price-section {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: rgba(0, 128, 192, 0.03);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-1);
+
+  .price-currency {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-primary-700);
+  }
+
+  .price-amount {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--brand-primary-700) 0%, var(--brand-secondary-700) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  .price-period {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--neutral-600);
+    font-weight: 500;
+  }
+}
+
+.plan-features {
+  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--neutral-700);
+  line-height: 1.5;
+
+  .feature-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, var(--brand-primary-700) 0%, var(--brand-secondary-700) 100%);
+    color: white;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 2px;
+  }
+
+  .feature-text {
+    flex: 1;
+  }
+}
+
+.plan-action {
+  margin-top: auto;
+}
+
+.btn-select-plan,
+.btn-current-plan {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-align: center;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--brand-primary-700) 0%, var(--brand-secondary-700) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 128, 192, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 128, 192, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-secondary {
+    background: white;
+    color: var(--brand-primary-700);
+    border: 2px solid var(--brand-primary-700);
+
+    &:hover {
+      background: var(--brand-primary-700);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 128, 192, 0.25);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.btn-current-plan {
+  background: var(--neutral-100);
+  color: var(--neutral-500);
+  cursor: not-allowed;
+  border: 2px solid var(--neutral-200);
+}
+
+// Confirmation Dialog
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: var(--space-4);
+}
+
+.confirmation-dialog {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  padding: var(--space-8);
+
+  @media (max-width: 768px) {
+    padding: var(--space-6);
+  }
+}
+
+.confirmation-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--space-6);
+
+  .confirmation-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-3);
+    animation: bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .confirmation-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin: 0;
+    text-align: center;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.confirmation-body {
+  margin-bottom: var(--space-6);
+  text-align: center;
+
+  .confirmation-text {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--neutral-700);
+    margin: 0 0 var(--space-4);
+    line-height: 1.6;
+
+    strong {
+      color: var(--brand-primary-700);
+      font-weight: 700;
+    }
+  }
+
+  .confirmation-note {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--neutral-500);
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: var(--space-3);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.btn-confirm,
+.btn-cancel {
+  flex: 1;
+  padding: var(--space-4) var(--space-6);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, var(--brand-primary-700) 0%, var(--brand-secondary-700) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 128, 192, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 128, 192, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-cancel {
+  background: var(--neutral-200);
+  color: var(--neutral-700);
+
+  &:hover {
+    background: var(--neutral-300);
+  }
+}
+
+// Animations (would need to be defined in component or use Angular animations)
+// For now, using CSS transitions

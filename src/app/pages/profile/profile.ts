@@ -5,11 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { Subscription, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService, User } from '../../core/services/auth.service';
+import { BillingService } from '../../core/services/billing.service';
+import { FeatureLimitService } from '../../core/services/feature-limit.service';
+import { UserSubscription } from '../../core/models/billing.model';
 import { CardComponent } from '../../shared/components/card/card';
 import { BadgeComponent } from '../../shared/components/badge/badge';
 import { AlertComponent } from '../../shared/components/alert/alert';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
+import { PlanComparisonModalComponent } from '../../shared/components/subscription-dialogs/plan-comparison-modal';
 
-type TabId = 'profile' | 'preferences' | 'security' | 'account';
+type TabId = 'profile' | 'preferences' | 'security' | 'account' | 'subscription';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +25,9 @@ type TabId = 'profile' | 'preferences' | 'security' | 'account';
     FormsModule,
     CardComponent,
     BadgeComponent,
-    AlertComponent
+    AlertComponent,
+    LoadingSpinnerComponent,
+    PlanComparisonModalComponent
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
@@ -46,6 +53,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     confirm: ''
   };
 
+  // Subscription state
+  subscription: UserSubscription | null = null;
+  isLoadingSubscription = false;
+  subscriptionError: string | null = null;
+  showPlanComparisonModal = false;
+
   // Success/error messages
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -67,7 +80,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private billingService: BillingService,
+    private featureLimitService: FeatureLimitService
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +100,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.userInfo.email = this.user.email;
     this.userInfo.mobile = this.user.mobile || '';
     this.userInfo.avatar = this.user.firstName.charAt(0).toUpperCase();
+
+    // Load subscription data
+    this.loadSubscription();
+
+    // Subscribe to feature limit service updates
+    this.subscriptions.add(
+      this.featureLimitService.getSubscription$()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(subscription => {
+          if (subscription) {
+            this.subscription = subscription;
+            this.cdr.markForCheck();
+          }
+        })
+    );
   }
 
   ngOnDestroy(): void {
@@ -335,5 +365,135 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.errorMessage = null;
         this.cdr.markForCheck();
       });
+  }
+
+  // =========================
+  // SUBSCRIPTION METHODS
+  // =========================
+
+  /**
+   * Load user's subscription data
+   */
+  async loadSubscription(): Promise<void> {
+    this.isLoadingSubscription = true;
+    this.subscriptionError = null;
+    this.cdr.markForCheck();
+
+    try {
+      // Load subscription from feature limit service (uses cache)
+      await this.featureLimitService.loadSubscription();
+
+      // Get subscription data
+      const subscription = this.featureLimitService.getSubscription();
+
+      if (subscription) {
+        this.subscription = subscription;
+      } else {
+        this.subscriptionError = 'Failed to load subscription information';
+      }
+    } catch (error) {
+      console.error('Failed to load subscription:', error);
+      this.subscriptionError = 'An error occurred while loading your subscription';
+    } finally {
+      this.isLoadingSubscription = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Open plan comparison modal
+   */
+  openPlanComparisonModal(): void {
+    this.showPlanComparisonModal = true;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Close plan comparison modal
+   */
+  closePlanComparisonModal(): void {
+    this.showPlanComparisonModal = false;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Handle plan change from modal
+   */
+  async handlePlanChange(planId: string): Promise<void> {
+    try {
+      // Optimistic update: close modal immediately
+      this.closePlanComparisonModal();
+
+      // Show loading state
+      this.isLoadingSubscription = true;
+      this.cdr.markForCheck();
+
+      // Call API to upgrade plan
+      await this.billingService.upgradePlan({
+        planId,
+        paymentMethod: 'mock',
+        transactionId: `txn_${Date.now()}`
+      }).toPromise();
+
+      // Refresh subscription data
+      await this.featureLimitService.refreshSubscription();
+
+      // Get updated subscription
+      this.subscription = this.featureLimitService.getSubscription();
+
+      // Show success message
+      this.showSuccessMessage('Plan upgraded successfully!');
+    } catch (error: any) {
+      console.error('Plan upgrade failed:', error);
+
+      // Show error message
+      const errorMsg = error.error?.message || error.message || 'Failed to upgrade plan. Please try again.';
+      this.showErrorMessage(errorMsg);
+    } finally {
+      this.isLoadingSubscription = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Get device usage percentage
+   */
+  getDeviceUsagePercentage(): number {
+    return this.featureLimitService.getDeviceUsagePercentage();
+  }
+
+  /**
+   * Get storage usage percentage
+   */
+  getStorageUsagePercentage(): number {
+    return this.featureLimitService.getStorageUsagePercentage();
+  }
+
+  /**
+   * Format bytes to human-readable string
+   */
+  formatBytes(bytes: number): string {
+    return this.billingService.formatBytes(bytes);
+  }
+
+  /**
+   * Format count (handles unlimited)
+   */
+  formatCount(count: number): string {
+    return this.billingService.formatCount(count);
+  }
+
+  /**
+   * Get progress bar color based on percentage
+   */
+  getProgressColor(percentage: number): string {
+    return this.billingService.getProgressColor(percentage);
+  }
+
+  /**
+   * Check if user should see upgrade prompt
+   */
+  shouldShowUpgradePrompt(): boolean {
+    return this.featureLimitService.shouldShowUpgradePrompt();
   }
 }

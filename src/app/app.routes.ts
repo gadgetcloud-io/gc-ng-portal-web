@@ -128,5 +128,18 @@ export const routes: Routes = [
         }
       }
     }
+  },
+
+  // Admin pages (require authentication and admin role)
+  {
+    path: 'admin/plans',
+    loadComponent: () => import('./pages/admin/plans/admin-plans').then(m => m.AdminPlansComponent),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'Subscription Plans',
+        icon: '💳'
+      }
+    }
   }
 ];

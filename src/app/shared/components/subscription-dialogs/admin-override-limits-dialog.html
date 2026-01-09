@@ -1,0 +1,204 @@
+<!-- Admin Override Limits Dialog -->
+<div class="modal-backdrop" *ngIf="isOpen" @fadeIn (click)="handleBackdropClick($event)">
+  <div class="modal-container" @slideUp>
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Override Feature Limits</h2>
+      <button
+        class="btn-close"
+        (click)="handleClose()"
+        type="button"
+        [disabled]="isSaving"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Error Alert -->
+      <gc-alert
+        *ngIf="saveError"
+        variant="error"
+        [dismissible]="false"
+      >
+        {{ saveError }}
+      </gc-alert>
+
+      <!-- User Info -->
+      <div class="user-info-box">
+        <h3 class="section-title">User Information</h3>
+        <div class="info-row">
+          <span class="info-label">Name:</span>
+          <span class="info-value">{{ userName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email:</span>
+          <span class="info-value">{{ userEmail }}</span>
+        </div>
+        <div class="info-row" *ngIf="currentSubscription">
+          <span class="info-label">Current Plan:</span>
+          <span class="info-value">
+            {{ currentSubscription.planDisplayName }}
+            <gc-badge variant="success" size="sm">Active</gc-badge>
+          </span>
+        </div>
+      </div>
+
+      <!-- Override Form -->
+      <form class="override-form" (ngSubmit)="handleSubmit()">
+        <!-- Instructions -->
+        <div class="instructions-box">
+          <p class="instructions-text">
+            Enable overrides to customize feature limits for this user.
+            Overrides take precedence over plan defaults.
+            Unchecked fields will use the plan's default values.
+          </p>
+        </div>
+
+        <!-- Override Fields -->
+        <div class="form-section">
+          <h3 class="section-title">Feature Overrides</h3>
+
+          <div class="overrides-grid">
+            <div
+              *ngFor="let field of overrideFields"
+              class="override-item"
+              [class.enabled]="field.enabled"
+            >
+              <!-- Checkbox to enable override -->
+              <div class="override-header">
+                <label class="override-checkbox-label">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="field.enabled"
+                    [name]="'enable-' + field.key"
+                    [disabled]="isSaving"
+                  />
+                  <span class="override-label-text">{{ field.label }}</span>
+                </label>
+
+                <!-- Show plan default value -->
+                <span class="plan-default-value">
+                  Plan Default: {{ formatValue(field, field.originalValue) }}
+                </span>
+              </div>
+
+              <!-- Number Input -->
+              <div *ngIf="field.type === 'number'" class="override-input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="field.value"
+                  [name]="'override-' + field.key"
+                  [disabled]="!field.enabled || isSaving"
+                  [placeholder]="field.originalValue.toString()"
+                />
+                <small class="form-hint" *ngIf="field.key === 'maxDevices' || field.key === 'maxStorageBytes'">
+                  Use -1 for unlimited
+                </small>
+              </div>
+
+              <!-- Checkbox Input -->
+              <div *ngIf="field.type === 'checkbox'" class="override-input-group">
+                <label class="checkbox-input-label">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="field.value"
+                    [name]="'override-' + field.key"
+                    [disabled]="!field.enabled || isSaving"
+                  />
+                  <span class="checkbox-input-text">
+                    {{ field.value ? 'Enabled' : 'Disabled' }}
+                  </span>
+                </label>
+              </div>
+
+              <!-- Select Input -->
+              <div *ngIf="field.type === 'select'" class="override-input-group">
+                <select
+                  class="form-control"
+                  [(ngModel)]="field.value"
+                  [name]="'override-' + field.key"
+                  [disabled]="!field.enabled || isSaving"
+                >
+                  <option *ngFor="let option of field.options" [value]="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Multi-Select Input -->
+              <div *ngIf="field.type === 'multiselect'" class="override-input-group">
+                <div class="multiselect-options">
+                  <label
+                    *ngFor="let option of field.options"
+                    class="multiselect-option-label"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="isMultiSelectOptionSelected(field, option.value)"
+                      (change)="toggleMultiSelectOption(field, option.value)"
+                      [disabled]="!field.enabled || isSaving"
+                    />
+                    <span class="multiselect-option-text">{{ option.label }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason -->
+        <div class="form-section">
+          <div class="form-group">
+            <label class="form-label" for="override-reason">
+              Reason for Overrides <span class="required">*</span>
+            </label>
+            <textarea
+              id="override-reason"
+              class="form-control form-textarea"
+              [(ngModel)]="reason"
+              name="reason"
+              placeholder="Explain why you're overriding these limits (minimum 10 characters)"
+              rows="4"
+              [disabled]="isSaving"
+              [class.error]="fieldError && fieldError.includes('Reason')"
+            ></textarea>
+            <small class="form-hint">Required for audit trail</small>
+            <small class="form-error" *ngIf="fieldError">
+              {{ fieldError }}
+            </small>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-secondary"
+        (click)="handleClose()"
+        type="button"
+        [disabled]="isSaving"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-primary"
+        (click)="handleSubmit()"
+        type="button"
+        [disabled]="isSaving"
+      >
+        <span *ngIf="!isSaving">
+          Apply Overrides
+        </span>
+        <span *ngIf="isSaving" class="btn-loading">
+          <gc-loading-spinner variant="light" size="sm"></gc-loading-spinner>
+          <span class="btn-loading-text">Applying...</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

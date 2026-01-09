@@ -1,0 +1,405 @@
+// Admin Plan Form Dialog Styles
+// Modal backdrop and container
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 22, 40, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    padding: 0;
+    align-items: flex-start;
+  }
+}
+
+.modal-container {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+// Modal Header
+.modal-header {
+  padding: var(--space-6) var(--space-8);
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: var(--space-5) var(--space-6);
+  }
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
+
+.btn-close {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--neutral-100);
+  color: var(--neutral-600);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: var(--neutral-200);
+    color: var(--neutral-900);
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Modal Body
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-8);
+
+  @media (max-width: 768px) {
+    padding: var(--space-6);
+  }
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--neutral-100);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--neutral-300);
+    border-radius: var(--radius-sm);
+
+    &:hover {
+      background: var(--neutral-400);
+    }
+  }
+}
+
+// Plan Form
+.plan-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+// Form Sections
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  &:not(:last-child) {
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin: 0;
+}
+
+// Form Groups
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--neutral-700);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  .required {
+    color: var(--color-error);
+    font-weight: 700;
+  }
+}
+
+.form-control {
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--neutral-900);
+  background: white;
+  transition: all var(--transition-base);
+
+  &::placeholder {
+    color: var(--neutral-400);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--neutral-400);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--brand-primary-700);
+    box-shadow: 0 0 0 4px rgba(0, 128, 192, 0.1);
+  }
+
+  &:disabled {
+    background: var(--neutral-100);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &.error {
+    border-color: var(--color-error);
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+.form-hint {
+  font-size: 0.8125rem;
+  color: var(--neutral-500);
+  font-style: italic;
+}
+
+.form-error {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+// Form Rows (for inline groups)
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Checkbox Inputs
+.form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--neutral-300);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: var(--brand-primary-700);
+    }
+
+    &:checked {
+      background: var(--brand-primary-700);
+      border-color: var(--brand-primary-700);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .checkbox-text {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--neutral-700);
+  }
+}
+
+// Checkbox Grid (for multi-select)
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Modal Footer
+.modal-footer {
+  padding: var(--space-6) var(--space-8);
+  border-top: 1px solid var(--neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: var(--space-5) var(--space-6);
+    flex-direction: column;
+  }
+}
+
+// Modal Buttons
+.btn-secondary,
+.btn-primary {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 140px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--brand-primary-700);
+  border: 2px solid var(--brand-primary-700);
+
+  &:hover:not(:disabled) {
+    background: rgba(0, 128, 192, 0.05);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-primary-700) 0%, var(--brand-secondary-700) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 128, 192, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 128, 192, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Button Loading State
+.btn-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.btn-loading-text {
+  font-weight: 600;
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-container,
+  .btn-close,
+  .form-control,
+  .btn-secondary,
+  .btn-primary,
+  .checkbox-label input {
+    animation: none;
+    transition: none;
+  }
+}
+
+// Focus visible for keyboard navigation
+.btn-close:focus-visible,
+.form-control:focus-visible,
+.btn-secondary:focus-visible,
+.btn-primary:focus-visible,
+.checkbox-label input:focus-visible {
+  outline: 2px solid var(--brand-primary-700);
+  outline-offset: 2px;
+}

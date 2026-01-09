@@ -1,0 +1,447 @@
+<!-- Admin Plan Form Dialog -->
+<div class="modal-backdrop" *ngIf="isOpen" @fadeIn (click)="handleBackdropClick($event)">
+  <div class="modal-container" @slideUp>
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">
+        {{ mode === 'create' ? 'Create New Plan' : 'Edit Plan' }}
+      </h2>
+      <button
+        class="btn-close"
+        (click)="handleClose()"
+        type="button"
+        [disabled]="isSaving"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Global Error -->
+      <gc-alert
+        *ngIf="saveError"
+        variant="error"
+        [dismissible]="false"
+      >
+        {{ saveError }}
+      </gc-alert>
+
+      <form class="plan-form" (ngSubmit)="handleSubmit()">
+        <!-- Plan Name -->
+        <div class="form-section">
+          <h3 class="section-title">Basic Information</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="plan-name">
+              Plan Name <span class="required">*</span>
+            </label>
+            <select
+              id="plan-name"
+              class="form-control"
+              [(ngModel)]="formData.name"
+              name="name"
+              [disabled]="mode === 'edit'"
+            >
+              <option value="Standard">Standard</option>
+              <option value="Family">Family</option>
+              <option value="Premium">Premium</option>
+            </select>
+            <small class="form-hint">Internal plan name (cannot be changed after creation)</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="display-name">
+              Display Name <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="display-name"
+              class="form-control"
+              [(ngModel)]="formData.displayName"
+              name="displayName"
+              placeholder="e.g., Standard Plan"
+              [class.error]="fieldErrors['displayName']"
+            />
+            <small class="form-error" *ngIf="fieldErrors['displayName']">
+              {{ fieldErrors['displayName'] }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="description">
+              Description <span class="required">*</span>
+            </label>
+            <textarea
+              id="description"
+              class="form-control form-textarea"
+              [(ngModel)]="formData.description"
+              name="description"
+              placeholder="Brief description of the plan (max 500 characters)"
+              rows="3"
+              maxlength="500"
+              [class.error]="fieldErrors['description']"
+            ></textarea>
+            <small class="form-hint">
+              {{ formData.description.length }}/500 characters
+            </small>
+            <small class="form-error" *ngIf="fieldErrors['description']">
+              {{ fieldErrors['description'] }}
+            </small>
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="form-section">
+          <h3 class="section-title">Pricing</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="price-amount">
+                Price Amount <span class="required">*</span>
+              </label>
+              <input
+                type="number"
+                id="price-amount"
+                class="form-control"
+                [(ngModel)]="formData.priceAmount"
+                name="priceAmount"
+                min="0"
+                step="1"
+                placeholder="0"
+                [class.error]="fieldErrors['priceAmount']"
+              />
+              <small class="form-error" *ngIf="fieldErrors['priceAmount']">
+                {{ fieldErrors['priceAmount'] }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="currency">Currency</label>
+              <select
+                id="currency"
+                class="form-control"
+                [(ngModel)]="formData.currency"
+                name="currency"
+              >
+                <option value="INR">INR (₹)</option>
+                <option value="USD">USD ($)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="billing-period">Billing Period</label>
+              <select
+                id="billing-period"
+                class="form-control"
+                [(ngModel)]="formData.billingPeriod"
+                name="billingPeriod"
+              >
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Limits -->
+        <div class="form-section">
+          <h3 class="section-title">Feature Limits</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="max-devices">
+                Max Devices <span class="required">*</span>
+              </label>
+              <input
+                type="number"
+                id="max-devices"
+                class="form-control"
+                [(ngModel)]="formData.maxDevices"
+                name="maxDevices"
+                placeholder="5"
+                [class.error]="fieldErrors['maxDevices']"
+              />
+              <small class="form-hint">Use -1 for unlimited</small>
+              <small class="form-error" *ngIf="fieldErrors['maxDevices']">
+                {{ fieldErrors['maxDevices'] }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="max-storage">
+                Max Storage (MB)
+              </label>
+              <input
+                type="number"
+                id="max-storage"
+                class="form-control"
+                [(ngModel)]="formData.maxStorageBytes"
+                name="maxStorageBytes"
+                placeholder="100"
+                step="1"
+              />
+              <small class="form-hint">In megabytes (100 MB = 104857600 bytes)</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="max-documents">
+                Max Documents per Device
+              </label>
+              <input
+                type="number"
+                id="max-documents"
+                class="form-control"
+                [(ngModel)]="formData.maxDocumentsPerDevice"
+                name="maxDocumentsPerDevice"
+                min="1"
+                placeholder="5"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="priority-support">
+                Priority Support (Hours)
+              </label>
+              <input
+                type="number"
+                id="priority-support"
+                class="form-control"
+                [(ngModel)]="formData.prioritySupportHours"
+                name="prioritySupportHours"
+                min="1"
+                placeholder="48"
+              />
+              <small class="form-hint">Response time in hours</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="max-family-members">
+                Max Family Members
+              </label>
+              <input
+                type="number"
+                id="max-family-members"
+                class="form-control"
+                [(ngModel)]="formData.maxFamilyMembers"
+                name="maxFamilyMembers"
+                min="0"
+                placeholder="0"
+              />
+              <small class="form-hint">0 = family sharing disabled</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="analytics-level">Analytics Level</label>
+              <select
+                id="analytics-level"
+                class="form-control"
+                [(ngModel)]="formData.analyticsLevel"
+                name="analyticsLevel"
+              >
+                <option value="basic">Basic</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Toggles -->
+        <div class="form-section">
+          <h3 class="section-title">Feature Access</h3>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.aiPhotoRecognition"
+                name="aiPhotoRecognition"
+              />
+              <span class="checkbox-text">AI Photo Recognition</span>
+            </label>
+          </div>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.dedicatedAccountManager"
+                name="dedicatedAccountManager"
+              />
+              <span class="checkbox-text">Dedicated Account Manager</span>
+            </label>
+          </div>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.familySharingEnabled"
+                name="familySharingEnabled"
+              />
+              <span class="checkbox-text">Family Sharing Enabled</span>
+            </label>
+          </div>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.canCreateRepairRequests"
+                name="canCreateRepairRequests"
+              />
+              <span class="checkbox-text">Can Create Repair Requests</span>
+            </label>
+          </div>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.enterpriseWarrantyTracking"
+                name="enterpriseWarrantyTracking"
+              />
+              <span class="checkbox-text">Enterprise Warranty Tracking</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Support Channels -->
+        <div class="form-section">
+          <h3 class="section-title">Support Channels</h3>
+          <div class="checkbox-grid">
+            <div
+              *ngFor="let option of supportChannelOptions"
+              class="form-group-checkbox"
+            >
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [checked]="isOptionSelected(formData.supportChannels, option.value)"
+                  (change)="toggleOption(formData.supportChannels, option.value)"
+                />
+                <span class="checkbox-text">{{ option.label }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Channels -->
+        <div class="form-section">
+          <h3 class="section-title">Notification Channels</h3>
+          <div class="checkbox-grid">
+            <div
+              *ngFor="let option of notificationChannelOptions"
+              class="form-group-checkbox"
+            >
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [checked]="isOptionSelected(formData.notificationChannels, option.value)"
+                  (change)="toggleOption(formData.notificationChannels, option.value)"
+                />
+                <span class="checkbox-text">{{ option.label }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plan Settings -->
+        <div class="form-section">
+          <h3 class="section-title">Plan Settings</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="display-order">Display Order</label>
+              <input
+                type="number"
+                id="display-order"
+                class="form-control"
+                [(ngModel)]="formData.displayOrder"
+                name="displayOrder"
+                min="1"
+                placeholder="1"
+              />
+              <small class="form-hint">Lower numbers appear first</small>
+            </div>
+          </div>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.isVisible"
+                name="isVisible"
+              />
+              <span class="checkbox-text">Visible on Pricing Page</span>
+            </label>
+          </div>
+
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.isDefault"
+                name="isDefault"
+              />
+              <span class="checkbox-text">Default Plan for New Users</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Reason (Edit Mode Only) -->
+        <div class="form-section" *ngIf="mode === 'edit'">
+          <h3 class="section-title">Change Reason</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="reason">
+              Reason for Changes <span class="required">*</span>
+            </label>
+            <textarea
+              id="reason"
+              class="form-control form-textarea"
+              [(ngModel)]="formData.reason"
+              name="reason"
+              placeholder="Explain why you're making these changes (minimum 10 characters)"
+              rows="3"
+              [class.error]="fieldErrors['reason']"
+            ></textarea>
+            <small class="form-hint">Required for audit trail</small>
+            <small class="form-error" *ngIf="fieldErrors['reason']">
+              {{ fieldErrors['reason'] }}
+            </small>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-secondary"
+        (click)="handleClose()"
+        type="button"
+        [disabled]="isSaving"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-primary"
+        (click)="handleSubmit()"
+        type="button"
+        [disabled]="isSaving"
+      >
+        <span *ngIf="!isSaving">
+          {{ mode === 'create' ? 'Create Plan' : 'Save Changes' }}
+        </span>
+        <span *ngIf="isSaving" class="btn-loading">
+          <gc-loading-spinner variant="light" size="sm"></gc-loading-spinner>
+          <span class="btn-loading-text">Saving...</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

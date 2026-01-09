@@ -1,0 +1,205 @@
+<!-- Success/Error Alerts -->
+<div class="alert-container">
+  <gc-alert
+    *ngIf="successMessage"
+    variant="success"
+    [dismissible]="false"
+  >
+    {{ successMessage }}
+  </gc-alert>
+
+  <gc-alert
+    *ngIf="errorMessage"
+    variant="error"
+    [dismissible]="false"
+  >
+    {{ errorMessage }}
+  </gc-alert>
+</div>
+
+<!-- Admin Plans Page -->
+<div class="admin-plans-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">Subscription Plans</h1>
+        <p class="page-subtitle">Manage subscription plans and pricing</p>
+      </div>
+      <button
+        class="btn-create-plan"
+        (click)="openCreateModal()"
+        type="button"
+      >
+        <span class="btn-icon">+</span>
+        <span class="btn-text">Create New Plan</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="page-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <gc-loading-spinner
+        variant="primary"
+        size="lg"
+        label="Loading plans..."
+        [centered]="true"
+      ></gc-loading-spinner>
+    </div>
+
+    <!-- Error State -->
+    <gc-alert
+      *ngIf="loadError && !isLoading"
+      variant="error"
+      [dismissible]="false"
+    >
+      {{ loadError }}
+    </gc-alert>
+
+    <!-- Empty State -->
+    <gc-empty-state
+      *ngIf="!isLoading && !loadError && plans.length === 0"
+      variant="no-data"
+      icon="💳"
+      title="No subscription plans"
+      description="Create your first subscription plan to get started"
+      actionText="+ Create Plan"
+      (onAction)="openCreateModal()"
+      size="lg"
+    ></gc-empty-state>
+
+    <!-- Plans Table -->
+    <gc-card
+      *ngIf="!isLoading && !loadError && plans.length > 0"
+      variant="elevated"
+      padding="none"
+    >
+      <div class="table-container">
+        <table class="plans-table">
+          <thead>
+            <tr>
+              <th class="col-name">Plan Name</th>
+              <th class="col-price">Price</th>
+              <th class="col-devices">Devices</th>
+              <th class="col-storage">Storage</th>
+              <th class="col-status">Status</th>
+              <th class="col-order">Display Order</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let plan of plans" class="plan-row">
+              <!-- Plan Name -->
+              <td class="col-name">
+                <div class="plan-name-cell">
+                  <span class="plan-name-text">{{ plan.displayName }}</span>
+                  <gc-badge
+                    *ngIf="plan.isDefault"
+                    variant="primary"
+                    size="sm"
+                  >
+                    Default
+                  </gc-badge>
+                  <gc-badge
+                    *ngIf="plan.isVisible"
+                    variant="info"
+                    size="sm"
+                  >
+                    Visible
+                  </gc-badge>
+                </div>
+                <span class="plan-description">{{ plan.description }}</span>
+              </td>
+
+              <!-- Price -->
+              <td class="col-price">
+                <div class="price-cell">
+                  <span class="price-amount">{{ formatPrice(plan.price.amount) }}</span>
+                  <span class="price-period" *ngIf="plan.price.amount > 0">
+                    /{{ getBillingPeriodLabel(plan.price.billingPeriod) }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Devices -->
+              <td class="col-devices">
+                {{ formatCount(plan.features.maxDevices) }}
+              </td>
+
+              <!-- Storage -->
+              <td class="col-storage">
+                {{ formatBytes(plan.features.maxStorageBytes) }}
+              </td>
+
+              <!-- Status -->
+              <td class="col-status">
+                <gc-badge
+                  [variant]="getStatusBadgeVariant(plan.status)"
+                  size="sm"
+                >
+                  {{ formatStatusLabel(plan.status) }}
+                </gc-badge>
+              </td>
+
+              <!-- Display Order -->
+              <td class="col-order">
+                {{ plan.displayOrder }}
+              </td>
+
+              <!-- Actions -->
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <button
+                    class="btn-action btn-edit"
+                    (click)="openEditModal(plan)"
+                    type="button"
+                    title="Edit plan"
+                  >
+                    <span class="action-icon">✎</span>
+                  </button>
+                  <button
+                    class="btn-action btn-archive"
+                    (click)="openArchiveModal(plan)"
+                    [disabled]="plan.status === 'archived' || plan.isDefault"
+                    type="button"
+                    [title]="plan.isDefault ? 'Cannot archive default plan' : 'Archive plan'"
+                  >
+                    <span class="action-icon">🗑</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </gc-card>
+  </div>
+</div>
+
+<!-- Modals -->
+<!-- Create Plan Modal -->
+<app-admin-plan-form-dialog
+  [isOpen]="showCreateModal"
+  mode="create"
+  (close)="closeCreateModal()"
+  (saved)="handlePlanCreated($event)"
+></app-admin-plan-form-dialog>
+
+<!-- Edit Plan Modal -->
+<app-admin-plan-form-dialog
+  [isOpen]="showEditModal"
+  mode="edit"
+  [plan]="selectedPlan"
+  (close)="closeEditModal()"
+  (saved)="handlePlanUpdated($event)"
+></app-admin-plan-form-dialog>
+
+<!-- Archive Plan Modal -->
+<app-archive-plan-confirm-dialog
+  [isOpen]="showArchiveModal"
+  [plan]="selectedPlan"
+  (close)="closeArchiveModal()"
+  (confirmed)="handlePlanArchived($event)"
+></app-archive-plan-confirm-dialog>

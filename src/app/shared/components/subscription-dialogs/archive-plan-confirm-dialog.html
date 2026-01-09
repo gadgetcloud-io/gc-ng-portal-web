@@ -1,0 +1,110 @@
+<!-- Archive Plan Confirmation Dialog -->
+<div class="modal-backdrop" *ngIf="isOpen && plan" @fadeIn (click)="handleBackdropClick($event)">
+  <div class="modal-container" @slideUp>
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Archive Plan</h2>
+      <button
+        class="btn-close"
+        (click)="handleClose()"
+        type="button"
+        [disabled]="isArchiving"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Error Alert -->
+      <gc-alert
+        *ngIf="archiveError"
+        variant="error"
+        [dismissible]="false"
+      >
+        {{ archiveError }}
+      </gc-alert>
+
+      <!-- Warning Message -->
+      <div class="warning-box">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-content">
+          <h3 class="warning-title">Are you sure?</h3>
+          <p class="warning-text">{{ getWarningMessage() }}</p>
+        </div>
+      </div>
+
+      <!-- Plan Details -->
+      <div class="plan-details-box">
+        <h4 class="details-title">Plan Details</h4>
+        <div class="detail-row">
+          <span class="detail-label">Plan Name:</span>
+          <span class="detail-value">{{ plan.displayName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Price:</span>
+          <span class="detail-value">
+            {{ plan.price.amount === 0 ? 'Free' : '₹' + plan.price.amount }}
+            <span *ngIf="plan.price.amount > 0" class="detail-period">
+              / {{ plan.price.billingPeriod }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Status:</span>
+          <span class="detail-value">{{ plan.status }}</span>
+        </div>
+      </div>
+
+      <!-- Reason Form -->
+      <form class="reason-form" (ngSubmit)="handleConfirm()">
+        <div class="form-group">
+          <label class="form-label" for="archive-reason">
+            Reason for Archiving <span class="required">*</span>
+          </label>
+          <textarea
+            id="archive-reason"
+            class="form-control form-textarea"
+            [(ngModel)]="reason"
+            name="reason"
+            placeholder="Explain why you're archiving this plan (minimum 10 characters)"
+            rows="4"
+            [disabled]="isArchiving"
+            [class.error]="fieldError"
+          ></textarea>
+          <small class="form-hint">Required for audit trail</small>
+          <small class="form-error" *ngIf="fieldError">
+            {{ fieldError }}
+          </small>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-secondary"
+        (click)="handleClose()"
+        type="button"
+        [disabled]="isArchiving"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-danger"
+        (click)="handleConfirm()"
+        type="button"
+        [disabled]="isArchiving || plan.isDefault"
+      >
+        <span *ngIf="!isArchiving">
+          🗑 Archive Plan
+        </span>
+        <span *ngIf="isArchiving" class="btn-loading">
+          <gc-loading-spinner variant="light" size="sm"></gc-loading-spinner>
+          <span class="btn-loading-text">Archiving...</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
