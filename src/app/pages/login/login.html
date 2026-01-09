@@ -1,0 +1,109 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Header -->
+    <div class="auth-header">
+      <div class="auth-icon">🔐</div>
+      <h1 class="auth-title">Sign In</h1>
+      <p class="auth-subtitle">Welcome back to GadgetCloud</p>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <div class="alert-icon">✓</div>
+      <div class="alert-content">
+        <p class="alert-message">{{ successMessage }}</p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage && !successMessage" class="alert alert-error">
+      <div class="alert-icon">✕</div>
+      <div class="alert-content">
+        <p class="alert-message">
+          {{ errorMessage }}
+          <button
+            *ngIf="showResendLink"
+            type="button"
+            class="resend-link"
+            (click)="onResendVerification()"
+          >
+            Resend verification email
+          </button>
+        </p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form class="auth-form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          class="form-input"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          class="form-input"
+          placeholder="Enter your password"
+          required
+          autocomplete="current-password"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [(ngModel)]="formData.rememberMe"
+            name="rememberMe"
+            class="checkbox-input"
+            [disabled]="isLoading"
+          />
+          <span>Remember me</span>
+        </label>
+        <a routerLink="/forgot-password" class="link-button">
+          Forgot password?
+        </a>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <gc-button
+          type="submit"
+          variant="primary"
+          size="lg"
+          [fullWidth]="true"
+          [disabled]="isLoading || (loginForm.invalid ?? false)"
+        >
+          {{ isLoading ? 'Signing in...' : 'Sign in' }}
+        </gc-button>
+      </div>
+    </form>
+
+    <!-- Sign Up Link -->
+    <div class="auth-footer">
+      <p class="auth-link-text">
+        Don't have an account?
+        <a routerLink="/signup" class="link-button">Sign up</a>
+      </p>
+    </div>
+  </div>
+</div>

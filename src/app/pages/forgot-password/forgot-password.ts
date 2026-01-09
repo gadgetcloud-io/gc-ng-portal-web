@@ -55,7 +55,7 @@ export class ForgotPasswordComponent {
   }
 
   backToSignIn(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   private isValidEmail(email: string): boolean {

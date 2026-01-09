@@ -1,0 +1,155 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Header -->
+    <div class="auth-header">
+      <div class="auth-icon">🚀</div>
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Join GadgetCloud today</p>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <div class="alert-icon">✓</div>
+      <div class="alert-content">
+        <h3 class="alert-title">Account Created!</h3>
+        <p class="alert-message">{{ successMessage }}</p>
+        <p class="alert-hint">
+          Redirecting to sign in page in {{ redirectCountdown }} seconds...
+        </p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage && !successMessage" class="alert alert-error">
+      <div class="alert-icon">✕</div>
+      <div class="alert-content">
+        <p class="alert-message">{{ errorMessage }}</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form *ngIf="!successMessage" class="auth-form" (ngSubmit)="onSubmit()" #signupForm="ngForm">
+      <!-- First Name Field -->
+      <div class="form-group">
+        <label for="firstName" class="form-label">First name</label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          [(ngModel)]="formData.firstName"
+          class="form-input"
+          placeholder="John"
+          required
+          autocomplete="given-name"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Last Name Field -->
+      <div class="form-group">
+        <label for="lastName" class="form-label">Last name</label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          [(ngModel)]="formData.lastName"
+          class="form-input"
+          placeholder="Doe"
+          required
+          autocomplete="family-name"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          class="form-input"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          class="form-input"
+          placeholder="Create a strong password"
+          required
+          minlength="8"
+          autocomplete="new-password"
+          [disabled]="isLoading"
+        />
+        <span class="field-hint">At least 8 characters</span>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="formData.confirmPassword"
+          class="form-input"
+          placeholder="Re-enter your password"
+          required
+          minlength="8"
+          autocomplete="new-password"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Terms Agreement -->
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          [(ngModel)]="formData.agreeToTerms"
+          name="agreeToTerms"
+          class="checkbox-input"
+          required
+          [disabled]="isLoading"
+        />
+        <span>
+          I agree to the
+          <a href="/terms" target="_blank" class="link">Terms of Service</a>
+          and
+          <a href="/privacy" target="_blank" class="link">Privacy Policy</a>
+        </span>
+      </label>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <gc-button
+          type="submit"
+          variant="primary"
+          size="lg"
+          [fullWidth]="true"
+          [disabled]="isLoading || (signupForm.invalid ?? false)"
+        >
+          {{ isLoading ? 'Creating account...' : 'Create account' }}
+        </gc-button>
+      </div>
+    </form>
+
+    <!-- Login Link -->
+    <div class="auth-footer">
+      <p class="auth-link-text">
+        Already have an account?
+        <a routerLink="/login" class="link-button">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>

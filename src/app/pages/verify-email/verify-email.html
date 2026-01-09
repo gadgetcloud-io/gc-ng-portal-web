@@ -16,9 +16,9 @@
       <gc-button
         variant="primary"
         size="lg"
-        (click)="goToHome()"
+        (click)="goToLogin()"
       >
-        Go to Home
+        Go to Sign In
       </gc-button>
     </div>
 
@@ -28,7 +28,16 @@
       <h1 class="success-title">Email Verified!</h1>
       <p class="success-message">Your email has been successfully verified.</p>
       <p class="success-message">You can now log in to your account.</p>
-      <p class="redirect-message">Redirecting to login...</p>
+
+      <gc-button
+        variant="primary"
+        size="lg"
+        (click)="goToLogin()"
+      >
+        Go to Sign In
+      </gc-button>
+
+      <p class="redirect-message">Redirecting automatically in 3 seconds...</p>
     </div>
   </div>
 </div>

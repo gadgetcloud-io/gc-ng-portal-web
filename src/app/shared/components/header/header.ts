@@ -1,22 +1,18 @@
 import { Component, OnInit, OnDestroy, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { LoginDialogComponent } from '../login-dialog/login-dialog';
-import { SignupDialogComponent } from '../signup-dialog/signup-dialog';
 import { AuthService, AuthState } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, LoginDialogComponent, SignupDialogComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
-  isLoginDialogOpen = false;
-  isSignupDialogOpen = false;
   isUserMenuOpen = false;
   isScrolled = false;
   authState: AuthState = { isAuthenticated: false, user: null };
@@ -31,7 +27,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -57,34 +54,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isMenuOpen = false;
   }
 
-  openLoginDialog(): void {
-    this.isLoginDialogOpen = true;
-    this.isSignupDialogOpen = false;
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
     this.closeMenu();
   }
 
-  openSignupDialog(): void {
-    this.isSignupDialogOpen = true;
-    this.isLoginDialogOpen = false;
+  navigateToSignup(): void {
+    this.router.navigate(['/signup']);
     this.closeMenu();
-  }
-
-  closeLoginDialog(): void {
-    this.isLoginDialogOpen = false;
-  }
-
-  closeSignupDialog(): void {
-    this.isSignupDialogOpen = false;
-  }
-
-  switchToSignup(): void {
-    this.isLoginDialogOpen = false;
-    this.isSignupDialogOpen = true;
-  }
-
-  switchToLogin(): void {
-    this.isSignupDialogOpen = false;
-    this.isLoginDialogOpen = true;
   }
 
   toggleUserMenu(): void {
@@ -93,18 +70,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   closeUserMenu(): void {
     this.isUserMenuOpen = false;
-  }
-
-  onLoginSuccess(): void {
-    this.ngZone.run(() => {
-      this.closeLoginDialog();
-    });
-  }
-
-  onSignupSuccess(): void {
-    this.ngZone.run(() => {
-      this.closeSignupDialog();
-    });
   }
 
   logout(): void {

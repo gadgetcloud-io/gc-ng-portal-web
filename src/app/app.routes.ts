@@ -3,11 +3,23 @@ import { authGuard } from './core/guards/auth.guard';
 import { publicGuard } from './core/guards/public.guard';
 
 export const routes: Routes = [
-  // Default route - redirect to dashboard
+  // Root route - redirect based on auth state
   {
     path: '',
-    redirectTo: '/dashboard',
+    loadComponent: () => import('./pages/root-redirect/root-redirect').then(m => m.RootRedirectComponent),
     pathMatch: 'full'
+  },
+
+  // Auth pages (accessible when not logged in)
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login').then(m => m.LoginComponent),
+    canActivate: [publicGuard]
+  },
+  {
+    path: 'signup',
+    loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent),
+    canActivate: [publicGuard]
   },
 
   // Navigation menu shortcuts (redirect to full descriptive paths)
@@ -27,7 +39,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // Auth-related pages (accessible when not logged in)
+  // Password reset pages (accessible when not logged in)
   {
     path: 'forgot-password',
     loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent),

@@ -59,9 +59,9 @@ export class VerifyEmailComponent implements OnInit {
           this.isValid = true;
           this.userEmail = response.email || '';
 
-          // Redirect to home after 3 seconds
+          // Redirect to login after 3 seconds
           setTimeout(() => {
-            this.router.navigate(['/']);
+            this.router.navigate(['/login']);
           }, 3000);
         } else {
           this.errorMessage = response.error || 'Invalid or expired verification link';
@@ -101,7 +101,7 @@ export class VerifyEmailComponent implements OnInit {
     });
   }
 
-  goToHome(): void {
-    this.router.navigate(['/']);
+  goToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }

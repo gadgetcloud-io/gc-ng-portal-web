@@ -93,9 +93,9 @@ export class ResetPasswordComponent implements OnInit {
         this.isSubmitting = false;
         if (response.success) {
           this.showSuccess = true;
-          // Redirect to home page after 2 seconds
+          // Redirect to login page after 2 seconds
           setTimeout(() => {
-            this.router.navigate(['/']);
+            this.router.navigate(['/login']);
           }, 2000);
         } else {
           this.errorMessage = response.error || 'An error occurred. Please try again.';
@@ -110,6 +110,6 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   backToSignIn(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }
