@@ -23,10 +23,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authSubscription?: Subscription;
 
   navLinks = [
-    { path: '/', label: 'Home', exact: true },
-    { path: '/features', label: 'Services' },
-    { path: '/pricing', label: 'Pricing' },
-    { path: '/blog', label: 'What is New?' }
+    { path: '/dashboard', label: 'Dashboard', exact: false },
+    { path: '/gadgets', label: 'Gadgets', exact: false },
+    { path: '/requests', label: 'Requests', exact: false },
+    { path: '/activity', label: 'Activity', exact: false }
   ];
 
   constructor(

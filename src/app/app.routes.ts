@@ -10,6 +10,23 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
+  // Navigation menu shortcuts (redirect to full descriptive paths)
+  {
+    path: 'gadgets',
+    redirectTo: '/my-gadgets',
+    pathMatch: 'full'
+  },
+  {
+    path: 'requests',
+    redirectTo: '/service-requests',
+    pathMatch: 'full'
+  },
+  {
+    path: 'activity',
+    redirectTo: '/dashboard', // Temporary until ActivityComponent exists
+    pathMatch: 'full'
+  },
+
   // Auth-related pages (accessible when not logged in)
   {
     path: 'forgot-password',
