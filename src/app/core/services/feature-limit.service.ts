@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, firstValueFrom } from 'rxjs';
 import { BillingService } from './billing.service';
-import { UserSubscription, LimitCheckResult } from '../models/billing.model';
+import { UserSubscription, LimitCheckResult, PlanFeatures } from '../models/billing.model';
 
 /**
  * Feature Limit Service
@@ -205,7 +205,7 @@ export class FeatureLimitService {
    * Check if user has access to a specific feature
    * @param featureName - Feature to check (e.g., 'aiPhotoRecognition')
    */
-  hasFeature(featureName: keyof typeof this.getSubscription().effectiveLimits): boolean {
+  hasFeature(featureName: keyof PlanFeatures): boolean {
     const subscription = this.getSubscription();
     if (!subscription) return false;
 

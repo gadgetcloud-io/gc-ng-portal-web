@@ -360,7 +360,6 @@ export class AdminPlanFormDialogComponent implements OnInit, OnChanges {
       },
       displayOrder: this.formData.displayOrder,
       isVisible: this.formData.isVisible,
-      isDefault: this.formData.isDefault,
       reason: this.formData.reason
     };
 

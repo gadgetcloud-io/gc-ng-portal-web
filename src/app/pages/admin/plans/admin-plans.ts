@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
 import { SubscriptionPlan } from '../../../core/models/billing.model';
 import { CardComponent } from '../../../shared/components/card/card';
@@ -16,7 +15,6 @@ import { ArchivePlanConfirmDialogComponent } from '../../../shared/components/su
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     CardComponent,
     BadgeComponent,
     LoadingSpinnerComponent,
