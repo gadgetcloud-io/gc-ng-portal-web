@@ -1,0 +1,30 @@
+<div class="limit-warning-banner" *ngIf="visible" role="alert">
+  <div class="banner-content">
+    <span class="banner-icon" role="img" [attr.aria-label]="limitType + ' limit warning'">{{ icon }}</span>
+    <div class="banner-text">
+      <p class="banner-message">⚠️ {{ message }}</p>
+      <p class="banner-description">{{ description }}</p>
+    </div>
+    <div class="banner-actions">
+      <gc-button variant="primary" size="sm" (click)="handleUpgrade()">
+        Upgrade
+      </gc-button>
+      <gc-button
+        *ngIf="limitType === 'storage'"
+        variant="ghost"
+        size="sm"
+        (click)="handleManageStorage()"
+      >
+        Manage Storage
+      </gc-button>
+      <button
+        class="dismiss-button"
+        (click)="handleDismiss()"
+        aria-label="Dismiss warning"
+        type="button"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>

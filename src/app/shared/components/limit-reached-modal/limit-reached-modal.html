@@ -1,0 +1,63 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="handleBackdropClick($event)" role="dialog" aria-modal="true">
+  <div class="modal-content" role="document">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">{{ title }}</h2>
+      <button
+        class="close-button"
+        (click)="handleClose()"
+        aria-label="Close modal"
+        type="button"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <p class="limit-message">{{ message }}</p>
+
+      <div class="options-section">
+        <h3 class="section-title">Your options:</h3>
+
+        <!-- Option 1: Delete/Manage -->
+        <div class="option">
+          <span class="option-number">1</span>
+          <p class="option-text">{{ optionMessage }}</p>
+        </div>
+
+        <!-- Option 2: Upgrade -->
+        <div class="option">
+          <span class="option-number">2</span>
+          <p class="option-text">Upgrade for more {{ limitType === 'device' ? 'devices' : 'storage' }}</p>
+        </div>
+      </div>
+
+      <div class="upgrade-section">
+        <p class="upgrade-message">{{ upgradeMessage }}</p>
+        <ul class="benefits-list">
+          <li *ngFor="let benefit of upgradeBenefits" class="benefit-item">
+            <span class="checkmark">✅</span>
+            {{ benefit }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <gc-button variant="primary" size="lg" [fullWidth]="true" (click)="handleUpgrade()">
+        Upgrade to Family
+      </gc-button>
+      <gc-button variant="secondary" size="md" [fullWidth]="true" (click)="handleViewPlans()">
+        View All Plans
+      </gc-button>
+      <gc-button variant="ghost" size="sm" [fullWidth]="true" (click)="handleManageItems()">
+        {{ manageButtonText }}
+      </gc-button>
+      <button class="cancel-button" (click)="handleClose()" type="button">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,216 @@
+@import '../../../styles/design-tokens';
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-lg);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-2xl);
+  animation: slideUp var(--transition-base) ease-out;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-neutral-200);
+
+  .modal-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-neutral-900);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .close-button {
+    background: transparent;
+    border: none;
+    color: var(--color-neutral-500);
+    font-size: var(--text-2xl);
+    line-height: 1;
+    padding: var(--space-1);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-neutral-700);
+    }
+
+    &:focus {
+      outline: 2px solid var(--brand-primary-500);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
+}
+
+.modal-body {
+  padding: var(--space-6);
+
+  .limit-message {
+    font-size: var(--text-lg);
+    color: var(--color-neutral-900);
+    margin: 0 0 var(--space-6) 0;
+    line-height: 1.5;
+  }
+
+  .options-section {
+    margin-bottom: var(--space-6);
+
+    .section-title {
+      font-size: var(--text-base);
+      font-weight: var(--font-semibold);
+      color: var(--color-neutral-900);
+      margin: 0 0 var(--space-4) 0;
+    }
+
+    .option {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+
+      .option-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: var(--color-neutral-100);
+        color: var(--color-neutral-700);
+        font-weight: var(--font-semibold);
+        font-size: var(--text-sm);
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .option-text {
+        font-size: var(--text-base);
+        color: var(--color-neutral-700);
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .upgrade-section {
+    background: var(--color-primary-50);
+    border-left: 4px solid var(--brand-primary-500);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+
+    .upgrade-message {
+      font-size: var(--text-base);
+      font-weight: var(--font-semibold);
+      color: var(--color-neutral-900);
+      margin: 0 0 var(--space-3) 0;
+    }
+
+    .benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+        font-size: var(--text-sm);
+        color: var(--color-neutral-700);
+        margin-bottom: var(--space-2);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .checkmark {
+          flex-shrink: 0;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}
+
+.modal-footer {
+  padding: var(--space-6);
+  border-top: 1px solid var(--color-neutral-200);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  .cancel-button {
+    background: transparent;
+    border: none;
+    color: var(--color-neutral-600);
+    font-size: var(--text-sm);
+    padding: var(--space-2);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    text-align: center;
+
+    &:hover {
+      color: var(--color-neutral-800);
+    }
+
+    &:focus {
+      outline: 2px solid var(--brand-primary-500);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-content {
+    max-height: 95vh;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: var(--space-4);
+  }
+
+  .modal-header .modal-title {
+    font-size: var(--text-xl);
+  }
+}
