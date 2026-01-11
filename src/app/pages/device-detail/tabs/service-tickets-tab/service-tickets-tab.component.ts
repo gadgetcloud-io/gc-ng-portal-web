@@ -135,11 +135,13 @@ export class ServiceTicketsTabComponent implements OnInit, OnDestroy {
     return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  formatRequestType(type: string): string {
+  formatRequestType(type?: string): string {
+    if (!type) return 'N/A';
     return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  getRequestTypeIcon(type: string): string {
+  getRequestTypeIcon(type?: string): string {
+    if (!type) return '📝';
     const icons: Record<string, string> = {
       'repair': '🔧',
       'maintenance': '🛠️',

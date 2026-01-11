@@ -23,7 +23,7 @@ export class ServiceTicketService {
    * @param limit Maximum number of tickets to return
    */
   listTickets(deviceId?: string, limit: number = 100): Observable<ServiceTicket[]> {
-    const endpoint = `/service-tickets?form_type=service_request&limit=${limit}`;
+    const endpoint = `/service-tickets?limit=${limit}`;
     return this.api.get<ServiceTicket[]>(endpoint).pipe(
       map(tickets => deviceId
         ? tickets.filter(t => t.data.deviceId === deviceId)
@@ -78,7 +78,7 @@ export class ServiceTicketService {
    */
   listEnrichedTickets(limit: number = 100): Observable<EnrichedServiceTicket[]> {
     return this.api.get<EnrichedServiceTicket[]>(
-      `/service-tickets/enriched?form_type=service_request&limit=${limit}`
+      `/service-tickets/enriched?limit=${limit}`
     );
   }
 

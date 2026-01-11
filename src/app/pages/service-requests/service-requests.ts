@@ -141,9 +141,17 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    this.filteredRequests = this.serviceRequests.filter(ticket => {
+    console.log('[applyFilters] Starting filter with:', {
+      selectedStatus: this.selectedStatus,
+      selectedType: this.selectedType,
+      selectedAssignment: this.selectedAssignment,
+      searchTerm: this.searchTerm,
+      totalTickets: this.serviceRequests.length
+    });
+
+    this.filteredRequests = this.serviceRequests.filter((ticket, index) => {
       const matchesStatus = this.selectedStatus === 'all' || ticket.status === this.selectedStatus;
-      const matchesType = this.selectedType === 'all' || ticket.data.requestType === this.selectedType;
+      const matchesType = this.selectedType === 'all' || ticket.data?.requestType === this.selectedType;
 
       // Assignment filter (support only)
       let matchesAssignment = true;
@@ -161,6 +169,7 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
         const term = this.searchTerm.toLowerCase();
         matchesSearch = !!(
           ticket.id.toLowerCase().includes(term) ||
+          ticket.data.subject?.toLowerCase().includes(term) ||
           ticket.data.issueDescription?.toLowerCase().includes(term) ||
           ticket.customer?.name?.toLowerCase().includes(term) ||
           ticket.customer?.email?.toLowerCase().includes(term) ||
@@ -169,9 +178,35 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
         );
       }
 
-      return matchesStatus && matchesType && matchesAssignment && matchesSearch;
+      const passes = matchesStatus && matchesType && matchesAssignment && matchesSearch;
+
+      // Log first 3 tickets to see what's happening
+      if (index < 3) {
+        console.log(`[Ticket ${index}] ${ticket.id}:`, {
+          formType: ticket.formType,
+          status: ticket.status,
+          requestType: ticket.data?.requestType,
+          matchesStatus,
+          matchesType,
+          matchesAssignment,
+          matchesSearch,
+          passes
+        });
+      }
+
+      return passes;
     });
+
+    console.log(`[applyFilters] Result: ${this.filteredRequests.length} / ${this.serviceRequests.length} tickets passed filter`);
+    console.log(`[applyFilters] filteredRequests is array:`, Array.isArray(this.filteredRequests));
+    console.log(`[applyFilters] filteredRequests reference:`, this.filteredRequests);
+
     this.cdr.detectChanges();
+
+    // Check if value changes after detect changes
+    setTimeout(() => {
+      console.log(`[applyFilters] After 1 second: filteredRequests.length = ${this.filteredRequests.length}`);
+    }, 1000);
   }
 
   onStatusChange(event: Event): void {
@@ -210,6 +245,7 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
   }
 
   getStatusLabel(status: string): string {
+    if (!status) return 'N/A';
     return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
@@ -243,7 +279,8 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTypeIcon(type: string): string {
+  getTypeIcon(type?: string): string {
+    if (!type) return '📋';
     switch (type) {
       case 'repair':
         return '🔧';
@@ -260,7 +297,8 @@ export class ServiceRequestsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTypeLabel(type: string): string {
+  getTypeLabel(type?: string): string {
+    if (!type) return 'N/A';
     return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 

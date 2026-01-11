@@ -32,12 +32,18 @@ export interface ServiceTicket {
   priority: TicketPriority;
   assignedTo?: string;
   data: {
-    requestType: RequestType;
+    requestType?: RequestType;  // Optional for support_request tickets
     deviceId?: string;
-    issueDescription: string;
+    issueDescription?: string;
     additionalNotes?: string;
     preferredContactMethod?: string;
     phoneNumber?: string;
+    subject?: string;  // For support_request tickets
+    description?: string;  // For support_request tickets
+    category?: string;  // For support_request tickets (technical, billing, etc.)
+    name?: string;  // Customer name in support_request
+    email?: string;  // Customer email in support_request
+    [key: string]: any;  // Allow additional fields from different form types
   };
   metadata?: {
     ipAddress?: string;
