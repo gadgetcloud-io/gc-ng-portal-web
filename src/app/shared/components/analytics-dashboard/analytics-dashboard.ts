@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,6 +9,13 @@ import { BadgeComponent } from '../badge/badge';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
 import { EmptyStateComponent } from '../empty-state/empty-state';
 import { ButtonComponent } from '../button/button';
+
+export interface AnalyticsClickEvent {
+  type: 'summary' | 'category' | 'warranty-status';
+  filterKey?: string;
+  filterValue?: string;
+  label?: string;
+}
 
 /**
  * Analytics Dashboard Component
@@ -44,6 +51,8 @@ import { ButtonComponent } from '../button/button';
 })
 export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+
+  @Output() cardClick = new EventEmitter<AnalyticsClickEvent>();
 
   // Analytics data
   analytics: PortfolioAnalytics | null = null;
@@ -221,5 +230,39 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
 
     return disabled;
+  }
+
+  /**
+   * Handle click on summary card (Total Devices, Purchase Value, etc.)
+   */
+  onSummaryCardClick(cardType: string): void {
+    this.cardClick.emit({
+      type: 'summary',
+      label: cardType
+    });
+  }
+
+  /**
+   * Handle click on category item
+   */
+  onCategoryClick(category: string): void {
+    this.cardClick.emit({
+      type: 'category',
+      filterKey: 'category',
+      filterValue: category,
+      label: this.getCategoryLabel(category)
+    });
+  }
+
+  /**
+   * Handle click on warranty status card
+   */
+  onWarrantyStatusClick(status: 'active' | 'expiring-soon' | 'expired'): void {
+    this.cardClick.emit({
+      type: 'warranty-status',
+      filterKey: 'status',
+      filterValue: status,
+      label: status === 'active' ? 'Active' : status === 'expiring-soon' ? 'Expiring Soon' : 'Expired'
+    });
   }
 }

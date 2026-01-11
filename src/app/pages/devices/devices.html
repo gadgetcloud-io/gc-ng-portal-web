@@ -87,6 +87,15 @@
             {{ status.label }}
           </option>
         </select>
+
+        <button
+          *ngIf="hasActiveFilters()"
+          class="clear-filters-btn"
+          (click)="clearFilters()"
+          title="Clear all filters"
+        >
+          ✕ Clear Filters
+        </button>
       </div>
     </div>
 

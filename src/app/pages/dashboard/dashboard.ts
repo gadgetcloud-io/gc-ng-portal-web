@@ -12,7 +12,8 @@ import { UploadDocumentDialogComponent } from '../../shared/components/document-
 import { ViewDocumentsDialogComponent } from '../../shared/components/document-dialogs/view-documents-dialog';
 import { DeleteDocumentDialogComponent } from '../../shared/components/document-dialogs/delete-document-dialog';
 import { DocumentService, GenericDocument } from '../../core/services/document.service';
-import { DeviceStatsComponent, DeviceStat } from '../../shared/components/device-stats/device-stats';
+import { DeviceStatsComponent, DeviceStat, StatClickEvent } from '../../shared/components/device-stats/device-stats';
+import { AnalyticsClickEvent } from '../../shared/components/analytics-dashboard/analytics-dashboard';
 import { DeviceListComponent } from '../../shared/components/device-list/device-list';
 import { ActivityService, Activity } from '../../core/services/activity.service';
 import { CardComponent } from '../../shared/components/card/card';
@@ -138,7 +139,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       change: '+0 this month',
       trend: 'neutral',
       icon: '📱',
-      color: 'blue'
+      color: 'blue',
+      filterKey: 'status',
+      filterValue: 'all'
     },
     {
       label: 'Active Warranties',
@@ -146,7 +149,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       change: '0% coverage',
       trend: 'neutral',
       icon: '🛡️',
-      color: 'green'
+      color: 'green',
+      filterKey: 'status',
+      filterValue: 'active'
     },
     {
       label: 'Expiring Soon',
@@ -154,7 +159,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       change: 'Next 90 days',
       trend: 'neutral',
       icon: '⚠️',
-      color: 'yellow'
+      color: 'yellow',
+      filterKey: 'status',
+      filterValue: 'expiring-soon'
     },
     {
       label: 'Expired',
@@ -162,7 +169,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       change: 'No coverage',
       trend: 'neutral',
       icon: '❌',
-      color: 'red'
+      color: 'red',
+      filterKey: 'status',
+      filterValue: 'expired'
     }
   ];
 
@@ -454,5 +463,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (deviceId) {
       this.openUploadDocumentDialog(deviceId);
     }
+  }
+
+  /**
+   * Handle stat card clicks from DeviceStatsComponent
+   */
+  onStatClick(event: StatClickEvent): void {
+    if (event.filterKey && event.filterValue) {
+      this.navigateToDevicesWithFilter(event.filterKey, event.filterValue);
+    } else {
+      // Navigate to devices page without filters for "Total Devices"
+      this.router.navigate(['/my-gadgets']);
+    }
+  }
+
+  /**
+   * Handle analytics card clicks from AnalyticsDashboardComponent
+   */
+  onAnalyticsCardClick(event: AnalyticsClickEvent): void {
+    if (event.filterKey && event.filterValue) {
+      this.navigateToDevicesWithFilter(event.filterKey, event.filterValue);
+    } else if (event.type === 'summary') {
+      // For summary cards without specific filters, navigate to devices page
+      this.router.navigate(['/my-gadgets']);
+    }
+  }
+
+  /**
+   * Navigate to devices page with a filter applied
+   */
+  private navigateToDevicesWithFilter(filterKey: string, filterValue: string): void {
+    this.router.navigate(['/my-gadgets'], {
+      queryParams: { [filterKey]: filterValue }
+    });
   }
 }

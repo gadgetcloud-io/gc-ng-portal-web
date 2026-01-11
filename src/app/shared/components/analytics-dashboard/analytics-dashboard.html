@@ -30,7 +30,7 @@
   <!-- Summary Cards Grid -->
   <div class="summary-grid">
     <!-- Total Devices -->
-    <gc-card variant="elevated" padding="md" class="summary-card">
+    <gc-card variant="elevated" padding="md" class="summary-card clickable" (click)="onSummaryCardClick('total-devices')">
       <div class="summary-content">
         <div class="summary-icon">📱</div>
         <div class="summary-details">
@@ -42,7 +42,7 @@
     </gc-card>
 
     <!-- Total Value -->
-    <gc-card variant="elevated" padding="md" class="summary-card">
+    <gc-card variant="elevated" padding="md" class="summary-card clickable" (click)="onSummaryCardClick('purchase-value')">
       <div class="summary-content">
         <div class="summary-icon">💰</div>
         <div class="summary-details">
@@ -73,7 +73,7 @@
     </gc-card>
 
     <!-- Warranty Protection -->
-    <gc-card variant="elevated" padding="md" class="summary-card" *ngIf="showWarrantyProtection">
+    <gc-card variant="elevated" padding="md" class="summary-card clickable" *ngIf="showWarrantyProtection" (click)="onWarrantyStatusClick('active')">
       <div class="summary-content">
         <div class="summary-icon">🛡️</div>
         <div class="summary-details">
@@ -144,7 +144,12 @@
     <div class="category-list" *ngIf="analytics.categoryBreakdown.length > 0">
       <div
         *ngFor="let category of analytics.categoryBreakdown"
-        class="category-item"
+        class="category-item clickable"
+        (click)="onCategoryClick(category.category)"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onCategoryClick(category.category)"
+        (keydown.space)="onCategoryClick(category.category)"
       >
         <div class="category-icon">{{ getCategoryIcon(category.category) }}</div>
         <div class="category-info">
@@ -223,19 +228,40 @@
     </div>
 
     <div class="warranty-stats-grid">
-      <div class="warranty-stat">
+      <div
+        class="warranty-stat clickable"
+        (click)="onWarrantyStatusClick('active')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onWarrantyStatusClick('active')"
+        (keydown.space)="onWarrantyStatusClick('active')"
+      >
         <gc-badge variant="success" size="lg">{{ analytics.activeWarranties }}</gc-badge>
         <div class="warranty-stat-label">Active</div>
         <div class="warranty-stat-value">{{ formatCurrency(analytics.totalWarrantyValue) }}</div>
       </div>
 
-      <div class="warranty-stat">
+      <div
+        class="warranty-stat clickable"
+        (click)="onWarrantyStatusClick('expiring-soon')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onWarrantyStatusClick('expiring-soon')"
+        (keydown.space)="onWarrantyStatusClick('expiring-soon')"
+      >
         <gc-badge variant="warning" size="lg">{{ analytics.expiringWarranties }}</gc-badge>
         <div class="warranty-stat-label">Expiring Soon</div>
         <div class="warranty-stat-sublabel">(within 30 days)</div>
       </div>
 
-      <div class="warranty-stat">
+      <div
+        class="warranty-stat clickable"
+        (click)="onWarrantyStatusClick('expired')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onWarrantyStatusClick('expired')"
+        (keydown.space)="onWarrantyStatusClick('expired')"
+      >
         <gc-badge variant="error" size="lg">{{ analytics.expiredWarranties }}</gc-badge>
         <div class="warranty-stat-label">Expired</div>
         <div class="warranty-stat-sublabel">(needs renewal)</div>

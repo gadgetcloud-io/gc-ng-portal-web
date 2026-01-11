@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { AuthService, User } from '../../core/services/auth.service';
@@ -101,6 +101,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
     private deviceService: DeviceService,
     private documentService: DocumentService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -111,6 +112,21 @@ export class DevicesComponent implements OnInit, OnDestroy {
       this.router.navigate(['/']);
       return;
     }
+
+    // Subscribe to query params to apply filters from navigation
+    const queryParamsSub = this.route.queryParams.subscribe(params => {
+      if (params['status']) {
+        this.selectedStatus = params['status'];
+      }
+      if (params['category']) {
+        this.selectedCategory = params['category'];
+      }
+      // Apply filters when devices are loaded
+      if (this.devices.length > 0) {
+        this.applyFilters();
+      }
+    });
+    this.subscriptions.add(queryParamsSub);
 
     this.loadDevices();
   }
@@ -185,11 +201,56 @@ export class DevicesComponent implements OnInit, OnDestroy {
   onCategoryChange(event: Event): void {
     this.selectedCategory = (event.target as HTMLSelectElement).value;
     this.applyFilters();
+    this.updateUrlParams();
   }
 
   onStatusChange(event: Event): void {
     this.selectedStatus = (event.target as HTMLSelectElement).value;
     this.applyFilters();
+    this.updateUrlParams();
+  }
+
+  /**
+   * Update URL query params to reflect current filter state
+   */
+  private updateUrlParams(): void {
+    const queryParams: { [key: string]: string | null } = {};
+
+    // Only add params if they're not the default 'all' value
+    queryParams['status'] = this.selectedStatus !== 'all' ? this.selectedStatus : null;
+    queryParams['category'] = this.selectedCategory !== 'all' ? this.selectedCategory : null;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+  /**
+   * Clear all filters and reset to defaults
+   */
+  clearFilters(): void {
+    this.selectedStatus = 'all';
+    this.selectedCategory = 'all';
+    this.searchTerm = '';
+    this.applyFilters();
+    // Clear URL params
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true
+    });
+  }
+
+  /**
+   * Check if any filters are active
+   */
+  hasActiveFilters(): boolean {
+    return this.selectedStatus !== 'all' ||
+           this.selectedCategory !== 'all' ||
+           this.searchTerm !== '';
   }
 
   getStatusColor(status: string): string {

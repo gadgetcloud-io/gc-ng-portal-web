@@ -16,14 +16,14 @@
 <!-- Stats Grid -->
 <section class="stats-section">
   <div class="container">
-    <gc-device-stats [stats]="stats"></gc-device-stats>
+    <gc-device-stats [stats]="stats" (statClick)="onStatClick($event)"></gc-device-stats>
   </div>
 </section>
 
 <!-- Analytics Dashboard (Feature Flag Controlled) -->
 <section class="analytics-section" *ngIf="showAnalytics && devices.length > 0">
   <div class="container">
-    <gc-analytics-dashboard></gc-analytics-dashboard>
+    <gc-analytics-dashboard (cardClick)="onAnalyticsCardClick($event)"></gc-analytics-dashboard>
   </div>
 </section>
 
