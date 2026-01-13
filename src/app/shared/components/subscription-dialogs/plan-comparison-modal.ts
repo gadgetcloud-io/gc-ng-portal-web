@@ -1,8 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { BillingService } from '../../../core/services/billing.service';
-import { SubscriptionPlan } from '../../../core/models/billing.model';
+import { SubscriptionPlan, SubscriptionUpgradeRequest } from '../../../core/models/billing.model';
 import { CardComponent } from '../card/card';
 import { BadgeComponent } from '../badge/badge';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
@@ -13,6 +14,7 @@ import { AlertComponent } from '../alert/alert';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     CardComponent,
     BadgeComponent,
     LoadingSpinnerComponent,
@@ -48,8 +50,10 @@ import { AlertComponent } from '../alert/alert';
 export class PlanComparisonModalComponent implements OnInit, OnChanges {
   @Input() isOpen = false;
   @Input() currentPlanId: string = '';
+  @Input() currentPlanName: string = '';
   @Output() close = new EventEmitter<void>();
   @Output() planSelected = new EventEmitter<string>();
+  @Output() upgradeRequested = new EventEmitter<{ ticketId?: string; requestedPlanId: string }>();
 
   plans: SubscriptionPlan[] = [];
   isLoadingPlans = false;
@@ -58,6 +62,14 @@ export class PlanComparisonModalComponent implements OnInit, OnChanges {
   // Confirmation state
   showConfirmation = false;
   selectedPlan: SubscriptionPlan | null = null;
+
+  // Upgrade request state
+  isSubmittingRequest = false;
+  requestSubmitted = false;
+  requestError: string | null = null;
+  ticketId: string | null = null;
+  upgradeReason: string = '';
+  upgradeUrgency: 'low' | 'normal' | 'high' = 'normal';
 
   constructor(
     private billingService: BillingService,
@@ -135,13 +147,43 @@ export class PlanComparisonModalComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Confirm plan selection
+   * Confirm plan selection - submits upgrade request
    */
-  confirmPlanSelection(): void {
-    if (this.selectedPlan) {
-      this.planSelected.emit(this.selectedPlan.id);
-      this.showConfirmation = false;
-      this.selectedPlan = null;
+  async confirmPlanSelection(): Promise<void> {
+    if (!this.selectedPlan) {
+      return;
+    }
+
+    this.isSubmittingRequest = true;
+    this.requestError = null;
+    this.cdr.markForCheck();
+
+    const request: SubscriptionUpgradeRequest = {
+      currentPlanId: this.currentPlanId,
+      currentPlanName: this.currentPlanName,
+      requestedPlanId: this.selectedPlan.id,
+      requestedPlanName: this.selectedPlan.displayName,
+      reason: this.upgradeReason || undefined,
+      urgency: this.upgradeUrgency
+    };
+
+    try {
+      const response = await this.billingService.submitUpgradeRequest(request).toPromise();
+      this.ticketId = response?.id || null;
+      this.requestSubmitted = true;
+      this.isSubmittingRequest = false;
+
+      // Emit the event so parent can handle success
+      this.upgradeRequested.emit({
+        ticketId: this.ticketId || undefined,
+        requestedPlanId: this.selectedPlan.id
+      });
+
+      this.cdr.markForCheck();
+    } catch (error: any) {
+      console.error('Failed to submit upgrade request:', error);
+      this.requestError = error?.error?.detail || 'Failed to submit upgrade request. Please try again.';
+      this.isSubmittingRequest = false;
       this.cdr.markForCheck();
     }
   }
@@ -152,6 +194,23 @@ export class PlanComparisonModalComponent implements OnInit, OnChanges {
   cancelPlanSelection(): void {
     this.showConfirmation = false;
     this.selectedPlan = null;
+    this.upgradeReason = '';
+    this.upgradeUrgency = 'normal';
+    this.requestError = null;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Close success state and modal
+   */
+  closeSuccessState(): void {
+    this.requestSubmitted = false;
+    this.ticketId = null;
+    this.showConfirmation = false;
+    this.selectedPlan = null;
+    this.upgradeReason = '';
+    this.upgradeUrgency = 'normal';
+    this.close.emit();
     this.cdr.markForCheck();
   }
 

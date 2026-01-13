@@ -417,42 +417,28 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle plan change from modal
+   * Handle plan change from modal (deprecated - use handleUpgradeRequested)
+   * @deprecated Direct plan upgrades are disabled. Use ticket-based workflow.
    */
   async handlePlanChange(planId: string): Promise<void> {
-    try {
-      // Optimistic update: close modal immediately
-      this.closePlanComparisonModal();
+    // Direct upgrades are deprecated. This method is kept for backwards compatibility.
+    // The modal now uses the ticket-based workflow via handleUpgradeRequested.
+    console.warn('handlePlanChange is deprecated. Use ticket-based workflow.');
+    this.closePlanComparisonModal();
+    this.showErrorMessage('Direct upgrades are disabled. Please submit an upgrade request.');
+  }
 
-      // Show loading state
-      this.isLoadingSubscription = true;
-      this.cdr.markForCheck();
+  /**
+   * Handle upgrade request submitted from modal (ticket-based workflow)
+   */
+  handleUpgradeRequested(event: { ticketId?: string; requestedPlanId: string }): void {
+    // Modal handles the success state display internally.
+    // We don't close the modal here - the user closes it via "Done" button.
+    // This event is emitted so we can track that a request was submitted.
+    console.log('Upgrade request submitted:', event);
 
-      // Call API to upgrade plan
-      await this.billingService.upgradePlan({
-        planId,
-        paymentMethod: 'mock',
-        transactionId: `txn_${Date.now()}`
-      }).toPromise();
-
-      // Refresh subscription data
-      await this.featureLimitService.refreshSubscription();
-
-      // Get updated subscription
-      this.subscription = this.featureLimitService.getSubscription();
-
-      // Show success message
-      this.showSuccessMessage('Plan upgraded successfully!');
-    } catch (error: any) {
-      console.error('Plan upgrade failed:', error);
-
-      // Show error message
-      const errorMsg = error.error?.message || error.message || 'Failed to upgrade plan. Please try again.';
-      this.showErrorMessage(errorMsg);
-    } finally {
-      this.isLoadingSubscription = false;
-      this.cdr.markForCheck();
-    }
+    // Optionally show success message after modal closes
+    // (but modal already shows success state, so this is just for when modal is closed)
   }
 
   /**

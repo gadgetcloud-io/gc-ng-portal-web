@@ -14,7 +14,9 @@ import {
   OverrideUserFeaturesRequest,
   FeatureOverride,
   LimitType,
-  PlanFeatures
+  PlanFeatures,
+  SubscriptionUpgradeRequest,
+  UpgradeRequestResponse
 } from '../models/billing.model';
 
 /**
@@ -68,6 +70,7 @@ export class BillingService {
    * Upgrade user's subscription plan (mock payment)
    * Requires authentication
    *
+   * @deprecated Use submitUpgradeRequest for ticket-based approval workflow
    * @param request - Upgrade request with planId, paymentMethod, transactionId
    * @returns Updated subscription details
    */
@@ -75,6 +78,26 @@ export class BillingService {
     return this.api.post<UserSubscription>('/billing/upgrade', request).pipe(
       catchError(error => {
         console.error('Failed to upgrade plan:', error);
+        throw error; // Re-throw so component can handle the error
+      })
+    );
+  }
+
+  /**
+   * Submit subscription upgrade request (ticket-based workflow)
+   * Creates a service ticket for support/admin to review and approve.
+   * Requires authentication.
+   *
+   * @param request - Upgrade request with current/requested plan details
+   * @returns Response with ticket ID and status
+   */
+  submitUpgradeRequest(request: SubscriptionUpgradeRequest): Observable<UpgradeRequestResponse> {
+    return this.api.post<UpgradeRequestResponse>('/service-tickets/subscription_upgrade/submit', {
+      formType: 'subscription_upgrade',
+      data: request
+    }).pipe(
+      catchError(error => {
+        console.error('Failed to submit upgrade request:', error);
         throw error; // Re-throw so component can handle the error
       })
     );

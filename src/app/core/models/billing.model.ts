@@ -168,3 +168,21 @@ export interface PlanComparison {
   ctaText: string;               // "Current Plan", "Upgrade", "Downgrade"
   ctaVariant: 'primary' | 'secondary' | 'ghost';
 }
+
+/** Request: Submit Subscription Upgrade Request (ticket-based workflow) */
+export interface SubscriptionUpgradeRequest {
+  currentPlanId: string;
+  currentPlanName: string;
+  requestedPlanId: string;
+  requestedPlanName: string;
+  reason?: string;
+  urgency?: 'low' | 'normal' | 'high';
+}
+
+/** Response: Upgrade Request Submission */
+export interface UpgradeRequestResponse {
+  id: string;                    // Ticket ID (TKT_00001)
+  formType: string;              // subscription_upgrade
+  status: string;                // submitted, open, etc.
+  createdAt: string;             // ISO timestamp
+}

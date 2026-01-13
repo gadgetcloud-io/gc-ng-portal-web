@@ -135,21 +135,21 @@
     </div>
   </div>
 
-  <!-- Confirmation Dialog -->
+  <!-- Confirmation Dialog - Request Form -->
   <div
-    *ngIf="showConfirmation && selectedPlan"
+    *ngIf="showConfirmation && selectedPlan && !requestSubmitted"
     class="confirmation-overlay"
     [@fadeIn]
   >
-    <div class="confirmation-dialog" [@scaleIn]>
+    <div class="confirmation-dialog confirmation-dialog--wide" [@scaleIn]>
       <div class="confirmation-header">
-        <span class="confirmation-icon">🚀</span>
-        <h3 class="confirmation-title">Confirm Plan Upgrade</h3>
+        <span class="confirmation-icon">📋</span>
+        <h3 class="confirmation-title">Request Plan Upgrade</h3>
       </div>
 
       <div class="confirmation-body">
         <p class="confirmation-text">
-          You're about to upgrade to the
+          You're requesting to upgrade to the
           <strong>{{ selectedPlan.displayName }}</strong> plan
           <span *ngIf="selectedPlan.price.amount > 0">
             (₹{{ selectedPlan.price.amount }}/{{ getBillingPeriodLabel(selectedPlan.price.billingPeriod) }})
@@ -158,9 +158,54 @@
             (Free forever)
           </span>.
         </p>
+
+        <!-- Request Form Fields -->
+        <div class="request-form">
+          <div class="form-field">
+            <label for="urgency" class="form-label">Urgency</label>
+            <select
+              id="urgency"
+              class="form-select"
+              [(ngModel)]="upgradeUrgency"
+              [disabled]="isSubmittingRequest"
+            >
+              <option value="low">Low - Within a week</option>
+              <option value="normal">Normal - Within a few days</option>
+              <option value="high">High - As soon as possible</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="reason" class="form-label">
+              Reason for upgrade
+              <span class="form-label-optional">(optional)</span>
+            </label>
+            <textarea
+              id="reason"
+              class="form-textarea"
+              [(ngModel)]="upgradeReason"
+              placeholder="Tell us why you'd like to upgrade..."
+              rows="3"
+              maxlength="1000"
+              [disabled]="isSubmittingRequest"
+            ></textarea>
+          </div>
+        </div>
+
         <p class="confirmation-note">
-          This is a mock payment. No actual charges will be made.
+          <span class="note-icon">ℹ️</span>
+          Our support team will review your request and contact you within 24-48 hours.
         </p>
+
+        <!-- Error Alert -->
+        <gc-alert
+          *ngIf="requestError"
+          variant="error"
+          [dismissible]="false"
+          class="request-error"
+        >
+          {{ requestError }}
+        </gc-alert>
       </div>
 
       <div class="confirmation-actions">
@@ -168,15 +213,62 @@
           class="btn-confirm"
           (click)="confirmPlanSelection()"
           type="button"
+          [disabled]="isSubmittingRequest"
         >
-          Confirm Upgrade
+          <span *ngIf="!isSubmittingRequest">Submit Request</span>
+          <span *ngIf="isSubmittingRequest" class="btn-loading">
+            <span class="loading-spinner"></span>
+            Submitting...
+          </span>
         </button>
         <button
           class="btn-cancel"
           (click)="cancelPlanSelection()"
           type="button"
+          [disabled]="isSubmittingRequest"
         >
           Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Dialog -->
+  <div
+    *ngIf="requestSubmitted && ticketId"
+    class="confirmation-overlay"
+    [@fadeIn]
+  >
+    <div class="confirmation-dialog" [@scaleIn]>
+      <div class="confirmation-header confirmation-header--success">
+        <span class="confirmation-icon">✅</span>
+        <h3 class="confirmation-title">Request Submitted</h3>
+      </div>
+
+      <div class="confirmation-body">
+        <p class="confirmation-text">
+          Your upgrade request has been submitted successfully!
+        </p>
+
+        <div class="ticket-reference">
+          <span class="ticket-label">Reference Number</span>
+          <span class="ticket-id">{{ ticketId }}</span>
+        </div>
+
+        <p class="confirmation-note">
+          <span class="note-icon">📧</span>
+          Our support team will review your request and contact you within 24-48 hours.
+          You can track this request in your Service Requests.
+        </p>
+      </div>
+
+      <div class="confirmation-actions confirmation-actions--centered">
+        <button
+          class="btn-confirm"
+          (click)="closeSuccessState()"
+          type="button"
+        >
+          Done
         </button>
       </div>
     </div>

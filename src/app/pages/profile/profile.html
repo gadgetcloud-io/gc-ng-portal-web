@@ -575,6 +575,8 @@
 <app-plan-comparison-modal
   [isOpen]="showPlanComparisonModal"
   [currentPlanId]="subscription?.planId || ''"
+  [currentPlanName]="subscription?.planDisplayName || ''"
   (close)="closePlanComparisonModal()"
   (planSelected)="handlePlanChange($event)"
+  (upgradeRequested)="handleUpgradeRequested($event)"
 ></app-plan-comparison-modal>
