@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { publicGuard } from './core/guards/public.guard';
+import { adminGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   // Root route - redirect based on auth state
@@ -134,7 +135,7 @@ export const routes: Routes = [
   {
     path: 'admin/plans',
     loadComponent: () => import('./pages/admin/plans/admin-plans').then(m => m.AdminPlansComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     data: {
       breadcrumb: {
         label: 'Subscription Plans',

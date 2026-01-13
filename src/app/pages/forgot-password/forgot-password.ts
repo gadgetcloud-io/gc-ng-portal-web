@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -20,7 +20,9 @@ export class ForgotPasswordComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
 
   onSubmit(): void {
@@ -38,18 +40,25 @@ export class ForgotPasswordComponent {
     this.isLoading = true;
     this.authService.forgotPassword(this.email).subscribe({
       next: (response) => {
-        this.isLoading = false;
-        if (response.success) {
-          this.showSuccess = true;
-          this.email = ''; // Clear input
-        } else {
-          this.errorMessage = response.error || 'An error occurred. Please try again.';
-        }
+        // Run inside NgZone to ensure change detection
+        this.ngZone.run(() => {
+          this.isLoading = false;
+          if (response.success) {
+            this.showSuccess = true;
+            this.email = ''; // Clear input
+          } else {
+            this.errorMessage = response.error || 'An error occurred. Please try again.';
+          }
+          this.cdr.detectChanges();
+        });
       },
       error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = 'An error occurred. Please try again.';
         console.error('Forgot password error:', error);
+        this.ngZone.run(() => {
+          this.isLoading = false;
+          this.errorMessage = 'An error occurred. Please try again.';
+          this.cdr.detectChanges();
+        });
       }
     });
   }
