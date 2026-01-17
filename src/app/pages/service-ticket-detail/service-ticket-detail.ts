@@ -101,6 +101,14 @@ export class ServiceTicketDetailComponent implements OnInit, OnDestroy {
     // Load ticket first for immediate UI display
     this.serviceTicketService.getTicket(this.ticketId).subscribe({
       next: (ticket) => {
+        if (!ticket) {
+          console.warn('API returned null/undefined for ticket:', this.ticketId);
+          this.ticket = null;
+          this.loading = false;
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+          return;
+        }
         this.ticket = ticket;
         this.breadcrumbService.setLabel(`/service-requests/${this.ticketId}`, ticket.id);
         this.loading = false;

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService, AuthState } from '../../../core/services/auth.service';
+import { TokenService } from '../../../core/services/token.service';
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isUserMenuOpen = false;
   isScrolled = false;
   authState: AuthState = { isAuthenticated: false, user: null };
+  tokenBalance: number | null = null;
+  lowBalanceWarning = false;
   private authSubscription?: Subscription;
+  private tokenSubscription?: Subscription;
+  private lowBalanceSubscription?: Subscription;
 
   navLinks = [
     { path: '/dashboard', label: 'Dashboard', exact: false },
@@ -27,18 +32,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private tokenService: TokenService,
     private ngZone: NgZone,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.authService.authState$.subscribe(
-      state => this.authState = state
+      state => {
+        this.authState = state;
+        // Load token balance when authenticated
+        if (state.isAuthenticated) {
+          this.tokenService.refreshBalance();
+        } else {
+          this.tokenBalance = null;
+          this.lowBalanceWarning = false;
+        }
+      }
+    );
+
+    // Subscribe to token balance updates
+    this.tokenSubscription = this.tokenService.balance$.subscribe(
+      balance => this.tokenBalance = balance
+    );
+
+    this.lowBalanceSubscription = this.tokenService.lowBalanceWarning$.subscribe(
+      warning => this.lowBalanceWarning = warning
     );
   }
 
   ngOnDestroy(): void {
     this.authSubscription?.unsubscribe();
+    this.tokenSubscription?.unsubscribe();
+    this.lowBalanceSubscription?.unsubscribe();
   }
 
   @HostListener('window:scroll', [])

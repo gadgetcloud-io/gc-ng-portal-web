@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ApiService, ApiResponse } from './api.service';
+import type { TokenService } from './token.service';
 
 export interface User {
   id: string;
@@ -61,7 +62,8 @@ export class AuthService {
 
   constructor(
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private injector: Injector
   ) {
     // Check for existing session on init
     this.initPromise = this.loadStoredAuth();
@@ -260,6 +262,20 @@ export class AuthService {
       isAuthenticated: false,
       user: null
     });
+
+    // Clear token service state (use injector to avoid circular dependency)
+    try {
+      // Dynamic import to avoid circular dependency at compile time
+      import('./token.service').then(({ TokenService }) => {
+        const tokenService = this.injector.get<TokenService>(TokenService);
+        tokenService.clearState();
+      }).catch(() => {
+        // TokenService may not be available in all contexts
+      });
+    } catch (e) {
+      // TokenService may not be available in all contexts
+    }
+
     this.router.navigate(['/']);
   }
 

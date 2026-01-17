@@ -11,6 +11,14 @@
   <button class="btn-back" (click)="navigateBack()">← Back to Service Requests</button>
 </div>
 
+<!-- Ticket Not Found State (when API returns null) -->
+<div class="error-container" *ngIf="!loading && !error && !ticket && ticketId">
+  <div class="error-icon">🔍</div>
+  <h2>Ticket Not Found</h2>
+  <p>The ticket "{{ ticketId }}" could not be loaded. It may have been deleted or you may not have permission to view it.</p>
+  <button class="btn-back" (click)="navigateBack()">← Back to Service Requests</button>
+</div>
+
 <!-- Main Content -->
 <div class="ticket-detail-page" *ngIf="ticket && !loading">
   <!-- Compact Header -->

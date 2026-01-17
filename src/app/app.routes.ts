@@ -85,6 +85,17 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'tokens',
+    loadComponent: () => import('./pages/tokens/tokens').then(m => m.TokensComponent),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: {
+        label: 'Token Wallet',
+        icon: '💰'
+      }
+    }
+  },
+  {
     path: 'my-gadgets',
     loadComponent: () => import('./pages/devices/devices').then(m => m.DevicesComponent),
     canActivate: [authGuard],
